@@ -1,0 +1,24 @@
+==========================================
+COPY-PASTE THESE INTO RAILWAY
+==========================================
+
+In Railway Dashboard → Variables tab → Raw Editor
+Paste all of this:
+
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+NODE_ENV=production
+PORT=3000
+JWT_SECRET=0482b6546a0308b210a0c6684ebd644bcec9c096180620354ac412aed7d918c8f58ad5a55b056a8e1ef8c37b03a16cad79021c599b749fbc96b188c8890122c5
+JWT_REFRESH_SECRET=b38dd71eb2f943c188939f5887e89ef7a1919348bcada4b61828b4e049268ea55b6f73c41aa4816c5f2ded0d043f38fa956a068b18a30724caf82b785db34477
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+CORS_ORIGIN=*
+
+==========================================
+OPTIONAL (Add Later if Needed)
+==========================================
+
+STRIPE_SECRET_KEY=sk_test_your_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+
+==========================================

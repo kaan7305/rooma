@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import { BOOKING_STATUS, REVIEW_TYPES } from '../utils/constants';
 import type {
@@ -15,19 +15,13 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
   const { booking_id, photo_urls, ...reviewData } = data;
 
   // Get booking details
-  const booking = await prisma.booking.findUnique({
-    where: { id: booking_id },
-    select: {
-      id: true,
-      booking_status: true,
-      guest_id: true,
-      host_id: true,
-      property_id: true,
-      check_out_date: true,
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('id, booking_status, guest_id, host_id, property_id, check_out_date')
+    .eq('id', booking_id)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
@@ -53,20 +47,21 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
   }
 
   // Check if review already exists
-  const existingReview = await prisma.review.findFirst({
-    where: {
-      booking_id,
-      reviewer_id: userId,
-    },
-  });
+  const { data: existingReview } = await supabase
+    .from('reviews')
+    .select('id')
+    .eq('booking_id', booking_id)
+    .eq('reviewer_id', userId)
+    .maybeSingle();
 
   if (existingReview) {
     throw new BadRequestError('You have already reviewed this booking');
   }
 
-  // Create review with photos
-  const review = await prisma.review.create({
-    data: {
+  // Create review
+  const { data: review, error: createError } = await supabase
+    .from('reviews')
+    .insert({
       booking_id,
       property_id: booking.property_id,
       reviewer_id: userId,
@@ -74,87 +69,111 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
       review_type: reviewType,
       ...reviewData,
       status: 'published',
-      photos: photo_urls
-        ? {
-            create: photo_urls.map((url) => ({
-              photo_url: url,
-            })),
-          }
-        : undefined,
-    },
-    include: {
-      reviewer: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      photos: true,
-      property: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-    },
-  });
+    })
+    .select()
+    .single();
+
+  if (createError || !review) {
+    throw new Error(createError?.message || 'Failed to create review');
+  }
+
+  // Create review photos if provided
+  if (photo_urls && photo_urls.length > 0) {
+    const photoData = photo_urls.map((url) => ({
+      review_id: review.id,
+      photo_url: url,
+    }));
+
+    await supabase.from('review_photos').insert(photoData);
+  }
+
+  // Get reviewer
+  const { data: reviewer } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url')
+    .eq('id', userId)
+    .single();
+
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title')
+    .eq('id', booking.property_id)
+    .single();
+
+  // Get photos
+  const { data: photos } = await supabase
+    .from('review_photos')
+    .select('*')
+    .eq('review_id', review.id);
 
   // TODO: Send notification to reviewee about new review
   // TODO: Update property/user average ratings
 
-  return review;
+  return {
+    ...review,
+    reviewer: reviewer || null,
+    photos: photos || [],
+    property: property || null,
+  };
 };
 
 /**
  * Get review by ID
  */
 export const getReviewById = async (reviewId: string) => {
-  const review = await prisma.review.findUnique({
-    where: { id: reviewId },
-    include: {
-      reviewer: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-          student_verified: true,
-          id_verified: true,
-        },
-      },
-      reviewee: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-        },
-      },
-      property: {
-        select: {
-          id: true,
-          title: true,
-          city: true,
-          country: true,
-        },
-      },
-      booking: {
-        select: {
-          id: true,
-          check_in_date: true,
-          check_out_date: true,
-        },
-      },
-      photos: true,
-    },
-  });
+  const { data: review, error: reviewError } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('id', reviewId)
+    .single();
 
-  if (!review) {
+  if (reviewError || !review) {
     throw new NotFoundError('Review not found');
   }
 
-  return review;
+  // Get reviewer
+  const { data: reviewer } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url, student_verified, id_verified')
+    .eq('id', review.reviewer_id)
+    .single();
+
+  // Get reviewee
+  const { data: reviewee } = await supabase
+    .from('users')
+    .select('id, first_name, last_name')
+    .eq('id', review.reviewee_id)
+    .single();
+
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title, city, country')
+    .eq('id', review.property_id)
+    .single();
+
+  // Get booking
+  const { data: booking } = await supabase
+    .from('bookings')
+    .select('id, check_in_date, check_out_date')
+    .eq('id', review.booking_id)
+    .single();
+
+  // Get photos
+  const { data: photos } = await supabase
+    .from('review_photos')
+    .select('*')
+    .eq('review_id', reviewId);
+
+  return {
+    ...review,
+    reviewer: reviewer || null,
+    reviewee: reviewee || null,
+    property: property || null,
+    booking: booking || null,
+    photos: photos || [],
+  };
 };
 
 /**
@@ -183,41 +202,54 @@ export const getReviews = async (filters: GetReviewsInput) => {
     where.overall_rating = { gte: min_rating };
   }
 
-  const [reviews, total] = await Promise.all([
-    prisma.review.findMany({
-      where,
-      orderBy: { created_at: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        reviewer: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-            student_verified: true,
-            id_verified: true,
-          },
-        },
-        property: {
-          select: {
-            id: true,
-            title: true,
-            city: true,
-            country: true,
-          },
-        },
-        photos: {
-          select: {
-            id: true,
-            photo_url: true,
-          },
-        },
-      },
-    }),
-    prisma.review.count({ where }),
-  ]);
+  // Build query
+  let query = supabase
+    .from('reviews')
+    .select('*', { count: 'exact' })
+    .eq('status', 'published');
+
+  if (property_id) {
+    query = query.eq('property_id', property_id);
+  }
+  if (reviewer_id) {
+    query = query.eq('reviewer_id', reviewer_id);
+  }
+  if (reviewee_id) {
+    query = query.eq('reviewee_id', reviewee_id);
+  }
+  if (min_rating) {
+    query = query.gte('overall_rating', min_rating);
+  }
+
+  const skip = (page - 1) * limit;
+  const to = skip + limit - 1;
+  query = query.order('created_at', { ascending: false }).range(skip, to);
+
+  const { data: reviewsData, error, count } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // Get related data for each review
+  const reviews = await Promise.all(
+    (reviewsData || []).map(async (review) => {
+      const [reviewer, property, photos] = await Promise.all([
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', review.reviewer_id).single(),
+        supabase.from('properties').select('id, title, city, country').eq('id', review.property_id).single(),
+        supabase.from('review_photos').select('id, photo_url').eq('review_id', review.id),
+      ]);
+
+      return {
+        ...review,
+        reviewer: reviewer.data || null,
+        property: property.data || null,
+        photos: photos.data || [],
+      };
+    })
+  );
+
+  const total = count || 0;
 
   return {
     reviews,
@@ -234,16 +266,13 @@ export const getReviews = async (filters: GetReviewsInput) => {
  * Update review (only by reviewer, before host responds)
  */
 export const updateReview = async (reviewId: string, userId: string, data: UpdateReviewInput) => {
-  const review = await prisma.review.findUnique({
-    where: { id: reviewId },
-    select: {
-      id: true,
-      reviewer_id: true,
-      host_response: true,
-    },
-  });
+  const { data: review, error: reviewError } = await supabase
+    .from('reviews')
+    .select('id, reviewer_id, host_response')
+    .eq('id', reviewId)
+    .single();
 
-  if (!review) {
+  if (reviewError || !review) {
     throw new NotFoundError('Review not found');
   }
 
@@ -257,43 +286,51 @@ export const updateReview = async (reviewId: string, userId: string, data: Updat
     throw new BadRequestError('Cannot update review after host has responded');
   }
 
-  const updatedReview = await prisma.review.update({
-    where: { id: reviewId },
-    data: {
+  const { data: updatedReview, error: updateError } = await supabase
+    .from('reviews')
+    .update({
       ...data,
-      updated_at: new Date(),
-    },
-    include: {
-      reviewer: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      photos: true,
-    },
-  });
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', reviewId)
+    .select()
+    .single();
 
-  return updatedReview;
+  if (updateError || !updatedReview) {
+    throw new Error(updateError?.message || 'Failed to update review');
+  }
+
+  // Get reviewer
+  const { data: reviewer } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url')
+    .eq('id', userId)
+    .single();
+
+  // Get photos
+  const { data: photos } = await supabase
+    .from('review_photos')
+    .select('*')
+    .eq('review_id', reviewId);
+
+  return {
+    ...updatedReview,
+    reviewer: reviewer || null,
+    photos: photos || [],
+  };
 };
 
 /**
  * Delete review (only by reviewer, within certain time period)
  */
 export const deleteReview = async (reviewId: string, userId: string) => {
-  const review = await prisma.review.findUnique({
-    where: { id: reviewId },
-    select: {
-      id: true,
-      reviewer_id: true,
-      host_response: true,
-      created_at: true,
-    },
-  });
+  const { data: review, error: reviewError } = await supabase
+    .from('reviews')
+    .select('id, reviewer_id, host_response, created_at')
+    .eq('id', reviewId)
+    .single();
 
-  if (!review) {
+  if (reviewError || !review) {
     throw new NotFoundError('Review not found');
   }
 
@@ -308,14 +345,15 @@ export const deleteReview = async (reviewId: string, userId: string) => {
   }
 
   // Cannot delete after 48 hours (configurable)
-  const hoursSinceCreation = (new Date().getTime() - review.created_at.getTime()) / (1000 * 60 * 60);
+  const hoursSinceCreation = (new Date().getTime() - new Date(review.created_at).getTime()) / (1000 * 60 * 60);
   if (hoursSinceCreation > 48) {
     throw new BadRequestError('Reviews can only be deleted within 48 hours of posting');
   }
 
-  await prisma.review.delete({
-    where: { id: reviewId },
-  });
+  await supabase
+    .from('reviews')
+    .delete()
+    .eq('id', reviewId);
 
   return { message: 'Review deleted successfully' };
 };
@@ -324,23 +362,25 @@ export const deleteReview = async (reviewId: string, userId: string) => {
  * Host response to a review
  */
 export const addHostResponse = async (reviewId: string, userId: string, data: HostResponseInput) => {
-  const review = await prisma.review.findUnique({
-    where: { id: reviewId },
-    select: {
-      id: true,
-      reviewee_id: true,
-      review_type: true,
-      host_response: true,
-      property: {
-        select: {
-          host_id: true,
-        },
-      },
-    },
-  });
+  const { data: review, error: reviewError } = await supabase
+    .from('reviews')
+    .select('id, reviewee_id, review_type, host_response, property_id')
+    .eq('id', reviewId)
+    .single();
 
-  if (!review) {
+  if (reviewError || !review) {
     throw new NotFoundError('Review not found');
+  }
+
+  // Get property to check host_id
+  const { data: property } = await supabase
+    .from('properties')
+    .select('host_id')
+    .eq('id', review.property_id)
+    .single();
+
+  if (!property) {
+    throw new NotFoundError('Property not found');
   }
 
   // Only the property host can respond (for guest-to-host reviews)
@@ -348,7 +388,7 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
     throw new BadRequestError('Only guest-to-host reviews can receive host responses');
   }
 
-  if (review.property.host_id !== userId) {
+  if (property.host_id !== userId) {
     throw new ForbiddenError('Only the property host can respond to this review');
   }
 
@@ -357,35 +397,49 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
     throw new BadRequestError('You have already responded to this review');
   }
 
-  const updatedReview = await prisma.review.update({
-    where: { id: reviewId },
-    data: {
+  const { data: updatedReview, error: updateError } = await supabase
+    .from('reviews')
+    .update({
       host_response: data.host_response,
-      host_responded_at: new Date(),
-      updated_at: new Date(),
-    },
-    include: {
-      reviewer: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      property: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-      photos: true,
-    },
-  });
+      host_responded_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', reviewId)
+    .select()
+    .single();
+
+  if (updateError || !updatedReview) {
+    throw new Error(updateError?.message || 'Failed to update review');
+  }
+
+  // Get reviewer
+  const { data: reviewer } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url')
+    .eq('id', updatedReview.reviewer_id)
+    .single();
+
+  // Get property details
+  const { data: propertyData } = await supabase
+    .from('properties')
+    .select('id, title')
+    .eq('id', review.property_id)
+    .single();
+
+  // Get photos
+  const { data: photos } = await supabase
+    .from('review_photos')
+    .select('*')
+    .eq('review_id', reviewId);
 
   // TODO: Send notification to reviewer about host response
 
-  return updatedReview;
+  return {
+    ...updatedReview,
+    reviewer: reviewer || null,
+    property: propertyData || null,
+    photos: photos || [],
+  };
 };
 
 /**
@@ -393,70 +447,60 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
  */
 export const getPropertyReviews = async (propertyId: string, page: number = 1, limit: number = 20) => {
   // Verify property exists
-  const property = await prisma.property.findUnique({
-    where: { id: propertyId },
-    select: { id: true },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('id')
+    .eq('id', propertyId)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
-  const [reviews, total] = await Promise.all([
-    prisma.review.findMany({
-      where: {
-        property_id: propertyId,
-        status: 'published',
-        review_type: REVIEW_TYPES.GUEST_TO_HOST, // Only show guest reviews for properties
-      },
-      orderBy: { created_at: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        reviewer: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-            student_verified: true,
-            id_verified: true,
-          },
-        },
-        booking: {
-          select: {
-            check_in_date: true,
-            check_out_date: true,
-          },
-        },
-        photos: true,
-      },
-    }),
-    prisma.review.count({
-      where: {
-        property_id: propertyId,
-        status: 'published',
-        review_type: REVIEW_TYPES.GUEST_TO_HOST,
-      },
-    }),
-  ]);
+  const skip = (page - 1) * limit;
+  const to = skip + limit - 1;
+
+  // Get reviews
+  const { data: reviewsData, error: reviewsError, count } = await supabase
+    .from('reviews')
+    .select('*', { count: 'exact' })
+    .eq('property_id', propertyId)
+    .eq('status', 'published')
+    .eq('review_type', REVIEW_TYPES.GUEST_TO_HOST)
+    .order('created_at', { ascending: false })
+    .range(skip, to);
+
+  if (reviewsError) {
+    throw new Error(reviewsError.message);
+  }
+
+  // Get related data for each review
+  const reviews = await Promise.all(
+    (reviewsData || []).map(async (review) => {
+      const [reviewer, booking, photos] = await Promise.all([
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', review.reviewer_id).single(),
+        supabase.from('bookings').select('check_in_date, check_out_date').eq('id', review.booking_id).single(),
+        supabase.from('review_photos').select('*').eq('review_id', review.id),
+      ]);
+
+      return {
+        ...review,
+        reviewer: reviewer.data || null,
+        booking: booking.data || null,
+        photos: photos.data || [],
+      };
+    })
+  );
+
+  const total = count || 0;
 
   // Calculate average ratings
-  const allReviews = await prisma.review.findMany({
-    where: {
-      property_id: propertyId,
-      status: 'published',
-      review_type: REVIEW_TYPES.GUEST_TO_HOST,
-    },
-    select: {
-      overall_rating: true,
-      cleanliness_rating: true,
-      accuracy_rating: true,
-      location_rating: true,
-      communication_rating: true,
-      value_rating: true,
-    },
-  });
+  const { data: allReviews } = await supabase
+    .from('reviews')
+    .select('overall_rating, cleanliness_rating, accuracy_rating, location_rating, communication_rating, value_rating')
+    .eq('property_id', propertyId)
+    .eq('status', 'published')
+    .eq('review_type', REVIEW_TYPES.GUEST_TO_HOST);
 
   const avgRatings =
     allReviews.length > 0

@@ -28,6 +28,7 @@
   "dependencies": {
     "@prisma/client": "^6.19.0",
     "@sendgrid/mail": "^8.1.6",
+    "@supabase/supabase-js": "^2.89.0",
     "bcrypt": "^6.0.0",
     "bull": "^4.16.5",
     "cloudinary": "^1.41.3",

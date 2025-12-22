@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import type {
   CreateConversationInput,
@@ -19,44 +19,54 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
   }
 
   // Verify other participant exists
-  const otherUser = await prisma.user.findUnique({
-    where: { id: participant_id },
-    select: { id: true },
-  });
+  const { data: otherUser, error: userError } = await supabase
+    .from('users')
+    .select('id')
+    .eq('id', participant_id)
+    .single();
 
-  if (!otherUser) {
+  if (userError || !otherUser) {
     throw new NotFoundError('User not found');
   }
 
   // Verify property exists if provided
   if (property_id) {
-    const property = await prisma.property.findUnique({
-      where: { id: property_id },
-      select: { id: true },
-    });
+    const { data: property, error: propertyError } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('id', property_id)
+      .single();
 
-    if (!property) {
+    if (propertyError || !property) {
       throw new NotFoundError('Property not found');
     }
   }
 
   // Verify booking exists if provided
   if (booking_id) {
-    const booking = await prisma.booking.findUnique({
-      where: { id: booking_id },
-      select: { id: true, guest_id: true, property: { select: { host_id: true } } },
-    });
+    const { data: booking, error: bookingError } = await supabase
+      .from('bookings')
+      .select('id, guest_id, property_id')
+      .eq('id', booking_id)
+      .single();
 
-    if (!booking) {
+    if (bookingError || !booking) {
       throw new NotFoundError('Booking not found');
     }
 
-    if (!booking.property) {
+    // Get property to check host_id
+    const { data: property } = await supabase
+      .from('properties')
+      .select('host_id')
+      .eq('id', booking.property_id)
+      .single();
+
+    if (!property) {
       throw new NotFoundError('Booking property not found');
     }
 
     // Verify user is part of the booking (either guest or host)
-    if (booking.guest_id !== userId && booking.property.host_id !== userId) {
+    if (booking.guest_id !== userId && property.host_id !== userId) {
       throw new ForbiddenError('You are not authorized to create a conversation for this booking');
     }
   }
@@ -65,108 +75,122 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
   const [part1, part2] = [userId, participant_id].sort();
 
   // Try to find existing conversation
-  const existingConversation = await prisma.conversation.findFirst({
-    where: {
-      participant_1_id: part1,
-      participant_2_id: part2,
-      property_id: property_id || null,
-    },
-    include: {
-      participant_1: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      participant_2: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      property: {
-        select: {
-          id: true,
-          title: true,
-          city: true,
-          country: true,
-          photos: {
-            take: 1,
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true },
-          },
-        },
-      },
-      messages: {
-        orderBy: { created_at: 'desc' },
-        take: 1,
-      },
-    },
-  });
+  let query = supabase
+    .from('conversations')
+    .select('*')
+    .eq('participant_1_id', part1)
+    .eq('participant_2_id', part2);
 
-  if (existingConversation) {
-    // Return existing conversation with unread count
-    const unreadCount = await prisma.message.count({
-      where: {
-        conversation_id: existingConversation.id,
-        recipient_id: userId,
-        read_at: null,
-      },
-    });
+  if (property_id) {
+    query = query.eq('property_id', property_id);
+  } else {
+    query = query.is('property_id', null);
+  }
+
+  const { data: existingConversations } = await query.limit(1);
+
+  if (existingConversations && existingConversations.length > 0) {
+    const existingConversation = existingConversations[0];
+
+    // Get participants
+    const [participant1, participant2] = await Promise.all([
+      supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', existingConversation.participant_1_id).single(),
+      supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', existingConversation.participant_2_id).single(),
+    ]);
+
+    // Get property if exists
+    let property = null;
+    if (existingConversation.property_id) {
+      const { data: propData } = await supabase
+        .from('properties')
+        .select('id, title, city, country')
+        .eq('id', existingConversation.property_id)
+        .single();
+
+      if (propData) {
+        const { data: photos } = await supabase
+          .from('property_photos')
+          .select('photo_url')
+          .eq('property_id', propData.id)
+          .order('display_order', { ascending: true })
+          .limit(1);
+        property = { ...propData, photos: photos || [] };
+      }
+    }
+
+    // Get last message
+    const { data: messages } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('conversation_id', existingConversation.id)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    // Get unread count
+    const { count: unreadCount } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('conversation_id', existingConversation.id)
+      .eq('recipient_id', userId)
+      .is('read_at', null);
 
     return {
       ...existingConversation,
-      unread_count: unreadCount,
+      participant_1: participant1.data || null,
+      participant_2: participant2.data || null,
+      property: property,
+      messages: messages || [],
+      unread_count: unreadCount || 0,
     };
   }
 
   // Create new conversation
-  const newConversation = await prisma.conversation.create({
-    data: {
+  const { data: newConversation, error: createError } = await supabase
+    .from('conversations')
+    .insert({
       participant_1_id: part1,
       participant_2_id: part2,
       property_id: property_id || null,
       booking_id: booking_id || null,
-    },
-    include: {
-      participant_1: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      participant_2: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      property: {
-        select: {
-          id: true,
-          title: true,
-          city: true,
-          country: true,
-          photos: {
-            take: 1,
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true },
-          },
-        },
-      },
-    },
-  });
+    })
+    .select()
+    .single();
+
+  if (createError || !newConversation) {
+    throw new Error(createError?.message || 'Failed to create conversation');
+  }
+
+  // Get participants
+  const [participant1, participant2] = await Promise.all([
+    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', part1).single(),
+    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', part2).single(),
+  ]);
+
+  // Get property if exists
+  let property = null;
+  if (newConversation.property_id) {
+    const { data: propData } = await supabase
+      .from('properties')
+      .select('id, title, city, country')
+      .eq('id', newConversation.property_id)
+      .single();
+
+    if (propData) {
+      const { data: photos } = await supabase
+        .from('property_photos')
+        .select('photo_url')
+        .eq('property_id', propData.id)
+        .order('display_order', { ascending: true })
+        .limit(1);
+      property = { ...propData, photos: photos || [] };
+    }
+  }
 
   return {
     ...newConversation,
+    participant_1: participant1.data || null,
+    participant_2: participant2.data || null,
+    property: property,
     unread_count: 0,
     messages: [],
   };
@@ -177,66 +201,72 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
  * GET /api/conversations
  */
 export const getUserConversations = async (userId: string) => {
-  const conversations = await prisma.conversation.findMany({
-    where: {
-      OR: [{ participant_1_id: userId }, { participant_2_id: userId }],
-    },
-    orderBy: { last_message_at: 'desc' },
-    include: {
-      participant_1: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      participant_2: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      property: {
-        select: {
-          id: true,
-          title: true,
-          city: true,
-          country: true,
-          photos: {
-            take: 1,
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true },
-          },
-        },
-      },
-      messages: {
-        orderBy: { created_at: 'desc' },
-        take: 1,
-      },
-    },
-  });
+  const { data: conversations, error } = await supabase
+    .from('conversations')
+    .select('*')
+    .or(`participant_1_id.eq.${userId},participant_2_id.eq.${userId}`)
+    .order('last_message_at', { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 
   // Add unread count and other participant info for each conversation
   const conversationsWithDetails = await Promise.all(
-    conversations.map(async (conv) => {
-      const unreadCount = await prisma.message.count({
-        where: {
-          conversation_id: conv.id,
-          recipient_id: userId,
-          read_at: null,
-        },
-      });
+    (conversations || []).map(async (conv) => {
+      // Get participants
+      const [participant1, participant2] = await Promise.all([
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conv.participant_1_id).single(),
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conv.participant_2_id).single(),
+      ]);
+
+      // Get property if exists
+      let property = null;
+      if (conv.property_id) {
+        const { data: propData } = await supabase
+          .from('properties')
+          .select('id, title, city, country')
+          .eq('id', conv.property_id)
+          .single();
+
+        if (propData) {
+          const { data: photos } = await supabase
+            .from('property_photos')
+            .select('photo_url')
+            .eq('property_id', propData.id)
+            .order('display_order', { ascending: true })
+            .limit(1);
+          property = { ...propData, photos: photos || [] };
+        }
+      }
+
+      // Get last message
+      const { data: messages } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conv.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      // Get unread count
+      const { count: unreadCount } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('conversation_id', conv.id)
+        .eq('recipient_id', userId)
+        .is('read_at', null);
 
       // Determine the other participant
       const otherParticipant =
-        conv.participant_1?.id === userId ? conv.participant_2 : conv.participant_1;
+        participant1.data?.id === userId ? participant2.data : participant1.data;
 
       return {
         ...conv,
-        unread_count: unreadCount,
+        participant_1: participant1.data || null,
+        participant_2: participant2.data || null,
+        property: property,
+        messages: messages || [],
+        unread_count: unreadCount || 0,
         other_participant: otherParticipant,
       };
     })
@@ -250,42 +280,13 @@ export const getUserConversations = async (userId: string) => {
  * GET /api/conversations/:id
  */
 export const getConversationById = async (conversationId: string, userId: string) => {
-  const conversation = await prisma.conversation.findUnique({
-    where: { id: conversationId },
-    include: {
-      participant_1: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      participant_2: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      property: {
-        select: {
-          id: true,
-          title: true,
-          city: true,
-          country: true,
-          photos: {
-            take: 1,
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true },
-          },
-        },
-      },
-    },
-  });
+  const { data: conversation, error: convError } = await supabase
+    .from('conversations')
+    .select('*')
+    .eq('id', conversationId)
+    .single();
 
-  if (!conversation) {
+  if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
   }
 
@@ -294,20 +295,49 @@ export const getConversationById = async (conversationId: string, userId: string
     throw new ForbiddenError('You are not a participant in this conversation');
   }
 
-  const unreadCount = await prisma.message.count({
-    where: {
-      conversation_id: conversationId,
-      recipient_id: userId,
-      read_at: null,
-    },
-  });
+  // Get participants
+  const [participant1, participant2] = await Promise.all([
+    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conversation.participant_1_id).single(),
+    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conversation.participant_2_id).single(),
+  ]);
+
+  // Get property if exists
+  let property = null;
+  if (conversation.property_id) {
+    const { data: propData } = await supabase
+      .from('properties')
+      .select('id, title, city, country')
+      .eq('id', conversation.property_id)
+      .single();
+
+    if (propData) {
+      const { data: photos } = await supabase
+        .from('property_photos')
+        .select('photo_url')
+        .eq('property_id', propData.id)
+        .order('display_order', { ascending: true })
+        .limit(1);
+      property = { ...propData, photos: photos || [] };
+    }
+  }
+
+  // Get unread count
+  const { count: unreadCount } = await supabase
+    .from('messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('conversation_id', conversationId)
+    .eq('recipient_id', userId)
+    .is('read_at', null);
 
   const otherParticipant =
-    conversation.participant_1?.id === userId ? conversation.participant_2 : conversation.participant_1;
+    participant1.data?.id === userId ? participant2.data : participant1.data;
 
   return {
     ...conversation,
-    unread_count: unreadCount,
+    participant_1: participant1.data || null,
+    participant_2: participant2.data || null,
+    property: property,
+    unread_count: unreadCount || 0,
     other_participant: otherParticipant,
   };
 };
@@ -322,16 +352,13 @@ export const sendMessage = async (
   data: SendMessageInput
 ) => {
   // Verify conversation exists and user is a participant
-  const conversation = await prisma.conversation.findUnique({
-    where: { id: conversationId },
-    select: {
-      id: true,
-      participant_1_id: true,
-      participant_2_id: true,
-    },
-  });
+  const { data: conversation, error: convError } = await supabase
+    .from('conversations')
+    .select('id, participant_1_id, participant_2_id')
+    .eq('id', conversationId)
+    .single();
 
-  if (!conversation) {
+  if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
   }
 
@@ -346,40 +373,38 @@ export const sendMessage = async (
       : conversation.participant_1_id;
 
   // Create message
-  const message = await prisma.message.create({
-    data: {
+  const { data: message, error: messageError } = await supabase
+    .from('messages')
+    .insert({
       conversation_id: conversationId,
       sender_id: userId,
       recipient_id: recipientId,
       message_text: data.message_text,
-    },
-    include: {
-      sender: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-      recipient: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-    },
-  });
+    })
+    .select()
+    .single();
+
+  if (messageError || !message) {
+    throw new Error(messageError?.message || 'Failed to create message');
+  }
+
+  // Get sender and recipient
+  const [sender, recipient] = await Promise.all([
+    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', userId).single(),
+    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', recipientId).single(),
+  ]);
 
   // Update conversation's last_message_at
-  await prisma.conversation.update({
-    where: { id: conversationId },
-    data: { last_message_at: new Date() },
-  });
+  await supabase
+    .from('conversations')
+    .update({ last_message_at: new Date().toISOString() })
+    .eq('id', conversationId);
 
-  return message;
+  return {
+    ...message,
+    sender: sender.data || null,
+    recipient: recipient.data || null,
+  };
 };
 
 /**
@@ -392,16 +417,13 @@ export const getMessages = async (
   filters: GetMessagesInput
 ) => {
   // Verify conversation exists and user is a participant
-  const conversation = await prisma.conversation.findUnique({
-    where: { id: conversationId },
-    select: {
-      id: true,
-      participant_1_id: true,
-      participant_2_id: true,
-    },
-  });
+  const { data: conversation, error: convError } = await supabase
+    .from('conversations')
+    .select('id, participant_1_id, participant_2_id')
+    .eq('id', conversationId)
+    .single();
 
-  if (!conversation) {
+  if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
   }
 
@@ -411,59 +433,58 @@ export const getMessages = async (
 
   const { page, limit, before_id } = filters;
   const skip = (page - 1) * limit;
+  const to = skip + limit - 1;
 
-  // Build where clause
-  const where: any = {
-    conversation_id: conversationId,
-  };
+  // Build query
+  let query = supabase
+    .from('messages')
+    .select('*', { count: 'exact' })
+    .eq('conversation_id', conversationId);
 
   // If before_id is provided, get messages before that message (for infinite scroll)
   if (before_id) {
-    const beforeMessage = await prisma.message.findUnique({
-      where: { id: before_id },
-      select: { created_at: true },
-    });
+    const { data: beforeMessage } = await supabase
+      .from('messages')
+      .select('created_at')
+      .eq('id', before_id)
+      .single();
 
     if (beforeMessage) {
-      where.created_at = { lt: beforeMessage.created_at };
+      query = query.lt('created_at', beforeMessage.created_at);
     }
   }
 
-  const [messages, total] = await Promise.all([
-    prisma.message.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { created_at: 'desc' },
-      include: {
-        sender: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-          },
-        },
-        recipient: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-          },
-        },
-      },
-    }),
-    prisma.message.count({ where }),
-  ]);
+  query = query.order('created_at', { ascending: false }).range(skip, to);
+
+  const { data: messages, error: messagesError, count } = await query;
+
+  if (messagesError) {
+    throw new Error(messagesError.message);
+  }
+
+  // Get sender and recipient for each message
+  const messagesWithUsers = await Promise.all(
+    (messages || []).map(async (msg) => {
+      const [sender, recipient] = await Promise.all([
+        msg.sender_id ? supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', msg.sender_id).single() : { data: null },
+        msg.recipient_id ? supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', msg.recipient_id).single() : { data: null },
+      ]);
+
+      return {
+        ...msg,
+        sender: sender.data || null,
+        recipient: recipient.data || null,
+      };
+    })
+  );
 
   return {
-    messages,
+    messages: messagesWithUsers,
     pagination: {
       page,
       limit,
-      total,
-      total_pages: Math.ceil(total / limit),
+      total: count || 0,
+      total_pages: Math.ceil((count || 0) / limit),
     },
   };
 };
@@ -474,16 +495,13 @@ export const getMessages = async (
  */
 export const markConversationAsRead = async (conversationId: string, userId: string) => {
   // Verify conversation exists and user is a participant
-  const conversation = await prisma.conversation.findUnique({
-    where: { id: conversationId },
-    select: {
-      id: true,
-      participant_1_id: true,
-      participant_2_id: true,
-    },
-  });
+  const { data: conversation, error: convError } = await supabase
+    .from('conversations')
+    .select('id, participant_1_id, participant_2_id')
+    .eq('id', conversationId)
+    .single();
 
-  if (!conversation) {
+  if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
   }
 
@@ -492,19 +510,20 @@ export const markConversationAsRead = async (conversationId: string, userId: str
   }
 
   // Mark all unread messages where user is the recipient as read
-  const result = await prisma.message.updateMany({
-    where: {
-      conversation_id: conversationId,
-      recipient_id: userId,
-      read_at: null,
-    },
-    data: {
-      read_at: new Date(),
-    },
-  });
+  const { data: updatedMessages, error: updateError } = await supabase
+    .from('messages')
+    .update({ read_at: new Date().toISOString() })
+    .eq('conversation_id', conversationId)
+    .eq('recipient_id', userId)
+    .is('read_at', null)
+    .select();
+
+  if (updateError) {
+    throw new Error(updateError.message);
+  }
 
   return {
     message: 'Messages marked as read',
-    count: result.count,
+    count: updatedMessages?.length || 0,
   };
 };

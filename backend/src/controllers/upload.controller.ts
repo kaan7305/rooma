@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as uploadService from '../services/upload.service';
 import { BadRequestError, UnauthorizedError } from '../utils/errors';
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 
 // Extend Request type to include file and files from multer
 interface MulterRequest extends Request {
@@ -43,14 +43,16 @@ export const uploadProfilePhoto = async (
     });
 
     // Update user's profile photo in database
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: { profile_photo_url: uploadResult.url },
-      select: {
-        id: true,
-        profile_photo_url: true,
-      },
-    });
+    const { data: user, error: updateError } = await supabase
+      .from('users')
+      .update({ profile_photo_url: uploadResult.url })
+      .eq('id', userId)
+      .select('id, profile_photo_url')
+      .single();
+
+    if (updateError || !user) {
+      throw new Error(updateError?.message || 'Failed to update profile photo');
+    }
 
     res.status(200).json({
       message: 'Profile photo uploaded successfully',
@@ -87,12 +89,13 @@ export const uploadPropertyPhotos = async (
     }
 
     // Verify property ownership
-    const property = await prisma.property.findUnique({
-      where: { id: property_id },
-      select: { host_id: true },
-    });
+    const { data: property, error: propertyError } = await supabase
+      .from('properties')
+      .select('host_id')
+      .eq('id', property_id)
+      .single();
 
-    if (!property) {
+    if (propertyError || !property) {
       throw new BadRequestError('Property not found');
     }
 
@@ -108,27 +111,30 @@ export const uploadPropertyPhotos = async (
     });
 
     // Get current max display order
-    const existingPhotos = await prisma.propertyPhoto.findMany({
-      where: { property_id },
-      select: { display_order: true },
-      orderBy: { display_order: 'desc' },
-      take: 1,
-    });
+    const { data: existingPhotos } = await supabase
+      .from('property_photos')
+      .select('display_order')
+      .eq('property_id', property_id)
+      .order('display_order', { ascending: false })
+      .limit(1);
 
-    const startOrder = existingPhotos.length > 0 && existingPhotos[0] ? existingPhotos[0].display_order + 1 : 0;
+    const startOrder = existingPhotos && existingPhotos.length > 0 && existingPhotos[0] ? existingPhotos[0].display_order + 1 : 0;
 
     // Create photo records in database
-    const photoRecords = await Promise.all(
-      uploadResults.map((result, index) =>
-        prisma.propertyPhoto.create({
-          data: {
-            property_id,
-            photo_url: result.url,
-            display_order: startOrder + index,
-          },
-        })
-      )
-    );
+    const photoRecordsData = uploadResults.map((result, index) => ({
+      property_id,
+      photo_url: result.url,
+      display_order: startOrder + index,
+    }));
+
+    const { data: photoRecords, error: createError } = await supabase
+      .from('property_photos')
+      .insert(photoRecordsData)
+      .select();
+
+    if (createError || !photoRecords) {
+      throw new Error(createError?.message || 'Failed to create photo records');
+    }
 
     res.status(200).json({
       message: `${photoRecords.length} photo(s) uploaded successfully`,
@@ -190,20 +196,28 @@ export const deletePropertyPhoto = async (
     const { id } = req.params;
 
     // Get photo and verify ownership
-    const photo = await prisma.propertyPhoto.findUnique({
-      where: { id },
-      include: {
-        property: {
-          select: { host_id: true },
-        },
-      },
-    });
+    const { data: photo, error: photoError } = await supabase
+      .from('property_photos')
+      .select('photo_url, property_id')
+      .eq('id', id)
+      .single();
 
-    if (!photo) {
+    if (photoError || !photo) {
       throw new BadRequestError('Photo not found');
     }
 
-    if (photo.property.host_id !== userId) {
+    // Get property to check ownership
+    const { data: property, error: propertyError } = await supabase
+      .from('properties')
+      .select('host_id')
+      .eq('id', photo.property_id)
+      .single();
+
+    if (propertyError || !property) {
+      throw new BadRequestError('Property not found');
+    }
+
+    if (property.host_id !== userId) {
       throw new BadRequestError('You can only delete photos from your own properties');
     }
 
@@ -217,9 +231,10 @@ export const deletePropertyPhoto = async (
     await uploadService.deleteImage(publicId);
 
     // Delete from database
-    await prisma.propertyPhoto.delete({
-      where: { id },
-    });
+    await supabase
+      .from('property_photos')
+      .delete()
+      .eq('id', id);
 
     res.status(200).json({
       message: 'Photo deleted successfully',

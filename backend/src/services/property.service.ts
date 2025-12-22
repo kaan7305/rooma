@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import { PROPERTY_STATUS } from '../utils/constants';
 import type {
@@ -15,123 +15,95 @@ export const createProperty = async (hostId: string, data: CreatePropertyInput) 
   const { amenity_ids, university_id, distance_to_university_km, ...propertyData } = data;
 
   // Verify host exists and is actually a host
-  const host = await prisma.user.findUnique({
-    where: { id: hostId },
-    select: { user_type: true },
-  });
+  const { data: host, error: hostError } = await supabase
+    .from('users')
+    .select('user_type')
+    .eq('id', hostId)
+    .single();
 
-  if (!host || (host.user_type !== 'host' && host.user_type !== 'both')) {
+  if (hostError || !host || (host.user_type !== 'host' && host.user_type !== 'both')) {
     throw new ForbiddenError('Only hosts can create properties');
   }
 
   // If university is provided, verify it exists
   if (university_id) {
-    const university = await prisma.university.findUnique({
-      where: { id: university_id },
-    });
+    const { data: university, error: uniError } = await supabase
+      .from('universities')
+      .select('id')
+      .eq('id', university_id)
+      .single();
 
-    if (!university) {
+    if (uniError || !university) {
       throw new NotFoundError('University not found');
     }
   }
 
-  // Create property with amenities
-  const property = await prisma.property.create({
-    data: {
+  // Create property
+  const { data: property, error: createError } = await supabase
+    .from('properties')
+    .insert({
       ...propertyData,
       host_id: hostId,
       status: PROPERTY_STATUS.PENDING_REVIEW, // Pending admin verification
       nearest_university_id: university_id,
       distance_to_university_km: distance_to_university_km,
-      // Connect amenities if provided
-      amenities: amenity_ids
-        ? {
-            create: amenity_ids.map((amenityId) => ({
-              amenity: { connect: { id: amenityId } },
-            })),
-          }
-        : undefined,
-    },
-    include: {
-      amenities: {
-        include: {
-          amenity: true,
-        },
-      },
-      nearest_university: true,
-      host: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-          student_verified: true,
-          id_verified: true,
-        },
-      },
-    },
-  });
+    })
+    .select()
+    .single();
 
-  return property;
+  if (createError || !property) {
+    throw new Error(createError?.message || 'Failed to create property');
+  }
+
+  // Create property amenities if provided
+  if (amenity_ids && amenity_ids.length > 0) {
+    const amenityData = amenity_ids.map((amenityId) => ({
+      property_id: property.id,
+      amenity_id: amenityId,
+    }));
+
+    await supabase.from('property_amenities').insert(amenityData);
+  }
+
+  // Get amenities
+  const { data: propertyAmenities } = await supabase
+    .from('property_amenities')
+    .select('amenity_id, amenity:amenities(*)')
+    .eq('property_id', property.id);
+
+  // Get nearest university
+  const { data: nearestUniversity } = await supabase
+    .from('universities')
+    .select('*')
+    .eq('id', property.nearest_university_id)
+    .maybeSingle();
+
+  // Get host
+  const { data: hostData } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url, student_verified, id_verified')
+    .eq('id', hostId)
+    .single();
+
+  return {
+    ...property,
+    amenities: propertyAmenities || [],
+    nearest_university: nearestUniversity,
+    host: hostData || null,
+  };
 };
 
 /**
  * Get property by ID with full details
  */
 export const getPropertyById = async (propertyId: string, userId: string | undefined = undefined) => {
-  const property = await prisma.property.findUnique({
-    where: { id: propertyId },
-    include: {
-      host: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-          bio: true,
-          student_verified: true,
-          id_verified: true,
-          created_at: true,
-        },
-      },
-      photos: {
-        orderBy: { display_order: 'asc' },
-      },
-      amenities: {
-        include: {
-          amenity: true,
-        },
-      },
-      nearest_university: true,
-      reviews: {
-        where: { status: 'published' },
-        include: {
-          reviewer: {
-            select: {
-              id: true,
-              first_name: true,
-              last_name: true,
-              profile_photo_url: true,
-            },
-          },
-        },
-        orderBy: { created_at: 'desc' },
-        take: 10,
-      },
-      bookings: {
-        where: {
-          booking_status: { in: ['confirmed', 'completed'] },
-        },
-        select: {
-          check_in_date: true,
-          check_out_date: true,
-          booking_status: true,
-        },
-      },
-    },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('*')
+    .eq('id', propertyId)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
@@ -140,20 +112,81 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
     throw new NotFoundError('Property not found');
   }
 
+  // Get host
+  const { data: host } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url, bio, student_verified, id_verified, created_at')
+    .eq('id', property.host_id)
+    .single();
+
+  // Get photos
+  const { data: photos } = await supabase
+    .from('property_photos')
+    .select('*')
+    .eq('property_id', propertyId)
+    .order('display_order', { ascending: true });
+
+  // Get amenities
+  const { data: propertyAmenities } = await supabase
+    .from('property_amenities')
+    .select('amenity_id, amenity:amenities(*)')
+    .eq('property_id', propertyId);
+
+  // Get nearest university
+  const { data: nearestUniversity } = await supabase
+    .from('universities')
+    .select('*')
+    .eq('id', property.nearest_university_id)
+    .maybeSingle();
+
+  // Get reviews
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('id, overall_rating, review_text, created_at, reviewer_id')
+    .eq('property_id', propertyId)
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  // Get reviewers for reviews
+  const reviewsWithReviewers = await Promise.all(
+    (reviews || []).map(async (review) => {
+      const { data: reviewer } = await supabase
+        .from('users')
+        .select('id, first_name, last_name, profile_photo_url')
+        .eq('id', review.reviewer_id)
+        .single();
+
+      return {
+        ...review,
+        reviewer: reviewer || null,
+      };
+    })
+  );
+
+  // Get bookings
+  const { data: bookings } = await supabase
+    .from('bookings')
+    .select('check_in_date, check_out_date, booking_status')
+    .eq('property_id', propertyId)
+    .in('booking_status', ['confirmed', 'completed']);
+
   // Calculate average rating
   const avgRating =
-    property.reviews.length > 0
-      ? property.reviews.reduce((sum, r) => sum + Number(r.overall_rating), 0) / property.reviews.length
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + Number(r.overall_rating), 0) / reviews.length
       : null;
 
-  const { reviews, bookings, ...propertyData } = property;
-
   return {
-    ...propertyData,
+    ...property,
+    host: host || null,
+    photos: photos || [],
+    amenities: propertyAmenities || [],
+    nearest_university: nearestUniversity,
     average_rating: avgRating,
-    total_reviews: reviews.length,
-    reviews: reviews.slice(0, 5), // Return first 5 reviews with property details
-    booked_dates: bookings.map((b) => ({
+    total_reviews: reviews?.length || 0,
+    reviews: reviewsWithReviewers.slice(0, 5),
+    booked_dates: (bookings || []).map((b) => ({
       start_date: b.check_in_date,
       end_date: b.check_out_date,
     })),
@@ -248,46 +281,138 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
       orderBy = { created_at: 'desc' };
   }
 
-  // Execute query with pagination
-  const [properties, total] = await Promise.all([
-    prisma.property.findMany({
-      where,
-      orderBy,
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        host: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-            student_verified: true,
-            id_verified: true,
-          },
-        },
-        photos: {
-          take: 1,
-          orderBy: { display_order: 'asc' },
-        },
-        nearest_university: {
-          select: {
-            id: true,
-            name: true,
-            city: true,
-            country: true,
-          },
-        },
-        reviews: {
-          where: { status: 'published' },
-          select: {
-            overall_rating: true,
-          },
-        },
-      },
-    }),
-    prisma.property.count({ where }),
-  ]);
+  // Build base query
+  let query = supabase
+    .from('properties')
+    .select('*', { count: 'exact' })
+    .eq('status', PROPERTY_STATUS.ACTIVE);
+
+  // Apply filters
+  if (city) {
+    query = query.ilike('city', `%${city}%`);
+  }
+  if (country) {
+    query = query.ilike('country', `%${country}%`);
+  }
+  if (university_id) {
+    query = query.eq('nearest_university_id', university_id);
+  }
+  if (min_price) {
+    query = query.gte('monthly_price_cents', min_price);
+  }
+  if (max_price) {
+    query = query.lte('monthly_price_cents', max_price);
+  }
+  if (bedrooms) {
+    query = query.gte('bedrooms', bedrooms);
+  }
+  if (bathrooms) {
+    query = query.gte('bathrooms', bathrooms);
+  }
+  if (property_type) {
+    query = query.eq('property_type', property_type);
+  }
+  if (max_distance_km && university_id) {
+    query = query.lte('distance_to_university_km', max_distance_km);
+  }
+
+  // Apply ordering
+  let orderColumn = 'created_at';
+  let orderAscending = false;
+  switch (sort_by) {
+    case 'price_asc':
+      orderColumn = 'monthly_price_cents';
+      orderAscending = true;
+      break;
+    case 'price_desc':
+      orderColumn = 'monthly_price_cents';
+      orderAscending = false;
+      break;
+    case 'distance':
+      orderColumn = 'distance_to_university_km';
+      orderAscending = true;
+      break;
+    default:
+      orderColumn = 'created_at';
+      orderAscending = false;
+  }
+
+  const skip = (page - 1) * limit;
+  const to = skip + limit - 1;
+  query = query.order(orderColumn, { ascending: orderAscending }).range(skip, to);
+
+  const { data: propertiesData, error, count } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // Filter by amenities if specified
+  let filteredProperties = propertiesData || [];
+  if (amenity_ids && amenity_ids.length > 0) {
+    const propertyIdsWithAmenities = new Set<string>();
+    
+    for (const amenityId of amenity_ids) {
+      const { data: propertyAmenities } = await supabase
+        .from('property_amenities')
+        .select('property_id')
+        .eq('amenity_id', amenityId);
+      
+      (propertyAmenities || []).forEach(pa => propertyIdsWithAmenities.add(pa.property_id));
+    }
+
+    // Properties must have ALL specified amenities
+    filteredProperties = filteredProperties.filter(p => 
+      amenity_ids.every(amenityId => propertyIdsWithAmenities.has(p.id))
+    );
+  }
+
+  // Filter by availability if check_in and check_out provided
+  if (check_in && check_out) {
+    const checkInDate = new Date(check_in).toISOString().split('T')[0];
+    const checkOutDate = new Date(check_out).toISOString().split('T')[0];
+
+    const propertyIds = filteredProperties.map(p => p.id);
+    
+    // Get all bookings that overlap with the search period
+    const { data: overlappingBookings } = await supabase
+      .from('bookings')
+      .select('property_id')
+      .in('property_id', propertyIds)
+      .in('booking_status', ['confirmed', 'completed'])
+      .or(`and(check_in_date.lte.${checkOutDate},check_out_date.gt.${checkInDate}),and(check_in_date.lt.${checkOutDate},check_out_date.gte.${checkOutDate}),and(check_in_date.gte.${checkInDate},check_out_date.lte.${checkOutDate})`);
+
+    const bookedPropertyIds = new Set((overlappingBookings || []).map(b => b.property_id));
+    filteredProperties = filteredProperties.filter(p => !bookedPropertyIds.has(p.id));
+  }
+
+  // Get related data for each property
+  const properties = await Promise.all(
+    filteredProperties.map(async (property) => {
+      const [host, photos, nearestUniversity, reviews] = await Promise.all([
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', property.host_id).single(),
+        supabase.from('property_photos').select('*').eq('property_id', property.id).order('display_order', { ascending: true }).limit(1),
+        property.nearest_university_id ? supabase.from('universities').select('id, name, city, country').eq('id', property.nearest_university_id).single() : { data: null },
+        supabase.from('reviews').select('overall_rating').eq('property_id', property.id).eq('status', 'published'),
+      ]);
+
+      const avgRating =
+        reviews.data && reviews.data.length > 0
+          ? reviews.data.reduce((sum, r) => sum + Number(r.overall_rating), 0) / reviews.data.length
+          : null;
+
+      return {
+        ...property,
+        host: host.data || null,
+        photos: photos.data || [],
+        nearest_university: nearestUniversity.data || null,
+        average_rating: avgRating,
+        total_reviews: reviews.data?.length || 0,
+      };
+    })
+  );
+
+  const total = count || 0;
 
   // Add average rating to each property
   const propertiesWithRatings = properties.map((property) => {
@@ -321,12 +446,13 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
  */
 export const updateProperty = async (propertyId: string, hostId: string, data: UpdatePropertyInput) => {
   // Verify property exists and belongs to host
-  const existingProperty = await prisma.property.findUnique({
-    where: { id: propertyId },
-    select: { host_id: true },
-  });
+  const { data: existingProperty, error: propertyError } = await supabase
+    .from('properties')
+    .select('host_id')
+    .eq('id', propertyId)
+    .single();
 
-  if (!existingProperty) {
+  if (propertyError || !existingProperty) {
     throw new NotFoundError('Property not found');
   }
 
@@ -338,48 +464,79 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
 
   // If university is being updated, verify it exists
   if (university_id) {
-    const university = await prisma.university.findUnique({
-      where: { id: university_id },
-    });
+    const { data: university, error: uniError } = await supabase
+      .from('universities')
+      .select('id')
+      .eq('id', university_id)
+      .single();
 
-    if (!university) {
+    if (uniError || !university) {
       throw new NotFoundError('University not found');
     }
   }
 
   // Update property
-  const property = await prisma.property.update({
-    where: { id: propertyId },
-    data: {
+  const { data: property, error: updateError } = await supabase
+    .from('properties')
+    .update({
       ...propertyData,
       nearest_university_id: university_id,
       distance_to_university_km: distance_to_university_km,
-      updated_at: new Date(),
-      // Update amenities if provided
-      amenities:
-        amenity_ids !== undefined
-          ? {
-              deleteMany: {}, // Remove all existing amenities
-              create: amenity_ids.map((amenityId) => ({
-                amenity: { connect: { id: amenityId } },
-              })),
-            }
-          : undefined,
-    },
-    include: {
-      amenities: {
-        include: {
-          amenity: true,
-        },
-      },
-      nearest_university: true,
-      photos: {
-        orderBy: { display_order: 'asc' },
-      },
-    },
-  });
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', propertyId)
+    .select()
+    .single();
 
-  return property;
+  if (updateError || !property) {
+    throw new Error(updateError?.message || 'Failed to update property');
+  }
+
+  // Update amenities if provided
+  if (amenity_ids !== undefined) {
+    // Delete all existing amenities
+    await supabase
+      .from('property_amenities')
+      .delete()
+      .eq('property_id', propertyId);
+
+    // Create new amenities
+    if (amenity_ids.length > 0) {
+      const amenityData = amenity_ids.map((amenityId) => ({
+        property_id: propertyId,
+        amenity_id: amenityId,
+      }));
+
+      await supabase.from('property_amenities').insert(amenityData);
+    }
+  }
+
+  // Get amenities
+  const { data: propertyAmenities } = await supabase
+    .from('property_amenities')
+    .select('amenity_id, amenity:amenities(*)')
+    .eq('property_id', propertyId);
+
+  // Get nearest university
+  const { data: nearestUniversity } = await supabase
+    .from('universities')
+    .select('*')
+    .eq('id', property.nearest_university_id)
+    .maybeSingle();
+
+  // Get photos
+  const { data: photos } = await supabase
+    .from('property_photos')
+    .select('*')
+    .eq('property_id', propertyId)
+    .order('display_order', { ascending: true });
+
+  return {
+    ...property,
+    amenities: propertyAmenities || [],
+    nearest_university: nearestUniversity,
+    photos: photos || [],
+  };
 };
 
 /**
@@ -387,12 +544,13 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
  */
 export const deleteProperty = async (propertyId: string, hostId: string) => {
   // Verify property exists and belongs to host
-  const existingProperty = await prisma.property.findUnique({
-    where: { id: propertyId },
-    select: { host_id: true },
-  });
+  const { data: existingProperty, error: propertyError } = await supabase
+    .from('properties')
+    .select('host_id')
+    .eq('id', propertyId)
+    .single();
 
-  if (!existingProperty) {
+  if (propertyError || !existingProperty) {
     throw new NotFoundError('Property not found');
   }
 
@@ -401,25 +559,24 @@ export const deleteProperty = async (propertyId: string, hostId: string) => {
   }
 
   // Check for active bookings
-  const activeBookings = await prisma.booking.count({
-    where: {
-      property_id: propertyId,
-      booking_status: { in: ['confirmed', 'completed'] },
-    },
-  });
+  const { count: activeBookings } = await supabase
+    .from('bookings')
+    .select('*', { count: 'exact', head: true })
+    .eq('property_id', propertyId)
+    .in('booking_status', ['confirmed', 'completed']);
 
-  if (activeBookings > 0) {
+  if ((activeBookings || 0) > 0) {
     throw new BadRequestError('Cannot delete property with active bookings');
   }
 
   // Soft delete by setting status to inactive
-  await prisma.property.update({
-    where: { id: propertyId },
-    data: {
+  await supabase
+    .from('properties')
+    .update({
       status: PROPERTY_STATUS.INACTIVE,
-      updated_at: new Date(),
-    },
-  });
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', propertyId);
 
   return { message: 'Property deleted successfully' };
 };
@@ -429,12 +586,13 @@ export const deleteProperty = async (propertyId: string, hostId: string) => {
  */
 export const addPhoto = async (propertyId: string, hostId: string, data: AddPhotoInput) => {
   // Verify property exists and belongs to host
-  const property = await prisma.property.findUnique({
-    where: { id: propertyId },
-    select: { host_id: true, photos: true },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('host_id')
+    .eq('id', propertyId)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
@@ -442,22 +600,34 @@ export const addPhoto = async (propertyId: string, hostId: string, data: AddPhot
     throw new ForbiddenError('You can only add photos to your own properties');
   }
 
+  // Get existing photos count
+  const { count: photoCount } = await supabase
+    .from('property_photos')
+    .select('*', { count: 'exact', head: true })
+    .eq('property_id', propertyId);
+
   // Limit to 20 photos per property
-  if (property.photos.length >= 20) {
+  if ((photoCount || 0) >= 20) {
     throw new BadRequestError('Maximum 20 photos per property');
   }
 
   // Set display order to last if not provided
-  const displayOrder = data.display_order ?? property.photos.length;
+  const displayOrder = data.display_order ?? (photoCount || 0);
 
-  const photo = await prisma.propertyPhoto.create({
-    data: {
+  const { data: photo, error: createError } = await supabase
+    .from('property_photos')
+    .insert({
       property_id: propertyId,
       photo_url: data.photo_url,
       caption: data.caption,
       display_order: displayOrder,
-    },
-  });
+    })
+    .select()
+    .single();
+
+  if (createError || !photo) {
+    throw new Error(createError?.message || 'Failed to create photo');
+  }
 
   return photo;
 };
@@ -467,12 +637,13 @@ export const addPhoto = async (propertyId: string, hostId: string, data: AddPhot
  */
 export const deletePhoto = async (propertyId: string, photoId: string, hostId: string) => {
   // Verify property exists and belongs to host
-  const property = await prisma.property.findUnique({
-    where: { id: propertyId },
-    select: { host_id: true },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('host_id')
+    .eq('id', propertyId)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
@@ -481,20 +652,21 @@ export const deletePhoto = async (propertyId: string, photoId: string, hostId: s
   }
 
   // Verify photo exists and belongs to this property
-  const photo = await prisma.propertyPhoto.findFirst({
-    where: {
-      id: photoId,
-      property_id: propertyId,
-    },
-  });
+  const { data: photo, error: photoError } = await supabase
+    .from('property_photos')
+    .select('*')
+    .eq('id', photoId)
+    .eq('property_id', propertyId)
+    .maybeSingle();
 
-  if (!photo) {
+  if (photoError || !photo) {
     throw new NotFoundError('Photo not found');
   }
 
-  await prisma.propertyPhoto.delete({
-    where: { id: photoId },
-  });
+  await supabase
+    .from('property_photos')
+    .delete()
+    .eq('id', photoId);
 
   return { message: 'Photo deleted successfully' };
 };
@@ -503,33 +675,27 @@ export const deletePhoto = async (propertyId: string, photoId: string, hostId: s
  * Get property availability (booked dates)
  */
 export const getAvailability = async (propertyId: string) => {
-  const property = await prisma.property.findUnique({
-    where: { id: propertyId },
-    select: {
-      id: true,
-      bookings: {
-        where: {
-          booking_status: { in: ['confirmed', 'completed'] },
-        },
-        select: {
-          check_in_date: true,
-          check_out_date: true,
-          booking_status: true,
-        },
-        orderBy: {
-          check_in_date: 'asc',
-        },
-      },
-    },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('id')
+    .eq('id', propertyId)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
+  // Get bookings
+  const { data: bookings } = await supabase
+    .from('bookings')
+    .select('check_in_date, check_out_date, booking_status')
+    .eq('property_id', propertyId)
+    .in('booking_status', ['confirmed', 'completed'])
+    .order('check_in_date', { ascending: true });
+
   return {
     property_id: property.id,
-    booked_dates: property.bookings.map((booking) => ({
+    booked_dates: (bookings || []).map((booking) => ({
       start_date: booking.check_in_date,
       end_date: booking.check_out_date,
       status: booking.booking_status,
@@ -541,60 +707,56 @@ export const getAvailability = async (propertyId: string) => {
  * Get property reviews
  */
 export const getPropertyReviews = async (propertyId: string, page: number = 1, limit: number = 10) => {
-  const property = await prisma.property.findUnique({
-    where: { id: propertyId },
-    select: { id: true, status: true },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('id, status')
+    .eq('id', propertyId)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
-  const [reviews, total] = await Promise.all([
-    prisma.review.findMany({
-      where: {
-        property_id: propertyId,
-        status: 'published',
-      },
-      include: {
-        reviewer: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-          },
-        },
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    }),
-    prisma.review.count({
-      where: {
-        property_id: propertyId,
-        status: 'published',
-      },
-    }),
-  ]);
+  const skip = (page - 1) * limit;
+  const to = skip + limit - 1;
+
+  // Get reviews
+  const { data: reviewsData, error: reviewsError, count } = await supabase
+    .from('reviews')
+    .select('*', { count: 'exact' })
+    .eq('property_id', propertyId)
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .range(skip, to);
+
+  if (reviewsError) {
+    throw new Error(reviewsError.message);
+  }
+
+  // Get reviewers for each review
+  const reviews = await Promise.all(
+    (reviewsData || []).map(async (review) => {
+      const { data: reviewer } = await supabase
+        .from('users')
+        .select('id, first_name, last_name, profile_photo_url')
+        .eq('id', review.reviewer_id)
+        .single();
+
+      return {
+        ...review,
+        reviewer: reviewer || null,
+      };
+    })
+  );
+
+  const total = count || 0;
 
   // Calculate average ratings
-  const allReviews = await prisma.review.findMany({
-    where: {
-      property_id: propertyId,
-      status: 'published',
-    },
-    select: {
-      overall_rating: true,
-      cleanliness_rating: true,
-      accuracy_rating: true,
-      communication_rating: true,
-      location_rating: true,
-      value_rating: true,
-    },
-  });
+  const { data: allReviews } = await supabase
+    .from('reviews')
+    .select('overall_rating, cleanliness_rating, accuracy_rating, communication_rating, location_rating, value_rating')
+    .eq('property_id', propertyId)
+    .eq('status', 'published');
 
   const avgRatings =
     allReviews.length > 0

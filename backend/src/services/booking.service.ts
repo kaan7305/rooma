@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import { BOOKING_STATUS, PRICING, MIN_STAY_WEEKS } from '../utils/constants';
 import type {
@@ -63,23 +63,13 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
   }
 
   // Get property details
-  const property = await prisma.property.findUnique({
-    where: { id: property_id },
-    select: {
-      id: true,
-      host_id: true,
-      title: true,
-      status: true,
-      max_guests: true,
-      minimum_stay_weeks: true,
-      maximum_stay_months: true,
-      monthly_price_cents: true,
-      cleaning_fee_cents: true,
-      security_deposit_cents: true,
-    },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('id, host_id, title, status, max_guests, minimum_stay_weeks, maximum_stay_months, monthly_price_cents, cleaning_fee_cents, security_deposit_cents')
+    .eq('id', property_id)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
@@ -108,28 +98,30 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
   }
 
   // Check availability - no overlapping confirmed bookings
-  const overlappingBookings = await prisma.booking.count({
-    where: {
-      property_id,
-      booking_status: { in: [BOOKING_STATUS.CONFIRMED, BOOKING_STATUS.PENDING] },
-      OR: [
-        {
-          // New booking starts during existing booking
-          AND: [{ check_in_date: { lte: checkIn } }, { check_out_date: { gt: checkIn } }],
-        },
-        {
-          // New booking ends during existing booking
-          AND: [{ check_in_date: { lt: checkOut } }, { check_out_date: { gte: checkOut } }],
-        },
-        {
-          // New booking completely contains existing booking
-          AND: [{ check_in_date: { gte: checkIn } }, { check_out_date: { lte: checkOut } }],
-        },
-      ],
-    },
-  });
+  // Get all bookings for this property with overlapping dates
+  const checkInStr = checkIn.toISOString().split('T')[0];
+  const checkOutStr = checkOut.toISOString().split('T')[0];
+  
+  const { data: existingBookings } = await supabase
+    .from('bookings')
+    .select('id, check_in_date, check_out_date')
+    .eq('property_id', property_id)
+    .in('booking_status', [BOOKING_STATUS.CONFIRMED, BOOKING_STATUS.PENDING]);
 
-  if (overlappingBookings > 0) {
+  // Filter for overlapping bookings in JavaScript
+  const overlappingBookings = existingBookings?.filter((booking) => {
+    const existingCheckIn = new Date(booking.check_in_date);
+    const existingCheckOut = new Date(booking.check_out_date);
+    
+    // Check if dates overlap
+    return (
+      (checkIn <= existingCheckIn && checkOut > existingCheckIn) ||
+      (checkIn < existingCheckOut && checkOut >= existingCheckOut) ||
+      (checkIn >= existingCheckIn && checkOut <= existingCheckOut)
+    );
+  }) || [];
+
+  if (overlappingBookings.length > 0) {
     throw new BadRequestError('Property is not available for the selected dates');
   }
 
@@ -142,13 +134,14 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
   );
 
   // Create booking
-  const booking = await prisma.booking.create({
-    data: {
+  const { data: booking, error: createError } = await supabase
+    .from('bookings')
+    .insert({
       property_id,
       guest_id: guestId,
       host_id: property.host_id,
-      check_in_date: checkIn,
-      check_out_date: checkOut,
+      check_in_date: checkIn.toISOString().split('T')[0],
+      check_out_date: checkOut.toISOString().split('T')[0],
       nights,
       guest_count,
       purpose_of_stay,
@@ -156,37 +149,47 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
       ...pricing,
       booking_status: BOOKING_STATUS.PENDING,
       payment_status: 'pending',
-    },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-          address_line1: true,
-          city: true,
-          country: true,
-          photos: {
-            take: 1,
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true },
-          },
-        },
-      },
-      host: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          profile_photo_url: true,
-        },
-      },
-    },
-  });
+    })
+    .select()
+    .single();
+
+  if (createError || !booking) {
+    throw new Error(createError?.message || 'Failed to create booking');
+  }
+
+  // Get property details
+  const { data: propertyData } = await supabase
+    .from('properties')
+    .select('id, title, address_line1, city, country')
+    .eq('id', property_id)
+    .single();
+
+  // Get property photos
+  const { data: photos } = await supabase
+    .from('property_photos')
+    .select('photo_url')
+    .eq('property_id', property_id)
+    .order('display_order', { ascending: true })
+    .limit(1);
+
+  // Get host details
+  const { data: host } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url')
+    .eq('id', property.host_id)
+    .single();
 
   // TODO: Send notification to host about new booking request
   // TODO: Create conversation between guest and host
 
-  return booking;
+  return {
+    ...booking,
+    property: propertyData ? {
+      ...propertyData,
+      photos: photos || [],
+    } : null,
+    host: host || null,
+  };
 };
 
 /**
@@ -217,60 +220,96 @@ export const getBookings = async (userId: string, filters: GetBookingsInput) => 
     where.property_id = property_id;
   }
 
-  // Filter upcoming bookings
-  if (upcoming) {
-    where.check_in_date = { gte: new Date() };
+  // Build Supabase query
+  let query = supabase
+    .from('bookings')
+    .select('*', { count: 'exact' });
+
+  // Filter by role
+  if (role === 'guest') {
+    query = query.eq('guest_id', userId);
+  } else if (role === 'host') {
+    query = query.eq('host_id', userId);
+  } else {
+    // Return both guest and host bookings - need to use OR
+    query = query.or(`guest_id.eq.${userId},host_id.eq.${userId}`);
   }
 
-  const [bookings, total] = await Promise.all([
-    prisma.booking.findMany({
-      where,
-      orderBy: { created_at: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        property: {
-          select: {
-            id: true,
-            title: true,
-            address_line1: true,
-            city: true,
-            country: true,
-            photos: {
-              take: 1,
-              orderBy: { display_order: 'asc' },
-              select: { photo_url: true },
-            },
-          },
-        },
-        guest: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-          },
-        },
-        host: {
-          select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            profile_photo_url: true,
-          },
-        },
-      },
-    }),
-    prisma.booking.count({ where }),
-  ]);
+  // Filter by status
+  if (status) {
+    query = query.eq('booking_status', status);
+  }
+
+  // Filter by property
+  if (property_id) {
+    query = query.eq('property_id', property_id);
+  }
+
+  // Filter upcoming bookings
+  if (upcoming) {
+    const today = new Date().toISOString().split('T')[0];
+    query = query.gte('check_in_date', today);
+  }
+
+  // Apply pagination and ordering
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  query = query.order('created_at', { ascending: false }).range(from, to);
+
+  const { data: bookings, error, count } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // Get related data for each booking
+  const bookingsWithRelations = await Promise.all(
+    (bookings || []).map(async (booking) => {
+      // Get property
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id, title, address_line1, city, country')
+        .eq('id', booking.property_id)
+        .single();
+
+      // Get property photos
+      const { data: photos } = await supabase
+        .from('property_photos')
+        .select('photo_url')
+        .eq('property_id', booking.property_id)
+        .order('display_order', { ascending: true })
+        .limit(1);
+
+      // Get guest
+      const { data: guest } = await supabase
+        .from('users')
+        .select('id, first_name, last_name, profile_photo_url')
+        .eq('id', booking.guest_id)
+        .single();
+
+      // Get host
+      const { data: host } = await supabase
+        .from('users')
+        .select('id, first_name, last_name, profile_photo_url')
+        .eq('id', booking.host_id)
+        .single();
+
+      return {
+        ...booking,
+        property: property ? { ...property, photos: photos || [] } : null,
+        guest: guest || null,
+        host: host || null,
+      };
+    })
+  );
 
   return {
-    bookings,
+    bookings: bookingsWithRelations,
     pagination: {
       page,
       limit,
-      total,
-      total_pages: Math.ceil(total / limit),
+      total: count || 0,
+      total_pages: Math.ceil((count || 0) / limit),
     },
   };
 };
@@ -279,59 +318,13 @@ export const getBookings = async (userId: string, filters: GetBookingsInput) => 
  * Get booking by ID
  */
 export const getBookingById = async (bookingId: string, userId: string) => {
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          property_type: true,
-          address_line1: true,
-          address_line2: true,
-          city: true,
-          state_province: true,
-          postal_code: true,
-          country: true,
-          bedrooms: true,
-          bathrooms: true,
-          max_guests: true,
-          cancellation_policy: true,
-          photos: {
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true, caption: true },
-          },
-        },
-      },
-      guest: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          email: true,
-          phone: true,
-          profile_photo_url: true,
-          student_verified: true,
-          id_verified: true,
-        },
-      },
-      host: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          email: true,
-          phone: true,
-          profile_photo_url: true,
-          student_verified: true,
-          id_verified: true,
-        },
-      },
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
@@ -340,19 +333,53 @@ export const getBookingById = async (bookingId: string, userId: string) => {
     throw new ForbiddenError('You do not have permission to view this booking');
   }
 
-  return booking;
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title, description, property_type, address_line1, address_line2, city, state_province, postal_code, country, bedrooms, bathrooms, max_guests, cancellation_policy')
+    .eq('id', booking.property_id)
+    .single();
+
+  // Get property photos
+  const { data: photos } = await supabase
+    .from('property_photos')
+    .select('photo_url, caption')
+    .eq('property_id', booking.property_id)
+    .order('display_order', { ascending: true });
+
+  // Get guest
+  const { data: guest } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, email, phone, profile_photo_url, student_verified, id_verified')
+    .eq('id', booking.guest_id)
+    .single();
+
+  // Get host
+  const { data: host } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, email, phone, profile_photo_url, student_verified, id_verified')
+    .eq('id', booking.host_id)
+    .single();
+
+  return {
+    ...booking,
+    property: property ? { ...property, photos: photos || [] } : null,
+    guest: guest || null,
+    host: host || null,
+  };
 };
 
 /**
  * Accept booking (host only)
  */
 export const acceptBooking = async (bookingId: string, hostId: string) => {
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    select: { id: true, host_id: true, booking_status: true },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('id, host_id, booking_status')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
@@ -364,48 +391,57 @@ export const acceptBooking = async (bookingId: string, hostId: string) => {
     throw new BadRequestError('Only pending bookings can be accepted');
   }
 
-  const updatedBooking = await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
+  const { data: updatedBooking, error: updateError } = await supabase
+    .from('bookings')
+    .update({
       booking_status: BOOKING_STATUS.CONFIRMED,
-      confirmed_at: new Date(),
-      updated_at: new Date(),
-    },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-      guest: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          email: true,
-        },
-      },
-    },
-  });
+      confirmed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', bookingId)
+    .select()
+    .single();
+
+  if (updateError || !updatedBooking) {
+    throw new Error(updateError?.message || 'Failed to update booking');
+  }
+
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title')
+    .eq('id', updatedBooking.property_id)
+    .single();
+
+  // Get guest
+  const { data: guest } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, email')
+    .eq('id', updatedBooking.guest_id)
+    .single();
 
   // TODO: Send notification to guest about accepted booking
   // TODO: Create calendar entries for the booking
   // TODO: Trigger payment processing
 
-  return updatedBooking;
+  return {
+    ...updatedBooking,
+    property: property || null,
+    guest: guest || null,
+  };
 };
 
 /**
  * Decline booking (host only)
  */
 export const declineBooking = async (bookingId: string, hostId: string, data: DeclineBookingInput) => {
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    select: { id: true, host_id: true, booking_status: true },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('id, host_id, booking_status')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
@@ -417,54 +453,50 @@ export const declineBooking = async (bookingId: string, hostId: string, data: De
     throw new BadRequestError('Only pending bookings can be declined');
   }
 
-  const updatedBooking = await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
+  const { data: updatedBooking, error: updateError } = await supabase
+    .from('bookings')
+    .update({
       booking_status: BOOKING_STATUS.CANCELLED,
       cancellation_reason: data.decline_reason,
       cancelled_by: hostId,
-      cancelled_at: new Date(),
-      updated_at: new Date(),
-    },
-    include: {
-      guest: {
-        select: {
-          id: true,
-          first_name: true,
-          email: true,
-        },
-      },
-    },
-  });
+      cancelled_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', bookingId)
+    .select()
+    .single();
+
+  if (updateError || !updatedBooking) {
+    throw new Error(updateError?.message || 'Failed to update booking');
+  }
+
+  // Get guest
+  const { data: guest } = await supabase
+    .from('users')
+    .select('id, first_name, email')
+    .eq('id', updatedBooking.guest_id)
+    .single();
 
   // TODO: Send notification to guest about declined booking
   // TODO: Process refund if any payment was made
 
-  return updatedBooking;
+  return {
+    ...updatedBooking,
+    guest: guest || null,
+  };
 };
 
 /**
  * Cancel booking (guest or host)
  */
 export const cancelBooking = async (bookingId: string, userId: string, data: CancelBookingInput) => {
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    select: {
-      id: true,
-      guest_id: true,
-      host_id: true,
-      booking_status: true,
-      check_in_date: true,
-      payment_status: true,
-      property: {
-        select: {
-          cancellation_policy: true,
-        },
-      },
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('id, guest_id, host_id, booking_status, check_in_date, payment_status, property_id')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
@@ -480,93 +512,83 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
     throw new BadRequestError('Cannot cancel a completed booking');
   }
 
+  // Get property for cancellation policy
+  const { data: property } = await supabase
+    .from('properties')
+    .select('cancellation_policy')
+    .eq('id', booking.property_id)
+    .single();
+
   // TODO: Implement cancellation policy logic for refunds
   // Calculate refund based on cancellation policy and days until check-in
   // const daysUntilCheckIn = Math.ceil(
-  //   (booking.check_in_date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+  //   (new Date(booking.check_in_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   // );
   // - Flexible: Full refund up to 24 hours before check-in
   // - Moderate: Full refund up to 5 days before check-in
   // - Strict: 50% refund up to 7 days before check-in
 
-  const updatedBooking = await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
+  const { data: updatedBooking, error: updateError } = await supabase
+    .from('bookings')
+    .update({
       booking_status: BOOKING_STATUS.CANCELLED,
       cancellation_reason: data.cancellation_reason,
       cancelled_by: userId,
-      cancelled_at: new Date(),
-      updated_at: new Date(),
-    },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-      guest: {
-        select: {
-          id: true,
-          first_name: true,
-          email: true,
-        },
-      },
-      host: {
-        select: {
-          id: true,
-          first_name: true,
-          email: true,
-        },
-      },
-    },
-  });
+      cancelled_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', bookingId)
+    .select()
+    .single();
+
+  if (updateError || !updatedBooking) {
+    throw new Error(updateError?.message || 'Failed to update booking');
+  }
+
+  // Get property details
+  const { data: propertyData } = await supabase
+    .from('properties')
+    .select('id, title')
+    .eq('id', updatedBooking.property_id)
+    .single();
+
+  // Get guest
+  const { data: guest } = await supabase
+    .from('users')
+    .select('id, first_name, email')
+    .eq('id', updatedBooking.guest_id)
+    .single();
+
+  // Get host
+  const { data: host } = await supabase
+    .from('users')
+    .select('id, first_name, email')
+    .eq('id', updatedBooking.host_id)
+    .single();
 
   // TODO: Process refund based on cancellation policy
   // TODO: Send notifications to both parties
   // TODO: Clear calendar entries
 
-  return updatedBooking;
+  return {
+    ...updatedBooking,
+    property: propertyData || null,
+    guest: guest || null,
+    host: host || null,
+  };
 };
 
 /**
  * Get booking invoice/receipt
  */
 export const getBookingInvoice = async (bookingId: string, userId: string) => {
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-          address_line1: true,
-          address_line2: true,
-          city: true,
-          state_province: true,
-          postal_code: true,
-          country: true,
-        },
-      },
-      guest: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-          email: true,
-        },
-      },
-      host: {
-        select: {
-          id: true,
-          first_name: true,
-          last_name: true,
-        },
-      },
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
@@ -574,6 +596,27 @@ export const getBookingInvoice = async (bookingId: string, userId: string) => {
   if (booking.guest_id !== userId && booking.host_id !== userId) {
     throw new ForbiddenError('You do not have permission to view this invoice');
   }
+
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title, address_line1, address_line2, city, state_province, postal_code, country')
+    .eq('id', booking.property_id)
+    .single();
+
+  // Get guest
+  const { data: guest } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, email')
+    .eq('id', booking.guest_id)
+    .single();
+
+  // Get host
+  const { data: host } = await supabase
+    .from('users')
+    .select('id, first_name, last_name')
+    .eq('id', booking.host_id)
+    .single();
 
   // Format invoice data
   return {
@@ -584,10 +627,10 @@ export const getBookingInvoice = async (bookingId: string, userId: string) => {
     confirmed_at: booking.confirmed_at,
 
     // Guest details
-    guest: booking.guest,
+    guest: guest || null,
 
     // Property details
-    property: booking.property,
+    property: property || null,
 
     // Booking details
     check_in_date: booking.check_in_date,

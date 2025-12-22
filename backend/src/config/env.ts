@@ -49,6 +49,10 @@ interface Config {
     backgroundJobs: boolean;
   };
   logLevel: string;
+  supabase: {
+    url: string;
+    serviceRoleKey: string;
+  };
 }
 
 const config: Config = {
@@ -98,6 +102,10 @@ const config: Config = {
     backgroundJobs: process.env.ENABLE_BACKGROUND_JOBS === 'true',
   },
   logLevel: process.env.LOG_LEVEL || 'info',
+  supabase: {
+    url: process.env.SUPABASE_URL || 'https://hfygradcovgih.supabase.co',
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || 'sb_secret_NwetXHqIUvb-qDw5BlxNMA_yDX0feyR',
+  },
 };
 
 export default config;

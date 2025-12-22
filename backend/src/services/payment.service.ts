@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import stripe from '../config/stripe';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import type {
@@ -16,30 +16,29 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
   const { booking_id, payment_method } = data;
 
   // Verify booking exists
-  const booking = await prisma.booking.findUnique({
-    where: { id: booking_id },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-          host_id: true,
-        },
-      },
-      guest: {
-        select: {
-          id: true,
-          email: true,
-          first_name: true,
-          last_name: true,
-        },
-      },
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('id', booking_id)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
+
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title, host_id')
+    .eq('id', booking.property_id)
+    .single();
+
+  // Get guest
+  const { data: guest } = await supabase
+    .from('users')
+    .select('id, email, first_name, last_name')
+    .eq('id', booking.guest_id)
+    .single();
 
   // Verify user is the guest
   if (booking.guest_id !== userId) {
@@ -75,22 +74,22 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
     metadata: {
       booking_id: booking.id,
       guest_id: booking.guest_id || '',
-      host_id: booking.property?.host_id || '',
+      host_id: property?.host_id || '',
       property_id: booking.property_id || '',
     },
-    description: `Booking for ${booking.property?.title || 'property'}`,
-    receipt_email: booking.guest?.email,
+    description: `Booking for ${property?.title || 'property'}`,
+    receipt_email: guest?.email,
   });
 
   // Update booking with payment intent ID
-  await prisma.booking.update({
-    where: { id: booking_id },
-    data: {
+  await supabase
+    .from('bookings')
+    .update({
       stripe_payment_intent_id: paymentIntent.id,
       payment_method: payment_method || 'card',
       payment_status: 'pending',
-    },
-  });
+    })
+    .eq('id', booking_id);
 
   return {
     payment_intent_id: paymentIntent.id,
@@ -108,18 +107,13 @@ export const confirmPayment = async (bookingId: string, userId: string, data: Co
   const { payment_intent_id } = data;
 
   // Verify booking exists
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    select: {
-      id: true,
-      guest_id: true,
-      stripe_payment_intent_id: true,
-      payment_status: true,
-      total_cents: true,
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('id, guest_id, stripe_payment_intent_id, payment_status, total_cents')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
@@ -142,13 +136,13 @@ export const confirmPayment = async (bookingId: string, userId: string, data: Co
   }
 
   // Update booking payment status
-  await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
+  await supabase
+    .from('bookings')
+    .update({
       payment_status: 'completed',
       booking_status: 'confirmed',
-    },
-  });
+    })
+    .eq('id', bookingId);
 
   return {
     message: 'Payment confirmed successfully',
@@ -164,25 +158,25 @@ export const confirmPayment = async (bookingId: string, userId: string, data: Co
  */
 export const getPaymentDetails = async (bookingId: string, userId: string) => {
   // Verify booking exists
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-          host_id: true,
-        },
-      },
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title, host_id')
+    .eq('id', booking.property_id)
+    .single();
+
   // Verify user is the guest or host
-  if (booking.guest_id !== userId && booking.property?.host_id !== userId) {
+  if (booking.guest_id !== userId && property?.host_id !== userId) {
     throw new ForbiddenError('You can only view payment details for your own bookings');
   }
 
@@ -245,24 +239,25 @@ export const refundPayment = async (
   const { amount_cents, reason } = data;
 
   // Verify booking exists
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    include: {
-      property: {
-        select: {
-          id: true,
-          host_id: true,
-        },
-      },
-    },
-  });
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('id', bookingId)
+    .single();
 
-  if (!booking) {
+  if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
   }
 
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, host_id')
+    .eq('id', booking.property_id)
+    .single();
+
   // Only host can issue refunds
-  if (booking.property?.host_id !== userId) {
+  if (property?.host_id !== userId) {
     throw new ForbiddenError('Only the host can issue refunds');
   }
 
@@ -315,13 +310,13 @@ export const refundPayment = async (
   // Update booking payment status
   const newPaymentStatus = refundAmount === booking.total_cents ? 'refunded' : 'partial';
 
-  await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
+  await supabase
+    .from('bookings')
+    .update({
       payment_status: newPaymentStatus,
       booking_status: 'cancelled',
-    },
-  });
+    })
+    .eq('id', bookingId);
 
   return {
     message: 'Refund processed successfully',
@@ -354,13 +349,13 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
 
       if (bookingId) {
         // Update booking status
-        await prisma.booking.update({
-          where: { id: bookingId },
-          data: {
+        await supabase
+          .from('bookings')
+          .update({
             payment_status: 'completed',
             booking_status: 'confirmed',
-          },
-        });
+          })
+          .eq('id', bookingId);
       }
       break;
     }
@@ -371,12 +366,12 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
 
       if (bookingId) {
         // Keep payment status as pending, but could add failed attempts tracking
-        await prisma.booking.update({
-          where: { id: bookingId },
-          data: {
+        await supabase
+          .from('bookings')
+          .update({
             payment_status: 'pending',
-          },
-        });
+          })
+          .eq('id', bookingId);
       }
       break;
     }
@@ -387,21 +382,23 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
 
       if (paymentIntentId) {
         // Find booking by payment intent ID
-        const booking = await prisma.booking.findFirst({
-          where: { stripe_payment_intent_id: paymentIntentId },
-        });
+        const { data: booking } = await supabase
+          .from('bookings')
+          .select('id')
+          .eq('stripe_payment_intent_id', paymentIntentId)
+          .maybeSingle();
 
         if (booking) {
           // Check if full or partial refund
           const isFullRefund = charge.amount_refunded === charge.amount;
 
-          await prisma.booking.update({
-            where: { id: booking.id },
-            data: {
+          await supabase
+            .from('bookings')
+            .update({
               payment_status: isFullRefund ? 'refunded' : 'partial',
               booking_status: 'cancelled',
-            },
-          });
+            })
+            .eq('id', booking.id);
         }
       }
       break;

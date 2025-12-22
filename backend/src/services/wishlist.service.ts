@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import type {
   CreateWishlistInput,
@@ -10,120 +10,96 @@ import type {
  * Create new wishlist
  */
 export const createWishlist = async (userId: string, data: CreateWishlistInput) => {
-  const wishlist = await prisma.wishlist.create({
-    data: {
+  const { data: wishlist, error: createError } = await supabase
+    .from('wishlists')
+    .insert({
       user_id: userId,
       name: data.name,
-    },
-    include: {
-      items: {
-        include: {
-          property: {
-            select: {
-              id: true,
-              title: true,
-              city: true,
-              country: true,
-              monthly_price_cents: true,
-              photos: {
-                take: 1,
-                orderBy: { display_order: 'asc' },
-                select: { photo_url: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+    })
+    .select()
+    .single();
 
-  return wishlist;
+  if (createError || !wishlist) {
+    throw new Error(createError?.message || 'Failed to create wishlist');
+  }
+
+  return { ...wishlist, items: [] };
 };
 
 /**
  * Get all wishlists for a user
  */
 export const getUserWishlists = async (userId: string) => {
-  const wishlists = await prisma.wishlist.findMany({
-    where: { user_id: userId },
-    orderBy: { created_at: 'desc' },
-    include: {
-      items: {
-        include: {
-          property: {
-            select: {
-              id: true,
-              title: true,
-              city: true,
-              country: true,
-              monthly_price_cents: true,
-              status: true,
-              photos: {
-                take: 1,
-                orderBy: { display_order: 'asc' },
-                select: { photo_url: true },
-              },
+  const { data: wishlists, error } = await supabase
+    .from('wishlists')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // Get items for each wishlist
+  const wishlistsWithItems = await Promise.all(
+    (wishlists || []).map(async (wishlist) => {
+      const { data: items } = await supabase
+        .from('wishlist_items')
+        .select('property_id, added_at')
+        .eq('wishlist_id', wishlist.id)
+        .order('added_at', { ascending: false });
+
+      // Get property details for each item
+      const itemsWithProperties = await Promise.all(
+        (items || []).map(async (item) => {
+          const { data: property } = await supabase
+            .from('properties')
+            .select('id, title, city, country, monthly_price_cents, status')
+            .eq('id', item.property_id)
+            .single();
+
+          if (!property) return null;
+
+          // Get first photo
+          const { data: photos } = await supabase
+            .from('property_photos')
+            .select('photo_url')
+            .eq('property_id', property.id)
+            .order('display_order', { ascending: true })
+            .limit(1);
+
+          return {
+            ...item,
+            property: {
+              ...property,
+              photos: photos || [],
             },
-          },
-        },
-        orderBy: { added_at: 'desc' },
-      },
-    },
-  });
+          };
+        })
+      );
 
-  // Add item count to each wishlist
-  const wishlistsWithCount = wishlists.map((wishlist) => ({
-    ...wishlist,
-    item_count: wishlist.items.length,
-  }));
+      return {
+        ...wishlist,
+        items: itemsWithProperties.filter(i => i !== null),
+        item_count: itemsWithProperties.filter(i => i !== null).length,
+      };
+    })
+  );
 
-  return wishlistsWithCount;
+  return wishlistsWithItems;
 };
 
 /**
  * Get wishlist by ID
  */
 export const getWishlistById = async (wishlistId: string, userId: string) => {
-  const wishlist = await prisma.wishlist.findUnique({
-    where: { id: wishlistId },
-    include: {
-      items: {
-        include: {
-          property: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              property_type: true,
-              city: true,
-              country: true,
-              bedrooms: true,
-              bathrooms: true,
-              max_guests: true,
-              monthly_price_cents: true,
-              status: true,
-              photos: {
-                take: 3,
-                orderBy: { display_order: 'asc' },
-                select: { photo_url: true },
-              },
-              host: {
-                select: {
-                  id: true,
-                  first_name: true,
-                  last_name: true,
-                  profile_photo_url: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: { added_at: 'desc' },
-      },
-    },
-  });
+  const { data: wishlist, error: wishlistError } = await supabase
+    .from('wishlists')
+    .select('*')
+    .eq('id', wishlistId)
+    .single();
 
-  if (!wishlist) {
+  if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
   }
 
@@ -132,9 +108,54 @@ export const getWishlistById = async (wishlistId: string, userId: string) => {
     throw new ForbiddenError('You do not have permission to view this wishlist');
   }
 
+  // Get items
+  const { data: items } = await supabase
+    .from('wishlist_items')
+    .select('property_id, added_at')
+    .eq('wishlist_id', wishlistId)
+    .order('added_at', { ascending: false });
+
+  // Get property details for each item
+  const itemsWithProperties = await Promise.all(
+    (items || []).map(async (item) => {
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id, title, description, property_type, city, country, bedrooms, bathrooms, max_guests, monthly_price_cents, status, host_id')
+        .eq('id', item.property_id)
+        .single();
+
+      if (!property) return null;
+
+      // Get photos
+      const { data: photos } = await supabase
+        .from('property_photos')
+        .select('photo_url')
+        .eq('property_id', property.id)
+        .order('display_order', { ascending: true })
+        .limit(3);
+
+      // Get host
+      const { data: host } = await supabase
+        .from('users')
+        .select('id, first_name, last_name, profile_photo_url')
+        .eq('id', property.host_id)
+        .single();
+
+      return {
+        ...item,
+        property: {
+          ...property,
+          photos: photos || [],
+          host: host || null,
+        },
+      };
+    })
+  );
+
   return {
     ...wishlist,
-    item_count: wishlist.items.length,
+    items: itemsWithProperties.filter(i => i !== null),
+    item_count: itemsWithProperties.filter(i => i !== null).length,
   };
 };
 
@@ -142,12 +163,13 @@ export const getWishlistById = async (wishlistId: string, userId: string) => {
  * Update wishlist name
  */
 export const updateWishlist = async (wishlistId: string, userId: string, data: UpdateWishlistInput) => {
-  const wishlist = await prisma.wishlist.findUnique({
-    where: { id: wishlistId },
-    select: { id: true, user_id: true },
-  });
+  const { data: wishlist, error: wishlistError } = await supabase
+    .from('wishlists')
+    .select('id, user_id')
+    .eq('id', wishlistId)
+    .single();
 
-  if (!wishlist) {
+  if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
   }
 
@@ -155,46 +177,69 @@ export const updateWishlist = async (wishlistId: string, userId: string, data: U
     throw new ForbiddenError('You can only update your own wishlists');
   }
 
-  const updatedWishlist = await prisma.wishlist.update({
-    where: { id: wishlistId },
-    data: {
-      name: data.name,
-    },
-    include: {
-      items: {
-        include: {
-          property: {
-            select: {
-              id: true,
-              title: true,
-              city: true,
-              country: true,
-              monthly_price_cents: true,
-              photos: {
-                take: 1,
-                orderBy: { display_order: 'asc' },
-                select: { photo_url: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const { data: updatedWishlist, error: updateError } = await supabase
+    .from('wishlists')
+    .update({ name: data.name })
+    .eq('id', wishlistId)
+    .select()
+    .single();
 
-  return updatedWishlist;
+  if (updateError || !updatedWishlist) {
+    throw new Error(updateError?.message || 'Failed to update wishlist');
+  }
+
+  // Get items
+  const { data: items } = await supabase
+    .from('wishlist_items')
+    .select('property_id, added_at')
+    .eq('wishlist_id', wishlistId)
+    .order('added_at', { ascending: false });
+
+  // Get property details
+  const itemsWithProperties = await Promise.all(
+    (items || []).map(async (item) => {
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id, title, city, country, monthly_price_cents')
+        .eq('id', item.property_id)
+        .single();
+
+      if (!property) return null;
+
+      const { data: photos } = await supabase
+        .from('property_photos')
+        .select('photo_url')
+        .eq('property_id', property.id)
+        .order('display_order', { ascending: true })
+        .limit(1);
+
+      return {
+        ...item,
+        property: {
+          ...property,
+          photos: photos || [],
+        },
+      };
+    })
+  );
+
+  return {
+    ...updatedWishlist,
+    items: itemsWithProperties.filter(i => i !== null),
+  };
 };
 
 /**
  * Delete wishlist
  */
 export const deleteWishlist = async (wishlistId: string, userId: string) => {
-  const wishlist = await prisma.wishlist.findUnique({
-    where: { id: wishlistId },
-    select: { id: true, user_id: true },
-  });
+  const { data: wishlist, error: wishlistError } = await supabase
+    .from('wishlists')
+    .select('id, user_id')
+    .eq('id', wishlistId)
+    .single();
 
-  if (!wishlist) {
+  if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
   }
 
@@ -202,9 +247,10 @@ export const deleteWishlist = async (wishlistId: string, userId: string) => {
     throw new ForbiddenError('You can only delete your own wishlists');
   }
 
-  await prisma.wishlist.delete({
-    where: { id: wishlistId },
-  });
+  await supabase
+    .from('wishlists')
+    .delete()
+    .eq('id', wishlistId);
 
   return { message: 'Wishlist deleted successfully' };
 };
@@ -214,12 +260,13 @@ export const deleteWishlist = async (wishlistId: string, userId: string) => {
  */
 export const addToWishlist = async (wishlistId: string, userId: string, data: AddToWishlistInput) => {
   // Verify wishlist exists and belongs to user
-  const wishlist = await prisma.wishlist.findUnique({
-    where: { id: wishlistId },
-    select: { id: true, user_id: true },
-  });
+  const { data: wishlist, error: wishlistError } = await supabase
+    .from('wishlists')
+    .select('id, user_id')
+    .eq('id', wishlistId)
+    .single();
 
-  if (!wishlist) {
+  if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
   }
 
@@ -228,60 +275,64 @@ export const addToWishlist = async (wishlistId: string, userId: string, data: Ad
   }
 
   // Verify property exists
-  const property = await prisma.property.findUnique({
-    where: { id: data.property_id },
-    select: { id: true, status: true },
-  });
+  const { data: property, error: propertyError } = await supabase
+    .from('properties')
+    .select('id, status')
+    .eq('id', data.property_id)
+    .single();
 
-  if (!property) {
+  if (propertyError || !property) {
     throw new NotFoundError('Property not found');
   }
 
   // Check if property already in wishlist
-  const existingItem = await prisma.wishlistItem.findUnique({
-    where: {
-      wishlist_id_property_id: {
-        wishlist_id: wishlistId,
-        property_id: data.property_id,
-      },
-    },
-  });
+  const { data: existingItem } = await supabase
+    .from('wishlist_items')
+    .select('*')
+    .eq('wishlist_id', wishlistId)
+    .eq('property_id', data.property_id)
+    .maybeSingle();
 
   if (existingItem) {
     throw new BadRequestError('Property already in wishlist');
   }
 
   // Add property to wishlist
-  const wishlistItem = await prisma.wishlistItem.create({
-    data: {
+  const { data: wishlistItem, error: createError } = await supabase
+    .from('wishlist_items')
+    .insert({
       wishlist_id: wishlistId,
       property_id: data.property_id,
-    },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          property_type: true,
-          city: true,
-          country: true,
-          bedrooms: true,
-          bathrooms: true,
-          max_guests: true,
-          monthly_price_cents: true,
-          status: true,
-          photos: {
-            take: 3,
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true },
-          },
-        },
-      },
-    },
-  });
+    })
+    .select()
+    .single();
 
-  return wishlistItem;
+  if (createError || !wishlistItem) {
+    throw new Error(createError?.message || 'Failed to add property to wishlist');
+  }
+
+  // Get property details
+  const { data: propertyDetails } = await supabase
+    .from('properties')
+    .select('id, title, description, property_type, city, country, bedrooms, bathrooms, max_guests, monthly_price_cents, status')
+    .eq('id', data.property_id)
+    .single();
+
+  // Get photos
+  const { data: photos } = await supabase
+    .from('property_photos')
+    .select('photo_url')
+    .eq('property_id', data.property_id)
+    .order('display_order', { ascending: true })
+    .limit(3);
+
+  return {
+    ...wishlistItem,
+    property: propertyDetails ? {
+      ...propertyDetails,
+      photos: photos || [],
+    } : null,
+  };
 };
 
 /**
@@ -289,12 +340,13 @@ export const addToWishlist = async (wishlistId: string, userId: string, data: Ad
  */
 export const removeFromWishlist = async (wishlistId: string, propertyId: string, userId: string) => {
   // Verify wishlist exists and belongs to user
-  const wishlist = await prisma.wishlist.findUnique({
-    where: { id: wishlistId },
-    select: { id: true, user_id: true },
-  });
+  const { data: wishlist, error: wishlistError } = await supabase
+    .from('wishlists')
+    .select('id, user_id')
+    .eq('id', wishlistId)
+    .single();
 
-  if (!wishlist) {
+  if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
   }
 
@@ -303,28 +355,23 @@ export const removeFromWishlist = async (wishlistId: string, propertyId: string,
   }
 
   // Check if item exists
-  const item = await prisma.wishlistItem.findUnique({
-    where: {
-      wishlist_id_property_id: {
-        wishlist_id: wishlistId,
-        property_id: propertyId,
-      },
-    },
-  });
+  const { data: item, error: itemError } = await supabase
+    .from('wishlist_items')
+    .select('*')
+    .eq('wishlist_id', wishlistId)
+    .eq('property_id', propertyId)
+    .maybeSingle();
 
-  if (!item) {
+  if (itemError || !item) {
     throw new NotFoundError('Property not found in wishlist');
   }
 
   // Remove from wishlist
-  await prisma.wishlistItem.delete({
-    where: {
-      wishlist_id_property_id: {
-        wishlist_id: wishlistId,
-        property_id: propertyId,
-      },
-    },
-  });
+  await supabase
+    .from('wishlist_items')
+    .delete()
+    .eq('wishlist_id', wishlistId)
+    .eq('property_id', propertyId);
 
   return { message: 'Property removed from wishlist' };
 };
@@ -333,17 +380,25 @@ export const removeFromWishlist = async (wishlistId: string, propertyId: string,
  * Check if property is in any of user's wishlists
  */
 export const isPropertyWishlisted = async (userId: string, propertyId: string) => {
-  const wishlistItem = await prisma.wishlistItem.findFirst({
-    where: {
-      property_id: propertyId,
-      wishlist: {
-        user_id: userId,
-      },
-    },
-    select: {
-      wishlist_id: true,
-    },
-  });
+  // Get user's wishlists
+  const { data: wishlists } = await supabase
+    .from('wishlists')
+    .select('id')
+    .eq('user_id', userId);
+
+  if (!wishlists || wishlists.length === 0) {
+    return { is_wishlisted: false, wishlist_id: null };
+  }
+
+  const wishlistIds = wishlists.map(w => w.id);
+
+  // Check if property is in any of user's wishlists
+  const { data: wishlistItem } = await supabase
+    .from('wishlist_items')
+    .select('wishlist_id')
+    .eq('property_id', propertyId)
+    .in('wishlist_id', wishlistIds)
+    .maybeSingle();
 
   return {
     is_wishlisted: !!wishlistItem,
@@ -356,20 +411,30 @@ export const isPropertyWishlisted = async (userId: string, propertyId: string) =
  */
 export const getOrCreateDefaultWishlist = async (userId: string) => {
   // Try to find existing default wishlist
-  let wishlist = await prisma.wishlist.findFirst({
-    where: { user_id: userId },
-    orderBy: { created_at: 'asc' }, // Get the oldest one (likely the default)
-  });
+  const { data: existingWishlists } = await supabase
+    .from('wishlists')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true })
+    .limit(1);
 
   // Create if doesn't exist
-  if (!wishlist) {
-    wishlist = await prisma.wishlist.create({
-      data: {
+  if (!existingWishlists || existingWishlists.length === 0) {
+    const { data: wishlist, error: createError } = await supabase
+      .from('wishlists')
+      .insert({
         user_id: userId,
         name: 'My Wishlist',
-      },
-    });
+      })
+      .select()
+      .single();
+
+    if (createError || !wishlist) {
+      throw new Error(createError?.message || 'Failed to create default wishlist');
+    }
+
+    return wishlist;
   }
 
-  return wishlist;
+  return existingWishlists[0];
 };

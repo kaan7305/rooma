@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 // import stripe from '../config/stripe'; // Reserved for future Stripe Connect integration
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import type { GetPayoutsInput, RequestPayoutInput } from '../validators/payout.validator';
@@ -23,41 +23,69 @@ export const getHostPayouts = async (userId: string, filters: GetPayoutsInput) =
     where.payout_status = status;
   }
 
-  const [payouts, total] = await Promise.all([
-    prisma.payout.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { created_at: 'desc' },
-      include: {
-        booking: {
-          select: {
-            id: true,
-            check_in_date: true,
-            check_out_date: true,
-            total_cents: true,
-            property: {
-              select: {
-                id: true,
-                title: true,
-              },
-            },
-            guest: {
-              select: {
-                id: true,
-                first_name: true,
-                last_name: true,
-              },
-            },
-          },
-        },
-      },
-    }),
-    prisma.payout.count({ where }),
-  ]);
+  // Build query
+  let query = supabase
+    .from('payouts')
+    .select('*', { count: 'exact' })
+    .eq('host_id', userId);
+
+  if (status) {
+    query = query.eq('payout_status', status);
+  }
+
+  const from = skip;
+  const to = skip + limit - 1;
+  query = query.order('created_at', { ascending: false }).range(from, to);
+
+  const { data: payouts, error, count } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // Get related booking data
+  const payoutsWithRelations = await Promise.all(
+    (payouts || []).map(async (payout) => {
+      // Get booking
+      const { data: booking } = await supabase
+        .from('bookings')
+        .select('id, check_in_date, check_out_date, total_cents, property_id, guest_id')
+        .eq('id', payout.booking_id)
+        .single();
+
+      if (!booking) {
+        return { ...payout, booking: null };
+      }
+
+      // Get property
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id, title')
+        .eq('id', booking.property_id)
+        .single();
+
+      // Get guest
+      const { data: guest } = await supabase
+        .from('users')
+        .select('id, first_name, last_name')
+        .eq('id', booking.guest_id)
+        .single();
+
+      return {
+        ...payout,
+        booking: booking ? {
+          ...booking,
+          property: property || null,
+          guest: guest || null,
+        } : null,
+      };
+    })
+  );
+
+  const total = count || 0;
 
   return {
-    payouts,
+    payouts: payoutsWithRelations,
     pagination: {
       page,
       limit,
@@ -72,38 +100,13 @@ export const getHostPayouts = async (userId: string, filters: GetPayoutsInput) =
  * GET /api/payouts/:id
  */
 export const getPayoutById = async (payoutId: string, userId: string) => {
-  const payout = await prisma.payout.findUnique({
-    where: { id: payoutId },
-    include: {
-      booking: {
-        select: {
-          id: true,
-          check_in_date: true,
-          check_out_date: true,
-          total_cents: true,
-          nights: true,
-          property: {
-            select: {
-              id: true,
-              title: true,
-              city: true,
-              country: true,
-            },
-          },
-          guest: {
-            select: {
-              id: true,
-              first_name: true,
-              last_name: true,
-              email: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const { data: payout, error: payoutError } = await supabase
+    .from('payouts')
+    .select('*')
+    .eq('id', payoutId)
+    .single();
 
-  if (!payout) {
+  if (payoutError || !payout) {
     throw new NotFoundError('Payout not found');
   }
 
@@ -112,7 +115,39 @@ export const getPayoutById = async (payoutId: string, userId: string) => {
     throw new ForbiddenError('You can only view your own payouts');
   }
 
-  return payout;
+  // Get booking
+  const { data: booking } = await supabase
+    .from('bookings')
+    .select('id, check_in_date, check_out_date, total_cents, nights, property_id, guest_id')
+    .eq('id', payout.booking_id)
+    .single();
+
+  if (!booking) {
+    return { ...payout, booking: null };
+  }
+
+  // Get property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('id, title, city, country')
+    .eq('id', booking.property_id)
+    .single();
+
+  // Get guest
+  const { data: guest } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, email')
+    .eq('id', booking.guest_id)
+    .single();
+
+  return {
+    ...payout,
+    booking: {
+      ...booking,
+      property: property || null,
+      guest: guest || null,
+    },
+  };
 };
 
 /**
@@ -123,12 +158,13 @@ export const requestPayout = async (userId: string, data: RequestPayoutInput) =>
   const { booking_ids, payout_method_id } = data;
 
   // Verify user is a host
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { id: true, email: true },
-  });
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('id, email')
+    .eq('id', userId)
+    .single();
 
-  if (!user) {
+  if (userError || !user) {
     throw new NotFoundError('User not found');
   }
 
@@ -144,23 +180,28 @@ export const requestPayout = async (userId: string, data: RequestPayoutInput) =>
     bookingWhere.id = { in: booking_ids };
   }
 
-  // Find all completed bookings that haven't been paid out yet
-  const eligibleBookings = await prisma.booking.findMany({
-    where: {
-      ...bookingWhere,
-      // No existing payout for this booking
-      payouts: {
-        none: {},
-      },
-    },
-    select: {
-      id: true,
-      total_cents: true,
-      service_fee_cents: true,
-      cleaning_fee_cents: true,
-      subtotal_cents: true,
-    },
-  });
+  // Find all completed bookings
+  let bookingQuery = supabase
+    .from('bookings')
+    .select('id, total_cents, service_fee_cents, cleaning_fee_cents, subtotal_cents')
+    .eq('host_id', userId)
+    .eq('payment_status', 'completed')
+    .eq('booking_status', 'completed');
+
+  if (booking_ids && booking_ids.length > 0) {
+    bookingQuery = bookingQuery.in('id', booking_ids);
+  }
+
+  const { data: allBookings } = await bookingQuery;
+
+  // Filter out bookings that already have payouts
+  const { data: existingPayouts } = await supabase
+    .from('payouts')
+    .select('booking_id')
+    .in('booking_id', (allBookings || []).map(b => b.id));
+
+  const existingBookingIds = new Set((existingPayouts || []).map(p => p.booking_id));
+  const eligibleBookings = (allBookings || []).filter(b => !existingBookingIds.has(b.id));
 
   if (eligibleBookings.length === 0) {
     throw new BadRequestError('No eligible bookings found for payout');
@@ -187,42 +228,60 @@ export const requestPayout = async (userId: string, data: RequestPayoutInput) =>
   }
 
   // Create payout records for each booking
-  const payoutPromises = eligibleBookings.map(async (booking) => {
+  const payoutData = eligibleBookings.map((booking) => {
     const hostRevenue = booking.subtotal_cents + booking.cleaning_fee_cents;
     const platformFee = Math.round(hostRevenue * (PLATFORM_FEE_PERCENT / 100));
     const netAmount = hostRevenue - platformFee;
 
-    return prisma.payout.create({
-      data: {
-        host_id: userId,
-        booking_id: booking.id,
-        amount_cents: hostRevenue,
-        platform_fee_cents: platformFee,
-        net_amount_cents: netAmount,
-        payout_status: 'pending',
-        payout_method_id: payout_method_id || null,
-        scheduled_for: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-      },
-      include: {
-        booking: {
-          select: {
-            id: true,
-            check_in_date: true,
-            check_out_date: true,
-            total_cents: true,
-            property: {
-              select: {
-                id: true,
-                title: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    return {
+      host_id: userId,
+      booking_id: booking.id,
+      amount_cents: hostRevenue,
+      platform_fee_cents: platformFee,
+      net_amount_cents: netAmount,
+      payout_status: 'pending',
+      payout_method_id: payout_method_id || null,
+      scheduled_for: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
+    };
   });
 
-  const payouts = await Promise.all(payoutPromises);
+  const { data: payouts, error: createError } = await supabase
+    .from('payouts')
+    .insert(payoutData)
+    .select();
+
+  if (createError || !payouts) {
+    throw new Error(createError?.message || 'Failed to create payouts');
+  }
+
+  // Get booking details for each payout
+  const payoutsWithBookings = await Promise.all(
+    payouts.map(async (payout) => {
+      const { data: booking } = await supabase
+        .from('bookings')
+        .select('id, check_in_date, check_out_date, total_cents, property_id')
+        .eq('id', payout.booking_id)
+        .single();
+
+      if (!booking) {
+        return { ...payout, booking: null };
+      }
+
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id, title')
+        .eq('id', booking.property_id)
+        .single();
+
+      return {
+        ...payout,
+        booking: {
+          ...booking,
+          property: property || null,
+        },
+      };
+    })
+  );
 
   // In a real implementation, you would create a Stripe transfer here
   // For now, we'll just mark as pending and return the payout records
@@ -242,13 +301,13 @@ export const requestPayout = async (userId: string, data: RequestPayoutInput) =>
     // Update payouts with transfer ID
     await Promise.all(
       payouts.map(payout =>
-        prisma.payout.update({
-          where: { id: payout.id },
-          data: {
+        supabase
+          .from('payouts')
+          .update({
             stripe_transfer_id: transfer.id,
             payout_status: 'processing',
-          },
-        })
+          })
+          .eq('id', payout.id)
       )
     );
   } catch (error) {
@@ -258,11 +317,11 @@ export const requestPayout = async (userId: string, data: RequestPayoutInput) =>
 
   return {
     message: 'Payout request created successfully',
-    total_payouts: payouts.length,
+    total_payouts: payoutsWithBookings.length,
     total_amount_cents: totalHostEarnings,
     platform_fee_cents: totalPlatformFee,
     net_payout_cents: netPayoutAmount,
-    scheduled_for: payouts[0]?.scheduled_for,
-    payouts: payouts,
+    scheduled_for: payoutsWithBookings[0]?.scheduled_for,
+    payouts: payoutsWithBookings,
   };
 };

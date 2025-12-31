@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import { NotFoundError } from '../utils/errors';
 import type { SearchUniversitiesInput } from '../validators/university.validator';
 
@@ -53,17 +53,34 @@ export const searchUniversities = async (filters: SearchUniversitiesInput) => {
   let total;
 
   if (latitude !== undefined && longitude !== undefined && radius_km !== undefined) {
-    // Fetch all universities (or a reasonable subset)
-    const allUniversities = await prisma.university.findMany({
-      where,
-      include: {
-        _count: {
-          select: {
-            properties: true,
-          },
-        },
-      },
-    });
+    // Build query for universities
+    let query = supabase.from('universities').select('*');
+
+    // Apply text search filters
+    if (q) {
+      query = query.or(`name.ilike.%${q}%,city.ilike.%${q}%,country.ilike.%${q}%`);
+    }
+    if (city) {
+      query = query.ilike('city', city);
+    }
+    if (country) {
+      query = query.ilike('country', country);
+    }
+
+    const { data: allUniversitiesData } = await query;
+
+    // Get property counts for each university
+    const universitiesWithCounts = await Promise.all(
+      (allUniversitiesData || []).map(async (uni) => {
+        const { count } = await supabase
+          .from('property_universities')
+          .select('*', { count: 'exact', head: true })
+          .eq('university_id', uni.id);
+        return { ...uni, _count: { properties: count || 0 } };
+      })
+    );
+
+    const allUniversities = universitiesWithCounts;
 
     // Filter by distance
     const universitiesWithDistance = allUniversities
@@ -88,23 +105,42 @@ export const searchUniversities = async (filters: SearchUniversitiesInput) => {
   } else {
     // Regular search without proximity
     const skip = (page - 1) * limit;
+    const to = skip + limit - 1;
 
-    [universities, total] = await Promise.all([
-      prisma.university.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { name: 'asc' },
-        include: {
-          _count: {
-            select: {
-              properties: true,
-            },
-          },
-        },
-      }),
-      prisma.university.count({ where }),
-    ]);
+    // Build query
+    let query = supabase.from('universities').select('*', { count: 'exact' });
+
+    // Apply filters
+    if (q) {
+      query = query.or(`name.ilike.%${q}%,city.ilike.%${q}%,country.ilike.%${q}%`);
+    }
+    if (city) {
+      query = query.ilike('city', city);
+    }
+    if (country) {
+      query = query.ilike('country', country);
+    }
+
+    query = query.order('name', { ascending: true }).range(skip, to);
+
+    const { data: universitiesData, count, error } = await query;
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Get property counts
+    const universities = await Promise.all(
+      (universitiesData || []).map(async (uni) => {
+        const { count: propCount } = await supabase
+          .from('property_universities')
+          .select('*', { count: 'exact', head: true })
+          .eq('university_id', uni.id);
+        return { ...uni, _count: { properties: propCount || 0 } };
+      })
+    );
+
+    total = count || 0;
   }
 
   // Format response
@@ -135,69 +171,68 @@ export const searchUniversities = async (filters: SearchUniversitiesInput) => {
  * GET /api/universities/:id
  */
 export const getUniversityById = async (universityId: string) => {
-  const university = await prisma.university.findUnique({
-    where: { id: universityId },
-    include: {
-      properties: {
-        include: {
-          property: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              property_type: true,
-              city: true,
-              country: true,
-              latitude: true,
-              longitude: true,
-              bedrooms: true,
-              bathrooms: true,
-              max_guests: true,
-              monthly_price_cents: true,
-              status: true,
-              photos: {
-                take: 1,
-                orderBy: { display_order: 'asc' },
-                select: { photo_url: true },
-              },
-              host: {
-                select: {
-                  id: true,
-                  first_name: true,
-                  last_name: true,
-                  profile_photo_url: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          distance_km: 'asc',
-        },
-        take: 20, // Limit to 20 closest properties
-      },
-      _count: {
-        select: {
-          properties: true,
-        },
-      },
-    },
-  });
+  const { data: university, error: uniError } = await supabase
+    .from('universities')
+    .select('*')
+    .eq('id', universityId)
+    .single();
 
-  if (!university) {
+  if (uniError || !university) {
     throw new NotFoundError('University not found');
   }
 
-  // Format nearby properties with distance info
-  const nearbyProperties = university.properties.map((up: any) => ({
-    ...up.property,
-    distance_km: up.distance_km,
-    transit_minutes: up.transit_minutes,
-    primary_photo_url: up.property.photos[0]?.photo_url || null,
-  }));
+  // Get property count
+  const { count: propertyCount } = await supabase
+    .from('property_universities')
+    .select('*', { count: 'exact', head: true })
+    .eq('university_id', universityId);
 
-  // Remove the nested photos array since we've extracted it
-  const formattedProperties = nearbyProperties.map(({ photos, ...rest }: any) => rest);
+  // Get nearby properties
+  const { data: propertyUniversities } = await supabase
+    .from('property_universities')
+    .select('property_id, distance_km, transit_minutes')
+    .eq('university_id', universityId)
+    .order('distance_km', { ascending: true })
+    .limit(20);
+
+  // Get property details for each
+  const nearbyProperties = await Promise.all(
+    (propertyUniversities || []).map(async (pu) => {
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id, title, description, property_type, city, country, latitude, longitude, bedrooms, bathrooms, max_guests, monthly_price_cents, status, host_id')
+        .eq('id', pu.property_id)
+        .single();
+
+      if (!property) return null;
+
+      // Get first photo
+      const { data: photos } = await supabase
+        .from('property_photos')
+        .select('photo_url')
+        .eq('property_id', property.id)
+        .order('display_order', { ascending: true })
+        .limit(1)
+        .single();
+
+      // Get host
+      const { data: host } = await supabase
+        .from('users')
+        .select('id, first_name, last_name, profile_photo_url')
+        .eq('id', property.host_id)
+        .single();
+
+      return {
+        ...property,
+        distance_km: pu.distance_km,
+        transit_minutes: pu.transit_minutes,
+        primary_photo_url: photos?.photo_url || null,
+        host: host || null,
+      };
+    })
+  );
+
+  const formattedProperties = nearbyProperties.filter(p => p !== null);
 
   return {
     id: university.id,
@@ -207,7 +242,7 @@ export const getUniversityById = async (universityId: string) => {
     latitude: university.latitude,
     longitude: university.longitude,
     created_at: university.created_at,
-    property_count: (university._count as any).properties,
+    property_count: propertyCount || 0,
     nearby_properties: formattedProperties,
   };
 };

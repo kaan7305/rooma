@@ -87,11 +87,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       {/* Hero Section with Search */}
       <section className="relative">
         {/* Background Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white dark:via-gray-900/50 dark:to-gray-900 pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-12 pb-20">
           {/* Hero Text */}
@@ -101,21 +101,21 @@ export default function HomePage() {
                 Find Your Perfect Sublet
               </span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               From weekly stays to yearly leases - discover verified sublets near you
             </p>
           </div>
 
           {/* Enhanced Search Bar */}
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-3">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 p-3 transition-colors duration-300">
               <div className="flex flex-col md:flex-row gap-2">
                 {/* Location Input */}
                 <div className="flex-1 relative">
-                  <div className="flex items-center gap-3 px-6 py-4 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-3 px-6 py-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                     <MapPin className="w-5 h-5 text-rose-500" />
                     <div className="flex-1">
-                      <label className="block text-xs font-semibold text-gray-900 mb-1">Where</label>
+                      <label className="block text-xs font-semibold text-gray-900 dark:text-gray-100 mb-1">Where</label>
                       <input
                         type="text"
                         placeholder="Search destinations"
@@ -123,14 +123,14 @@ export default function HomePage() {
                         onChange={(e) => setSelectedLocation(e.target.value)}
                         onFocus={() => setShowLocationDropdown(true)}
                         onBlur={() => setTimeout(() => setShowLocationDropdown(false), 200)}
-                        className="w-full outline-none text-sm text-gray-700 placeholder-gray-400 bg-transparent"
+                        className="w-full outline-none text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent"
                       />
                     </div>
                   </div>
 
                   {/* Location Dropdown */}
                   {showLocationDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
                       <div className="p-2">
                         {popularCities.map((city) => (
                           <button
@@ -139,13 +139,13 @@ export default function HomePage() {
                               setSelectedLocation(city);
                               setShowLocationDropdown(false);
                             }}
-                            className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center">
-                                <MapPin className="w-5 h-5 text-rose-600" />
+                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 flex items-center justify-center">
+                                <MapPin className="w-5 h-5 text-rose-600 dark:text-rose-400" />
                               </div>
-                              <span className="text-sm font-medium text-gray-900">{city}</span>
+                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{city}</span>
                             </div>
                           </button>
                         ))}

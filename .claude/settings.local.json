@@ -42,7 +42,20 @@
       "Bash(dig:*)",
       "Bash(psql:*)",
       "Bash(npx ts-node:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(kill:*)",
+      "Bash(test:*)",
+      "Bash(for dir in safety cancellation-policy blog community referrals host-resources hosting-community about careers press)",
+      "Bash(do)",
+      "Bash(if [ -f \"/Users/kaaneroltu/Desktop/Sublet Project/frontend/app/$dir/page.tsx\" ])",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(else)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(npx prisma generate:*)",
+      "Bash(timeout 90 npm run build:*)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []

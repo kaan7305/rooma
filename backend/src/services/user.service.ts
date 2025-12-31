@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import supabase from '../config/supabase';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 import type {
   UpdateProfileInput,
@@ -10,29 +10,13 @@ import type {
  * Get authenticated user's own profile
  */
 export const getMyProfile = async (userId: string) => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      email: true,
-      first_name: true,
-      last_name: true,
-      user_type: true,
-      phone: true,
-      phone_verified: true,
-      email_verified: true,
-      date_of_birth: true,
-      profile_photo_url: true,
-      bio: true,
-      student_verified: true,
-      id_verified: true,
-      created_at: true,
-      updated_at: true,
-      last_login: true,
-    },
-  });
+  const { data: user, error: findError } = await supabase
+    .from('users')
+    .select('id, email, first_name, last_name, user_type, phone, phone_verified, email_verified, date_of_birth, profile_photo_url, bio, student_verified, id_verified, created_at, updated_at, last_login')
+    .eq('id', userId)
+    .single();
 
-  if (!user) {
+  if (findError || !user) {
     throw new NotFoundError('User not found');
   }
 
@@ -43,30 +27,19 @@ export const getMyProfile = async (userId: string) => {
  * Update user profile
  */
 export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: {
+  const { data: user, error: updateError } = await supabase
+    .from('users')
+    .update({
       ...data,
-      updated_at: new Date(),
-    },
-    select: {
-      id: true,
-      email: true,
-      first_name: true,
-      last_name: true,
-      user_type: true,
-      phone: true,
-      phone_verified: true,
-      email_verified: true,
-      date_of_birth: true,
-      profile_photo_url: true,
-      bio: true,
-      student_verified: true,
-      id_verified: true,
-      created_at: true,
-      updated_at: true,
-    },
-  });
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', userId)
+    .select('id, email, first_name, last_name, user_type, phone, phone_verified, email_verified, date_of_birth, profile_photo_url, bio, student_verified, id_verified, created_at, updated_at')
+    .single();
+
+  if (updateError || !user) {
+    throw new NotFoundError('User not found');
+  }
 
   return user;
 };
@@ -75,61 +48,61 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
  * Get public user profile
  */
 export const getUserProfile = async (userId: string) => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      first_name: true,
-      last_name: true,
-      profile_photo_url: true,
-      bio: true,
-      user_type: true,
-      student_verified: true,
-      id_verified: true,
-      created_at: true,
-      // Include aggregated data
-      properties: {
-        where: { status: 'active' },
-        select: {
-          id: true,
-          title: true,
-          city: true,
-          country: true,
-          monthly_price_cents: true,
-          photos: {
-            take: 1,
-            orderBy: { display_order: 'asc' },
-            select: { photo_url: true },
-          },
-        },
-        take: 6,
-      },
-      reviews_received: {
-        where: { status: 'published' },
-        select: {
-          overall_rating: true,
-        },
-      },
-    },
-  });
+  // Get user data
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, profile_photo_url, bio, user_type, student_verified, id_verified, created_at')
+    .eq('id', userId)
+    .single();
 
-  if (!user) {
+  if (userError || !user) {
     throw new NotFoundError('User not found');
   }
 
+  // Get properties
+  const { data: properties } = await supabase
+    .from('properties')
+    .select('id, title, city, country, monthly_price_cents')
+    .eq('host_id', userId)
+    .eq('status', 'active')
+    .limit(6);
+
+  // Get first photo for each property
+  const propertiesWithPhotos = await Promise.all(
+    (properties || []).map(async (property) => {
+      const { data: photos } = await supabase
+        .from('property_photos')
+        .select('photo_url')
+        .eq('property_id', property.id)
+        .order('display_order', { ascending: true })
+        .limit(1)
+        .single();
+
+      return {
+        ...property,
+        photos: photos ? [{ photo_url: photos.photo_url }] : [],
+      };
+    })
+  );
+
+  // Get reviews
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('overall_rating')
+    .eq('reviewee_id', userId)
+    .eq('status', 'published');
+
   // Calculate average rating
   const avgRating =
-    user.reviews_received.length > 0
-      ? user.reviews_received.reduce((sum, r) => sum + Number(r.overall_rating), 0) /
-        user.reviews_received.length
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + Number(r.overall_rating), 0) / reviews.length
       : null;
 
-  const { reviews_received, ...userData } = user;
-
   return {
-    ...userData,
+    ...user,
+    properties: propertiesWithPhotos,
     average_rating: avgRating,
-    total_reviews: reviews_received.length,
+    total_reviews: reviews?.length || 0,
   };
 };
 
@@ -138,26 +111,32 @@ export const getUserProfile = async (userId: string) => {
  */
 export const uploadStudentId = async (userId: string, data: UploadStudentIdInput) => {
   // Check if user already has pending or approved verification
-  const existing = await prisma.studentVerification.findFirst({
-    where: {
-      user_id: userId,
-      verification_status: { in: ['pending', 'approved'] },
-    },
-  });
+  const { data: existing } = await supabase
+    .from('student_verifications')
+    .select('id')
+    .eq('user_id', userId)
+    .in('verification_status', ['pending', 'approved'])
+    .maybeSingle();
 
   if (existing) {
     throw new BadRequestError('Student verification already submitted or approved');
   }
 
-  const verification = await prisma.studentVerification.create({
-    data: {
+  const { data: verification, error: createError } = await supabase
+    .from('student_verifications')
+    .insert({
       user_id: userId,
       university_name: data.university_name,
       university_email: data.university_email,
       student_id_photo_url: data.student_id_photo_url,
       verification_status: 'pending',
-    },
-  });
+    })
+    .select()
+    .single();
+
+  if (createError || !verification) {
+    throw new Error(createError?.message || 'Failed to create student verification');
+  }
 
   return verification;
 };
@@ -167,28 +146,34 @@ export const uploadStudentId = async (userId: string, data: UploadStudentIdInput
  */
 export const uploadGovernmentId = async (userId: string, data: UploadGovernmentIdInput) => {
   // Check if user already has pending or approved verification
-  const existing = await prisma.identityVerification.findFirst({
-    where: {
-      user_id: userId,
-      verification_status: { in: ['pending', 'approved'] },
-    },
-  });
+  const { data: existing } = await supabase
+    .from('identity_verifications')
+    .select('id')
+    .eq('user_id', userId)
+    .in('verification_status', ['pending', 'approved'])
+    .maybeSingle();
 
   if (existing) {
     throw new BadRequestError('ID verification already submitted or approved');
   }
 
   // Hash ID number for privacy (if provided, though not in current schema)
-  const verification = await prisma.identityVerification.create({
-    data: {
+  const { data: verification, error: createError } = await supabase
+    .from('identity_verifications')
+    .insert({
       user_id: userId,
       id_type: data.id_type,
       id_front_photo_url: data.id_front_photo_url,
       id_back_photo_url: data.id_back_photo_url,
       verification_status: 'pending',
       provider: 'manual',
-    },
-  });
+    })
+    .select()
+    .single();
+
+  if (createError || !verification) {
+    throw new Error(createError?.message || 'Failed to create identity verification');
+  }
 
   return verification;
 };
@@ -199,11 +184,16 @@ export const uploadGovernmentId = async (userId: string, data: UploadGovernmentI
 export const verifyEmail = async (userId: string, _token: string) => {
   // TODO: Implement token validation logic
   // For now, just mark as verified
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: { email_verified: true },
-    select: { id: true, email: true, email_verified: true },
-  });
+  const { data: user, error: updateError } = await supabase
+    .from('users')
+    .update({ email_verified: true })
+    .eq('id', userId)
+    .select('id, email, email_verified')
+    .single();
+
+  if (updateError || !user) {
+    throw new NotFoundError('User not found');
+  }
 
   return user;
 };
@@ -214,11 +204,16 @@ export const verifyEmail = async (userId: string, _token: string) => {
 export const verifyPhone = async (userId: string, _code: string) => {
   // TODO: Implement code validation logic with Twilio
   // For now, just mark as verified
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: { phone_verified: true },
-    select: { id: true, phone: true, phone_verified: true },
-  });
+  const { data: user, error: updateError } = await supabase
+    .from('users')
+    .update({ phone_verified: true })
+    .eq('id', userId)
+    .select('id, phone, phone_verified')
+    .single();
+
+  if (updateError || !user) {
+    throw new NotFoundError('User not found');
+  }
 
   return user;
 };
@@ -227,17 +222,25 @@ export const verifyPhone = async (userId: string, _code: string) => {
  * Get user settings
  */
 export const getUserSettings = async (userId: string) => {
-  let settings = await prisma.userSettings.findUnique({
-    where: { user_id: userId },
-  });
+  const { data: settings } = await supabase
+    .from('user_settings')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
 
   // Create default settings if not exists
   if (!settings) {
-    settings = await prisma.userSettings.create({
-      data: {
-        user_id: userId,
-      },
-    });
+    const { data: newSettings, error: createError } = await supabase
+      .from('user_settings')
+      .insert({ user_id: userId })
+      .select()
+      .single();
+
+    if (createError || !newSettings) {
+      throw new Error(createError?.message || 'Failed to create user settings');
+    }
+
+    return newSettings;
   }
 
   return settings;
@@ -265,17 +268,45 @@ export const updateUserSettings = async (
     two_factor_enabled?: boolean;
   }
 ) => {
-  const settings = await prisma.userSettings.upsert({
-    where: { user_id: userId },
-    create: {
-      user_id: userId,
-      ...data,
-    },
-    update: {
-      ...data,
-      updated_at: new Date(),
-    },
-  });
+  // Check if settings exist
+  const { data: existing } = await supabase
+    .from('user_settings')
+    .select('user_id')
+    .eq('user_id', userId)
+    .maybeSingle();
 
-  return settings;
+  if (existing) {
+    // Update existing
+    const { data: settings, error: updateError } = await supabase
+      .from('user_settings')
+      .update({
+        ...data,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (updateError || !settings) {
+      throw new Error(updateError?.message || 'Failed to update user settings');
+    }
+
+    return settings;
+  } else {
+    // Create new
+    const { data: settings, error: createError } = await supabase
+      .from('user_settings')
+      .insert({
+        user_id: userId,
+        ...data,
+      })
+      .select()
+      .single();
+
+    if (createError || !settings) {
+      throw new Error(createError?.message || 'Failed to create user settings');
+    }
+
+    return settings;
+  }
 };

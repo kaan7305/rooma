@@ -38,7 +38,7 @@ export default function BookingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="mb-8">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-2">
@@ -60,10 +60,10 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
             My Bookings
           </h1>
           <Link
@@ -75,12 +75,12 @@ export default function BookingsPage() {
         </div>
 
         {bookings.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Calendar className="w-10 h-10 text-rose-600" />
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Calendar className="w-10 h-10 text-rose-600 dark:text-rose-400" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No bookings yet</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No bookings yet</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               Start exploring properties and book your perfect student home!
             </p>
             <Link

@@ -243,18 +243,18 @@ export default function AdvancedMessaging() {
   );
 
   return (
-    <div className="h-[calc(100vh-200px)] bg-white rounded-2xl shadow-xl overflow-hidden flex">
+    <div className="h-[calc(100vh-200px)] bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden flex">
       {/* Conversations List */}
-      <div className="w-1/3 border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
+      <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Search messages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -264,8 +264,8 @@ export default function AdvancedMessaging() {
             <button
               key={conv.id}
               onClick={() => setActiveConversation(conv)}
-              className={`w-full p-4 flex gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${
-                activeConversation?.id === conv.id ? 'bg-rose-50' : ''
+              className={`w-full p-4 flex gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 ${
+                activeConversation?.id === conv.id ? 'bg-rose-50 dark:bg-rose-900/20' : ''
               }`}
             >
               <div className="relative shrink-0">
@@ -275,19 +275,19 @@ export default function AdvancedMessaging() {
                   className="w-12 h-12 rounded-full"
                 />
                 {conv.isTyping && (
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white" />
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-gray-800" />
                 )}
               </div>
               <div className="flex-1 text-left overflow-hidden">
                 <div className="flex items-start justify-between mb-1">
-                  <h4 className="font-semibold text-gray-900 truncate">{conv.participantName}</h4>
-                  <span className="text-xs text-gray-500 shrink-0 ml-2">{formatTime(conv.lastMessageTime)}</span>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{conv.participantName}</h4>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0 ml-2">{formatTime(conv.lastMessageTime)}</span>
                 </div>
-                <p className="text-sm text-gray-600 truncate mb-1">{conv.propertyTitle}</p>
-                <p className="text-sm text-gray-500 truncate">
+                <p className="text-sm text-gray-600 dark:text-gray-300 truncate mb-1">{conv.propertyTitle}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                   {conv.isTyping ? (
-                    <span className="text-emerald-600 flex items-center gap-1">
-                      <Circle className="w-2 h-2 fill-emerald-600 animate-pulse" />
+                    <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <Circle className="w-2 h-2 fill-emerald-600 dark:fill-emerald-400 animate-pulse" />
                       typing...
                     </span>
                   ) : (

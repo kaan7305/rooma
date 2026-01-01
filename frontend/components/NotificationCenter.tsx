@@ -128,9 +128,9 @@ export default function NotificationCenter() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center relative">
@@ -142,8 +142,8 @@ export default function NotificationCenter() {
               )}
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Notifications</h2>
-              <p className="text-gray-600 text-sm">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Notifications</h2>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
                 {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}` : 'All caught up!'}
               </p>
             </div>
@@ -164,22 +164,22 @@ export default function NotificationCenter() {
             <div className="relative">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="w-10 h-10 hover:bg-gray-100 rounded-lg flex items-center justify-center transition"
+                className="w-10 h-10 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg flex items-center justify-center transition"
               >
-                <Filter className="w-5 h-5 text-gray-600" />
+                <Filter className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-200 z-10">
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-10">
                   <button
                     onClick={() => { setFilter('all'); setShowDropdown(false); }}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 text-sm first:rounded-t-xl ${filter === 'all' ? 'bg-rose-50 text-rose-600 font-semibold' : 'text-gray-700'}`}
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm first:rounded-t-xl ${filter === 'all' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}`}
                   >
                     All Notifications
                   </button>
                   <button
                     onClick={() => { setFilter('unread'); setShowDropdown(false); }}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 text-sm last:rounded-b-xl ${filter === 'unread' ? 'bg-rose-50 text-rose-600 font-semibold' : 'text-gray-700'}`}
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm last:rounded-b-xl ${filter === 'unread' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}`}
                   >
                     Unread Only
                   </button>
@@ -191,16 +191,16 @@ export default function NotificationCenter() {
       </div>
 
       {/* Notifications List */}
-      <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+      <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-[600px] overflow-y-auto">
         {filteredNotifications.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Bell className="w-10 h-10 text-gray-300" />
+            <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Bell className="w-10 h-10 text-gray-300 dark:text-gray-500" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
               {filter === 'unread' ? 'No unread notifications' : 'No notifications'}
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 dark:text-gray-300 text-sm">
               {filter === 'unread' ? 'All caught up!' : 'You\'ll see notifications here when you have activity'}
             </p>
           </div>
@@ -209,15 +209,15 @@ export default function NotificationCenter() {
             const Icon = notification.icon;
 
             const content = (
-              <div className={`p-4 hover:bg-gray-50 transition-colors group ${!notification.read ? 'bg-blue-50/50' : ''}`}>
+              <div className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group ${!notification.read ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''}`}>
                 <div className="flex gap-4">
-                  <div className={`w-10 h-10 rounded-xl ${notification.read ? 'bg-gray-100' : 'bg-white shadow-md'} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                  <div className={`w-10 h-10 rounded-xl ${notification.read ? 'bg-gray-100 dark:bg-gray-700' : 'bg-white dark:bg-gray-800 shadow-md'} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                     <Icon className={`w-5 h-5 ${notification.color}`} />
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3 mb-1">
-                      <h3 className={`font-semibold ${!notification.read ? 'text-gray-900' : 'text-gray-700'}`}>
+                      <h3 className={`font-semibold ${!notification.read ? 'text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}>
                         {notification.title}
                       </h3>
                       {!notification.read && (
@@ -225,12 +225,12 @@ export default function NotificationCenter() {
                       )}
                     </div>
 
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
                       {notification.message}
                     </p>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {formatTimestamp(notification.timestamp)}
                       </span>
 
@@ -238,7 +238,7 @@ export default function NotificationCenter() {
                         {notification.actionLabel && notification.actionUrl && (
                           <Link
                             href={notification.actionUrl}
-                            className="text-xs font-medium text-rose-600 hover:text-rose-700 transition-colors"
+                            className="text-xs font-medium text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 transition-colors"
                           >
                             {notification.actionLabel} →
                           </Link>
@@ -256,10 +256,10 @@ export default function NotificationCenter() {
                           e.stopPropagation();
                           handleMarkAsRead(notification.id);
                         }}
-                        className="w-8 h-8 hover:bg-emerald-100 rounded-lg flex items-center justify-center transition"
+                        className="w-8 h-8 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-lg flex items-center justify-center transition"
                         title="Mark as read"
                       >
-                        <Check className="w-4 h-4 text-emerald-600" />
+                        <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                       </button>
                     )}
                   </div>

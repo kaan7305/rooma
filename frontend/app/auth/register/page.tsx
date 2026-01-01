@@ -207,12 +207,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 px-4 py-12">
       <div className="w-full max-w-2xl">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">NestQuarter</h1>
-          <p className="text-gray-600 mt-2">Create your account and find your perfect home.</p>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">Create your account and find your perfect home.</p>
         </div>
 
         {/* Progress Indicator */}
@@ -220,62 +220,62 @@ export default function RegisterPage() {
           <div className="flex items-center justify-between max-w-md mx-auto">
             <div className="flex flex-col items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 1 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 text-gray-500'
+                currentStep >= 1 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
               }`}>
                 {currentStep > 1 ? <Check className="w-5 h-5" /> : '1'}
               </div>
-              <span className="text-xs mt-1 text-gray-600">Email</span>
+              <span className="text-xs mt-1 text-gray-600 dark:text-gray-300">Email</span>
             </div>
-            <div className={`flex-1 h-1 mx-2 ${currentStep >= 2 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gray-200'}`}></div>
+            <div className={`flex-1 h-1 mx-2 ${currentStep >= 2 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
             <div className="flex flex-col items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 2 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 text-gray-500'
+                currentStep >= 2 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
               }`}>
                 {currentStep > 2 ? <Check className="w-5 h-5" /> : '2'}
               </div>
-              <span className="text-xs mt-1 text-gray-600">Verify</span>
+              <span className="text-xs mt-1 text-gray-600 dark:text-gray-300">Verify</span>
             </div>
-            <div className={`flex-1 h-1 mx-2 ${currentStep >= 3 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gray-200'}`}></div>
+            <div className={`flex-1 h-1 mx-2 ${currentStep >= 3 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
             <div className="flex flex-col items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 3 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 text-gray-500'
+                currentStep >= 3 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
               }`}>
                 3
               </div>
-              <span className="text-xs mt-1 text-gray-600">Details</span>
+              <span className="text-xs mt-1 text-gray-600 dark:text-gray-300">Details</span>
             </div>
           </div>
         </div>
 
         {/* Register Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
           {/* Step 1: Email Entry */}
           {currentStep === 1 && (
             <>
               <div className="flex items-center gap-3 mb-6">
                 <Mail className="w-6 h-6 text-rose-600" />
-                <h2 className="text-2xl font-bold text-gray-900">Enter Your Student Email</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Enter Your Student Email</h2>
               </div>
 
               {codeError && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600">{codeError}</p>
+                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <p className="text-sm text-red-600 dark:text-red-400">{codeError}</p>
                 </div>
               )}
 
               <form onSubmit={handleEmailSubmit(onEmailSubmit)} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email Address
                   </label>
                   <input
                     {...registerEmailField('email')}
                     type="email"
                     id="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                     placeholder="you@email.com"
                   />
-                  {emailErrors.email && <p className="mt-1 text-sm text-red-600">{emailErrors.email.message}</p>}
+                  {emailErrors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{emailErrors.email.message}</p>}
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -307,30 +307,30 @@ export default function RegisterPage() {
             <>
               <div className="flex items-center gap-3 mb-6">
                 <Check className="w-6 h-6 text-rose-600" />
-                <h2 className="text-2xl font-bold text-gray-900">Verify Your Email</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Verify Your Email</h2>
               </div>
 
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-emerald-800">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 mb-6">
+                <p className="text-sm text-emerald-800 dark:text-emerald-300">
                   ✉️ We sent a verification code to <strong>{email}</strong>
                 </p>
               </div>
 
               {codeError && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600">{codeError}</p>
+                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <p className="text-sm text-red-600 dark:text-red-400">{codeError}</p>
                 </div>
               )}
 
               {codeSuccess && (
-                <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <p className="text-sm text-emerald-600">{codeSuccess}</p>
+                <div className="mb-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">{codeSuccess}</p>
                 </div>
               )}
 
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="code" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Verification Code
                   </label>
                   <input
@@ -342,12 +342,12 @@ export default function RegisterPage() {
                       setVerificationCode(value);
                       setCodeError('');
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 text-gray-900 text-center text-2xl font-bold tracking-widest"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 text-center text-2xl font-bold tracking-widest"
                     placeholder="000000"
                     maxLength={6}
                   />
                   {timeRemaining !== null && (
-                    <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                    <div className="mt-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                       <Clock className="w-4 h-4" />
                       <span>Code expires in {formatTime(timeRemaining)}</span>
                     </div>
@@ -374,7 +374,7 @@ export default function RegisterPage() {
                     {isSendingCode ? 'Sending...' : 'Resend Code'}
                   </button>
                   {!canResend && timeRemaining && (
-                    <p className="text-xs text-gray-500 mt-1">Available after code expires</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Available after code expires</p>
                   )}
                 </div>
 
@@ -386,7 +386,7 @@ export default function RegisterPage() {
                     setCodeError('');
                     setCodeSuccess('');
                   }}
-                  className="w-full text-gray-600 hover:text-gray-700 text-sm"
+                  className="w-full text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 text-sm"
                 >
                   ← Change Email Address
                 </button>
@@ -397,11 +397,11 @@ export default function RegisterPage() {
           {/* Step 3: Complete Registration */}
           {currentStep === 3 && (
             <>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Complete Your Profile</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Complete Your Profile</h2>
 
               {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                 </div>
               )}
 
@@ -409,41 +409,41 @@ export default function RegisterPage() {
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       First Name
                     </label>
                     <input
                       {...register('first_name')}
                       type="text"
                       id="first_name"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                       placeholder="John"
                     />
                     {errors.first_name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.first_name.message}</p>
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.first_name.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Last Name
                     </label>
                     <input
                       {...register('last_name')}
                       type="text"
                       id="last_name"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                       placeholder="Doe"
                     />
                     {errors.last_name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.last_name.message}</p>
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.last_name.message}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Email Field (Read-only, already verified) */}
                 <div>
-                  <label htmlFor="email_confirmed" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email_confirmed" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email Address (Verified)
                   </label>
                   <div className="relative">
@@ -452,22 +452,22 @@ export default function RegisterPage() {
                       type="email"
                       id="email_confirmed"
                       readOnly
-                      className="w-full px-4 py-3 border border-emerald-300 bg-emerald-50 rounded-lg outline-none text-gray-900"
+                      className="w-full px-4 py-3 border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg outline-none text-gray-900 dark:text-gray-100"
                     />
-                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600" />
+                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                 </div>
 
                 {/* Phone Number Field */}
                 <div>
-                  <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Phone Number (Optional)
                   </label>
                   <input
                     {...register('phone_number')}
                     type="tel"
                     id="phone_number"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -475,7 +475,7 @@ export default function RegisterPage() {
                 {/* Password Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Password
                     </label>
                     <div className="relative">
@@ -483,26 +483,26 @@ export default function RegisterPage() {
                         {...register('password')}
                         type={showPassword ? 'text' : 'password'}
                         id="password"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 text-gray-900"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                         placeholder="Min. 6 characters"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                       >
                         {showPassword ? '👁️' : '👁️‍🗨️'}
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password.message}</p>
                     )}
                   </div>
 
                   <div>
                     <label
                       htmlFor="confirm_password"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
                       Confirm Password
                     </label>
@@ -511,19 +511,19 @@ export default function RegisterPage() {
                         {...register('confirm_password')}
                         type={showConfirmPassword ? 'text' : 'password'}
                         id="confirm_password"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 text-gray-900"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                         placeholder="Confirm password"
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                       >
                         {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
                       </button>
                     </div>
                     {errors.confirm_password && (
-                      <p className="mt-1 text-sm text-red-600">{errors.confirm_password.message}</p>
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.confirm_password.message}</p>
                     )}
                   </div>
                 </div>
@@ -535,9 +535,9 @@ export default function RegisterPage() {
                     type="checkbox"
                     id="is_student"
                     defaultChecked
-                    className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300 dark:border-gray-700 rounded"
                   />
-                  <label htmlFor="is_student" className="ml-2 block text-sm text-gray-700">
+                  <label htmlFor="is_student" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                     I am a student
                   </label>
                 </div>
@@ -559,16 +559,16 @@ export default function RegisterPage() {
 
           {/* Divider */}
           <div className="mt-6 flex items-center">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500">Or</span>
-            <div className="flex-1 border-t border-gray-300"></div>
+            <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
+            <span className="px-4 text-sm text-gray-500 dark:text-gray-400">Or</span>
+            <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
           </div>
 
           {/* Login Link */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-rose-600 font-medium hover:text-rose-700">
+              <Link href="/auth/login" className="text-rose-600 dark:text-rose-400 font-medium hover:text-rose-700 dark:hover:text-rose-300">
                 Sign in
               </Link>
             </p>
@@ -576,13 +576,13 @@ export default function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <p className="mt-8 text-center text-sm text-gray-600">
+        <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-300">
           By creating an account, you agree to our{' '}
-          <Link href="/terms" className="text-rose-600 hover:text-rose-700">
+          <Link href="/terms" className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" className="text-rose-600 hover:text-rose-700">
+          <Link href="/privacy" className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300">
             Privacy Policy
           </Link>
         </p>

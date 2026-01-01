@@ -34,7 +34,7 @@ export default function BookingConfirmationModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 p-6 rounded-t-3xl">
           <div className="flex items-center justify-between">
@@ -58,23 +58,23 @@ export default function BookingConfirmationModal({
 
         <div className="p-6 space-y-6">
           {/* Property Info */}
-          <div className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+          <div className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700">
             <img
               src={property.image}
               alt={property.title}
               className="w-24 h-24 rounded-xl object-cover"
             />
             <div className="flex-1">
-              <h3 className="font-bold text-gray-900 mb-1">{property.title}</h3>
-              <p className="text-sm text-gray-600 flex items-center gap-1 mb-2">
+              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">{property.title}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1 mb-2">
                 <MapPin className="w-3 h-3" />
                 {property.location}
               </p>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-1 bg-rose-100 text-rose-700 rounded-lg text-xs font-medium">
+                <span className="px-2 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 rounded-lg text-xs font-medium">
                   {property.type}
                 </span>
-                <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium">
+                <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-medium">
                   {property.beds} bed · {property.baths} bath
                 </span>
               </div>
@@ -83,80 +83,80 @@ export default function BookingConfirmationModal({
 
           {/* Booking Details */}
           <div className="space-y-4">
-            <h3 className="font-bold text-gray-900 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-purple-600" />
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               Booking Details
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <p className="text-xs text-blue-600 font-medium mb-1">Check-in</p>
-                <p className="text-lg font-bold text-blue-900">
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-700">
+                <p className="text-xs text-blue-600 dark:text-blue-300 font-medium mb-1">Check-in</p>
+                <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
                   {new Date(checkIn).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                   })}
                 </p>
-                <p className="text-xs text-blue-600">After 3:00 PM</p>
+                <p className="text-xs text-blue-600 dark:text-blue-300">After 3:00 PM</p>
               </div>
 
-              <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
-                <p className="text-xs text-purple-600 font-medium mb-1">Check-out</p>
-                <p className="text-lg font-bold text-purple-900">
+              <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl border border-purple-200 dark:border-purple-700">
+                <p className="text-xs text-purple-600 dark:text-purple-300 font-medium mb-1">Check-out</p>
+                <p className="text-lg font-bold text-purple-900 dark:text-purple-100">
                   {new Date(checkOut).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                   })}
                 </p>
-                <p className="text-xs text-purple-600">Before 11:00 AM</p>
+                <p className="text-xs text-purple-600 dark:text-purple-300">Before 11:00 AM</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-green-50 rounded-xl border border-green-200">
-                <p className="text-xs text-green-600 font-medium mb-1">Duration</p>
-                <p className="text-2xl font-bold text-green-900">{days} {days === 1 ? 'Day' : 'Days'}</p>
+              <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-xl border border-green-200 dark:border-green-700">
+                <p className="text-xs text-green-600 dark:text-green-300 font-medium mb-1">Duration</p>
+                <p className="text-2xl font-bold text-green-900 dark:text-green-100">{days} {days === 1 ? 'Day' : 'Days'}</p>
               </div>
 
-              <div className="p-4 bg-orange-50 rounded-xl border border-orange-200">
+              <div className="p-4 bg-orange-50 dark:bg-orange-900/30 rounded-xl border border-orange-200 dark:border-orange-700">
                 <div className="flex items-center gap-2 mb-1">
-                  <Users className="w-4 h-4 text-orange-600" />
-                  <p className="text-xs text-orange-600 font-medium">Guests</p>
+                  <Users className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                  <p className="text-xs text-orange-600 dark:text-orange-300 font-medium">Guests</p>
                 </div>
-                <p className="text-2xl font-bold text-orange-900">{guests} {guests === 1 ? 'Guest' : 'Guests'}</p>
+                <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">{guests} {guests === 1 ? 'Guest' : 'Guests'}</p>
               </div>
             </div>
           </div>
 
           {/* Price Breakdown */}
           <div className="space-y-4">
-            <h3 className="font-bold text-gray-900 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-emerald-600" />
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               Price Breakdown
             </h3>
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
+            <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-700">
+                <span className="text-gray-700 dark:text-gray-300">
                   ${Math.round(property.price / 30).toLocaleString()} × {days} {days === 1 ? 'day' : 'days'}
                 </span>
-                <span className="font-semibold text-gray-900">${totalPrice.toLocaleString()}</span>
+                <span className="font-semibold text-gray-900 dark:text-gray-100">${totalPrice.toLocaleString()}</span>
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-700">Service fee</span>
-                <span className="font-semibold text-gray-900">${serviceFee.toLocaleString()}</span>
+                <span className="text-gray-700 dark:text-gray-300">Service fee</span>
+                <span className="font-semibold text-gray-900 dark:text-gray-100">${serviceFee.toLocaleString()}</span>
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-700">Cleaning fee</span>
-                <span className="font-semibold text-gray-900">${cleaningFee}</span>
+                <span className="text-gray-700 dark:text-gray-300">Cleaning fee</span>
+                <span className="font-semibold text-gray-900 dark:text-gray-100">${cleaningFee}</span>
               </div>
 
-              <div className="pt-3 border-t border-gray-300 flex items-center justify-between">
-                <span className="text-lg font-bold text-gray-900">Total (USD)</span>
+              <div className="pt-3 border-t border-gray-300 dark:border-gray-700 flex items-center justify-between">
+                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Total (USD)</span>
                 <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                   ${finalTotal.toLocaleString()}
                 </span>

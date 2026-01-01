@@ -2094,285 +2094,1730 @@ The theming system uses Tailwind CSS's class-based dark mode strategy combined w
 - Graceful degradation for older browsers (defaults to light mode)
 - System preference detection works in all major browsers
 
-## Troubleshooting Common Issues
+## Comprehensive Troubleshooting Guide
 
-### Database Connection Problems
+This section provides detailed diagnostic procedures and solutions for common and advanced issues you may encounter while developing or deploying the NestQuarter platform.
 
-**Symptom:** Error message "Error: connect ECONNREFUSED" or "Can't reach database server"
+### Database Connection and Query Issues
 
-**Diagnosis:**
+#### Issue 1: PostgreSQL Connection Refused
+
+**Symptom:** Error message "Error: connect ECONNREFUSED" or "Can't reach database server at localhost:5432"
+
+**Root Cause Analysis:**
+The application cannot establish a TCP connection to the PostgreSQL server. This typically indicates that either PostgreSQL is not running, is listening on a different port, or network/firewall rules are blocking the connection.
+
+**Advanced Diagnosis:**
 ```bash
-# Check if PostgreSQL is running
-# macOS
+# Step 1: Verify PostgreSQL service status
+# macOS with Homebrew
 brew services list | grep postgresql
+# Expected output: postgresql@15 started <user> ~/Library/LaunchAgents/homebrew.mxcl.postgresql@15.plist
+
+# Linux systemd
+sudo systemctl status postgresql
+# Expected output: active (running)
+
+# Alternative: Check process directly
+ps aux | grep postgres
+# Should show multiple postgres processes
+
+# Step 2: Verify PostgreSQL is listening on correct port
+sudo lsof -i -P -n | grep LISTEN | grep 5432
+# Expected output: postgres <PID> <user> TCP *:5432 (LISTEN)
+
+# Alternative using netstat (Linux)
+sudo netstat -tlnp | grep 5432
+# Expected output: tcp 0 0 127.0.0.1:5432 0.0.0.0:* LISTEN <PID>/postgres
+
+# Step 3: Test connection with psql
+psql -U nestquarter_user -d nestquarter -h localhost -p 5432
+# If successful, you should see: nestquarter=>
+
+# Step 4: Check PostgreSQL logs for errors
+# macOS
+tail -f /usr/local/var/log/postgresql@15.log
 
 # Linux
-sudo systemctl status postgresql
+sudo tail -f /var/log/postgresql/postgresql-15-main.log
 
-# Test direct connection
-psql -U nestquarter_user -d nestquarter -h localhost
+# Step 5: Verify DATABASE_URL format
+echo $DATABASE_URL
+# Should match: postgresql://username:password@host:port/database
 ```
 
 **Solutions:**
 
-1. **PostgreSQL not running:**
+1. **PostgreSQL Service Not Running:**
    ```bash
-   # macOS
+   # macOS with Homebrew
    brew services start postgresql@15
+   # Verify it started
+   brew services info postgresql@15
+
+   # Linux with systemd
+   sudo systemctl start postgresql
+   sudo systemctl enable postgresql  # Enable auto-start on boot
+
+   # Check logs immediately after starting
+   sudo journalctl -u postgresql -n 50 --no-pager
+   ```
+
+2. **Wrong Port Configuration:**
+   ```bash
+   # Find which port PostgreSQL is actually using
+   sudo lsof -i -P | grep postgres | grep LISTEN
+
+   # Update DATABASE_URL in .env to match the actual port
+   # If PostgreSQL is on port 5433 instead of 5432:
+   DATABASE_URL="postgresql://user:password@localhost:5433/nestquarter"
+   ```
+
+3. **Authentication Failure (pg_hba.conf):**
+   ```bash
+   # Locate pg_hba.conf
+   psql postgres -c "SHOW hba_file;"
+
+   # Edit the file (example path)
+   sudo nano /usr/local/var/postgresql@15/pg_hba.conf
+
+   # Add or modify this line for local development:
+   # TYPE  DATABASE        USER            ADDRESS                 METHOD
+   local   all            all                                     trust
+   host    all            all             127.0.0.1/32            md5
+   host    all            all             ::1/128                 md5
+
+   # Reload PostgreSQL configuration
+   # macOS
+   brew services restart postgresql@15
 
    # Linux
-   sudo systemctl start postgresql
+   sudo systemctl reload postgresql
    ```
 
-2. **Wrong credentials in DATABASE_URL:**
-   - Verify username, password, host, port, and database name
-   - Ensure no extra spaces or special characters
-   - Check that user has proper permissions
-
-3. **Firewall blocking connection:**
+4. **User Permissions Issues:**
    ```bash
-   # Check PostgreSQL is listening
-   sudo netstat -plnt | grep 5432
+   # Connect as superuser
+   psql postgres
 
-   # Ensure firewall allows connections
+   # Check user exists and has correct permissions
+   \du
+
+   # Grant necessary permissions
+   GRANT ALL PRIVILEGES ON DATABASE nestquarter TO nestquarter_user;
+
+   # For PostgreSQL 15+, also grant schema permissions
+   \c nestquarter
+   GRANT ALL ON SCHEMA public TO nestquarter_user;
+   GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO nestquarter_user;
+   GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO nestquarter_user;
+   ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO nestquarter_user;
    ```
 
-4. **Database does not exist:**
+5. **Firewall Blocking Connection:**
    ```bash
-   # Create database
-   createdb nestquarter
+   # macOS firewall
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
 
-   # Or via psql
-   psql postgres -c "CREATE DATABASE nestquarter;"
+   # Allow PostgreSQL through firewall
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /usr/local/bin/postgres
+
+   # Linux ufw
+   sudo ufw status
+   sudo ufw allow 5432/tcp
+
+   # Linux firewalld
+   sudo firewall-cmd --zone=public --add-port=5432/tcp --permanent
+   sudo firewall-cmd --reload
    ```
 
-### Redis Connection Failures
+6. **Cloud Database Connection Issues (Railway/Supabase):**
+   ```bash
+   # Test connection to cloud database
+   psql "postgresql://postgres:password@containers-us-west-123.railway.app:5432/railway"
 
-**Symptom:** "Error: Redis connection failed" or "ECONNREFUSED 127.0.0.1:6379"
+   # If SSL is required, add sslmode parameter
+   DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=require"
+
+   # For connection pooling with Supabase
+   DATABASE_URL="postgresql://postgres:password@db.projectref.supabase.co:6543/postgres?pgbouncer=true&connection_limit=1"
+
+   # Test with verbose error output
+   PGSSLMODE=require psql -h db.projectref.supabase.co -U postgres -d postgres -p 5432 -v ON_ERROR_STOP=1
+   ```
+
+#### Issue 2: Slow Database Queries
+
+**Symptom:** API endpoints taking 3+ seconds to respond, timeout errors in production
 
 **Diagnosis:**
 ```bash
-# Test Redis connection
-redis-cli ping
-# Should return: PONG
+# Enable Prisma query logging in backend/src/server.ts or prisma/schema.prisma
+# Add to datasource db block:
+log = ["query", "info", "warn", "error"]
 
-# Check if Redis is running
-# macOS
-brew services list | grep redis
+# Or set environment variable
+DEBUG=prisma:query npm run dev
 
-# Linux
-sudo systemctl status redis
+# Identify slow queries in PostgreSQL
+psql -U postgres -d nestquarter
+
+# Show currently running queries
+SELECT pid, now() - pg_stat_activity.query_start AS duration, query
+FROM pg_stat_activity
+WHERE (now() - pg_stat_activity.query_start) > interval '5 seconds'
+  AND state = 'active';
+
+# Check for missing indexes
+SELECT schemaname, tablename, indexname
+FROM pg_indexes
+WHERE schemaname = 'public'
+ORDER BY tablename;
+
+# Analyze query performance
+EXPLAIN ANALYZE SELECT * FROM "Property" WHERE location = 'Boston' AND price < 2000;
 ```
 
 **Solutions:**
 
-1. **Redis not running:**
-   ```bash
-   # macOS
-   brew services start redis
+1. **Add Database Indexes:**
+   ```prisma
+   // In prisma/schema.prisma, add indexes to frequently queried fields
+   model Property {
+     id        String   @id @default(cuid())
+     location  String
+     price     Int
+     createdAt DateTime @default(now())
 
-   # Linux
-   sudo systemctl start redis-server
+     @@index([location])
+     @@index([price])
+     @@index([location, price])
+     @@index([createdAt])
+   }
+
+   // Create migration
+   npx prisma migrate dev --name add_property_indexes
    ```
 
-2. **Wrong Redis URL:**
-   - Check REDIS_URL in `.env`
-   - Default should be `redis://localhost:6379`
-   - For Redis Cloud, ensure full connection string is correct
+2. **Optimize Prisma Queries with Select and Include:**
+   ```typescript
+   // Bad: Fetches all fields and all relations
+   const property = await prisma.property.findUnique({
+     where: { id },
+     include: {
+       reviews: true,
+       bookings: true,
+       host: true
+     }
+   });
 
-3. **Redis password required:**
-   - Format: `redis://default:password@host:port`
-   - Check Redis configuration for password requirement
+   // Good: Only fetch what you need
+   const property = await prisma.property.findUnique({
+     where: { id },
+     select: {
+       id: true,
+       title: true,
+       price: true,
+       host: {
+         select: {
+           id: true,
+           name: true,
+           avatar: true
+         }
+       },
+       reviews: {
+         take: 5,
+         orderBy: { createdAt: 'desc' },
+         select: {
+           id: true,
+           rating: true,
+           comment: true,
+           createdAt: true
+         }
+       }
+     }
+   });
+   ```
 
-### Port Conflicts
+3. **Implement Pagination:**
+   ```typescript
+   // Add pagination to large result sets
+   const properties = await prisma.property.findMany({
+     take: 20,  // Limit results
+     skip: (page - 1) * 20,  // Offset for pagination
+     orderBy: { createdAt: 'desc' },
+     where: filters
+   });
 
-**Symptom:** "Error: listen EADDRINUSE: address already in use :::3000"
+   // Get total count for pagination metadata
+   const total = await prisma.property.count({ where: filters });
+   ```
 
-**Diagnosis and Solution:**
+4. **Enable Connection Pooling:**
+   ```env
+   # In backend/.env, add connection pool parameters
+   DATABASE_URL="postgresql://user:password@host:5432/db?schema=public&connection_limit=10&pool_timeout=20"
+   ```
+
+5. **Use Database Query Caching with Redis:**
+   ```typescript
+   // In backend/src/services/property.service.ts
+   import { redis } from '../config/redis';
+
+   async function getProperty(id: string) {
+     // Check cache first
+     const cacheKey = `property:${id}`;
+     const cached = await redis.get(cacheKey);
+
+     if (cached) {
+       return JSON.parse(cached);
+     }
+
+     // Query database
+     const property = await prisma.property.findUnique({
+       where: { id }
+     });
+
+     // Cache for 5 minutes
+     await redis.setex(cacheKey, 300, JSON.stringify(property));
+
+     return property;
+   }
+   ```
+
+#### Issue 3: Database Migration Conflicts
+
+**Symptom:** "Migration failed to apply cleanly" or "Drift detected" errors
+
+**Advanced Diagnosis:**
 ```bash
-# Find process using the port
-lsof -i :3000  # For frontend
-lsof -i :5000  # For backend
+# Check detailed migration status
+npx prisma migrate status
 
-# Kill the process
-kill -9 <PID>
+# View migration history in database
+psql -U nestquarter_user -d nestquarter -c "SELECT * FROM _prisma_migrations ORDER BY finished_at DESC;"
 
-# Or use different ports
-# Frontend
-PORT=3001 npm run dev
+# Check for schema drift
+npx prisma migrate diff --from-schema-datamodel prisma/schema.prisma --to-schema-database $DATABASE_URL --script
 
-# Backend - change PORT in .env
-PORT=5001
+# Inspect specific migration file
+cat prisma/migrations/20240101000000_migration_name/migration.sql
 ```
 
-### Prisma Migration Errors
+**Solutions:**
 
-**Symptom:** Migration fails or "Drift detected" warnings
+1. **Resolve Baseline Migration Issues:**
+   ```bash
+   # For existing database, create baseline
+   npx prisma migrate resolve --applied "0_init"
+
+   # Mark all migrations as applied
+   npx prisma migrate deploy
+   ```
+
+2. **Fix Failed Migration:**
+   ```bash
+   # Mark failed migration as rolled back
+   npx prisma migrate resolve --rolled-back "20240101000000_migration_name"
+
+   # Delete the failed migration directory
+   rm -rf prisma/migrations/20240101000000_migration_name
+
+   # Create a new migration with the fix
+   npx prisma migrate dev --name fix_migration_issue
+   ```
+
+3. **Handle Production Migration Safely:**
+   ```bash
+   # NEVER use migrate dev in production
+   # ALWAYS use migrate deploy
+
+   # Preview what will happen
+   npx prisma migrate diff \
+     --from-schema-datamodel prisma/schema.prisma \
+     --to-schema-database $DATABASE_URL \
+     --script > preview.sql
+
+   # Review preview.sql carefully
+
+   # Apply migrations in production
+   npx prisma migrate deploy
+   ```
+
+4. **Recover from Catastrophic Migration Failure:**
+   ```bash
+   # Step 1: Backup current database
+   pg_dump -U nestquarter_user nestquarter > backup_$(date +%Y%m%d_%H%M%S).sql
+
+   # Step 2: Reset migration table (destructive - use with caution)
+   psql -U nestquarter_user -d nestquarter -c "DROP TABLE IF EXISTS _prisma_migrations CASCADE;"
+
+   # Step 3: Re-initialize migrations
+   npx prisma migrate deploy
+
+   # Step 4: If that fails, do complete reset (WARNING: data loss)
+   npx prisma migrate reset --skip-seed
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+
+### Redis Connection and Performance Issues
+
+#### Issue 4: Redis Connection Failures in Production
+
+**Symptom:** "ECONNREFUSED 127.0.0.1:6379" or "Redis connection timeout"
+
+**Advanced Diagnosis:**
+```bash
+# Test local Redis
+redis-cli ping
+# Expected: PONG
+
+# Test remote Redis with authentication
+redis-cli -h redis-12345.c1.us-east-1-2.ec2.cloud.redislabs.com -p 12345 -a your_password ping
+
+# Monitor Redis in real-time
+redis-cli monitor
+
+# Check Redis info
+redis-cli info
+# Look for: connected_clients, used_memory, total_commands_processed
+
+# Test connection from Node.js context
+node -e "const Redis = require('ioredis'); const redis = new Redis(process.env.REDIS_URL); redis.ping().then(console.log).catch(console.error);"
+
+# Check Redis logs
+# Linux
+sudo tail -f /var/log/redis/redis-server.log
+
+# macOS
+tail -f /usr/local/var/log/redis.log
+```
 
 **Solutions:**
 
-1. **Reset database (WARNING: deletes all data):**
+1. **Configure Redis for Production:**
    ```bash
-   cd backend
-   npx prisma migrate reset
-   npm run prisma:migrate
-   npm run prisma:seed
+   # Edit redis.conf
+   # Linux: /etc/redis/redis.conf
+   # macOS: /usr/local/etc/redis.conf
+
+   # Set password
+   requirepass your_strong_password_here
+
+   # Bind to all interfaces (use with caution, configure firewall)
+   bind 0.0.0.0
+
+   # Or bind to specific IP
+   bind 127.0.0.1 192.168.1.100
+
+   # Set max memory
+   maxmemory 256mb
+   maxmemory-policy allkeys-lru
+
+   # Enable AOF persistence for data durability
+   appendonly yes
+   appendfsync everysec
+
+   # Restart Redis
+   sudo systemctl restart redis
    ```
 
-2. **Resolve migration conflicts:**
-   ```bash
-   # Check migration status
-   npx prisma migrate status
+2. **Fix Redis Connection Pool Issues:**
+   ```typescript
+   // In backend/src/config/redis.ts
+   import Redis from 'ioredis';
 
-   # Mark migration as applied (if already applied manually)
-   npx prisma migrate resolve --applied "migration_name"
+   const redis = new Redis(process.env.REDIS_URL, {
+     maxRetriesPerRequest: 3,
+     retryStrategy(times) {
+       const delay = Math.min(times * 50, 2000);
+       return delay;
+     },
+     reconnectOnError(err) {
+       const targetError = 'READONLY';
+       if (err.message.includes(targetError)) {
+         return true; // Reconnect
+       }
+       return false;
+     },
+     // Connection pool settings
+     lazyConnect: true,
+     enableOfflineQueue: true,
+     connectTimeout: 10000,
+     // For Redis Cluster
+     enableReadyCheck: true,
+     showFriendlyErrorStack: true
+   });
 
-   # Mark migration as rolled back
-   npx prisma migrate resolve --rolled-back "migration_name"
+   // Handle connection events
+   redis.on('error', (err) => {
+     console.error('Redis Client Error:', err);
+   });
+
+   redis.on('connect', () => {
+     console.log('Redis Client Connected');
+   });
+
+   redis.on('ready', () => {
+     console.log('Redis Client Ready');
+   });
+
+   redis.on('close', () => {
+     console.warn('Redis Client Connection Closed');
+   });
+
+   redis.on('reconnecting', () => {
+     console.log('Redis Client Reconnecting...');
+   });
+
+   export { redis };
    ```
 
-3. **Database out of sync:**
-   ```bash
-   # Pull current database schema
-   npx prisma db pull
-
-   # This updates schema.prisma to match database
-   # Review changes and create new migration if needed
+3. **Implement Redis Sentinel for High Availability:**
+   ```typescript
+   // For production with Redis Sentinel
+   const redis = new Redis({
+     sentinels: [
+       { host: 'sentinel-1', port: 26379 },
+       { host: 'sentinel-2', port: 26379 },
+       { host: 'sentinel-3', port: 26379 }
+     ],
+     name: 'mymaster',
+     password: process.env.REDIS_PASSWORD,
+     sentinelPassword: process.env.SENTINEL_PASSWORD
+   });
    ```
 
-### Module Not Found Errors
-
-**Symptom:** "Cannot find module 'xyz'" or import errors
-
-**Solutions:**
-
-1. **Reinstall dependencies:**
+4. **Debug Redis Memory Issues:**
    ```bash
-   # Remove node_modules and lock files
-   rm -rf node_modules package-lock.json
+   # Check memory usage
+   redis-cli info memory
 
-   # Clean install
-   npm ci
+   # Find largest keys
+   redis-cli --bigkeys
+
+   # Analyze memory by key pattern
+   redis-cli --memkeys --memkeys-samples 10000
+
+   # Check if eviction is happening
+   redis-cli info stats | grep evicted
+
+   # Clear specific keys if needed
+   redis-cli KEYS "session:*" | xargs redis-cli DEL
+
+   # Or flush all (WARNING: clears everything)
+   redis-cli FLUSHALL
    ```
 
-2. **Clear Next.js cache (frontend):**
+### Module Resolution and TypeScript Issues
+
+#### Issue 5: Cannot Find Module Errors
+
+**Symptom:** "Cannot find module '@/components/xyz'" or "Module not found: Can't resolve 'xyz'"
+
+**Comprehensive Diagnosis:**
+```bash
+# Step 1: Verify node_modules exists and is complete
+ls -la node_modules/ | wc -l
+# Should show hundreds of directories
+
+# Step 2: Check package.json and lock file consistency
+npm ls
+# Look for missing or extraneous packages
+
+# Step 3: Verify TypeScript path mappings
+cat tsconfig.json | grep -A 10 "paths"
+
+# Step 4: Check if specific package is installed
+npm list package-name
+
+# Step 5: Verify Next.js cache
+ls -la frontend/.next/
+
+# Step 6: Check for case sensitivity issues (especially on macOS)
+find src -name "*.ts" -o -name "*.tsx" | xargs grep -l "component/Button"
+# vs
+find src -name "Button.*"
+```
+
+**Advanced Solutions:**
+
+1. **Complete Dependency Reset:**
    ```bash
+   # Nuclear option - complete cleanup and reinstall
+
+   # Frontend
    cd frontend
-   rm -rf .next
+   rm -rf node_modules .next package-lock.json
+   npm cache clean --force
+   npm install
+
+   # Backend
+   cd ../backend
+   rm -rf node_modules dist package-lock.json
+   npm cache clean --force
+   npm install
+   npx prisma generate  # Regenerate Prisma client
+
+   # Verify installations
+   npm list --depth=0
+   ```
+
+2. **Fix TypeScript Path Resolution:**
+   ```json
+   // In frontend/tsconfig.json
+   {
+     "compilerOptions": {
+       "baseUrl": ".",
+       "paths": {
+         "@/*": ["./*"],
+         "@/components/*": ["./components/*"],
+         "@/lib/*": ["./lib/*"],
+         "@/app/*": ["./app/*"]
+       },
+       "moduleResolution": "bundler",  // For Next.js 13+
+       "resolveJsonModule": true,
+       "isolatedModules": true
+     },
+     "include": [
+       "next-env.d.ts",
+       "**/*.ts",
+       "**/*.tsx",
+       ".next/types/**/*.ts"
+     ],
+     "exclude": ["node_modules"]
+   }
+
+   // Restart TypeScript server in VS Code
+   // CMD/CTRL + Shift + P → "TypeScript: Restart TS Server"
+   ```
+
+3. **Fix Next.js Import Resolution:**
+   ```javascript
+   // In frontend/next.config.js
+   const path = require('path');
+
+   module.exports = {
+     webpack: (config) => {
+       config.resolve.alias = {
+         ...config.resolve.alias,
+         '@': path.resolve(__dirname),
+         '@/components': path.resolve(__dirname, 'components'),
+         '@/lib': path.resolve(__dirname, 'lib'),
+       };
+       return config;
+     },
+   };
+   ```
+
+4. **Handle Prisma Client Generation Issues:**
+   ```bash
+   # If Prisma client is not found
+   cd backend
+
+   # Clear Prisma cache
+   rm -rf node_modules/.prisma
+   rm -rf node_modules/@prisma
+
+   # Reinstall Prisma
+   npm install prisma @prisma/client --save-dev
+
+   # Generate client with verbose output
+   npx prisma generate --schema=./prisma/schema.prisma
+
+   # Verify generation
+   ls -la node_modules/.prisma/client/
+   ```
+
+5. **Fix Peer Dependency Conflicts:**
+   ```bash
+   # Check for conflicts
+   npm ls
+   # Look for UNMET PEER DEPENDENCY warnings
+
+   # Option 1: Use legacy peer deps (quick fix)
+   npm install --legacy-peer-deps
+
+   # Option 2: Use force (not recommended)
+   npm install --force
+
+   # Option 3: Update conflicting packages (recommended)
+   npm update package-name
+
+   # Option 4: Use npm overrides (package.json)
+   {
+     "overrides": {
+       "package-name": "^specific-version"
+     }
+   }
+   ```
+
+#### Issue 6: TypeScript Type Errors in Production Build
+
+**Symptom:** "Type error: Property 'xyz' does not exist on type" during `npm run build`
+
+**Diagnosis:**
+```bash
+# Run full type check
+npx tsc --noEmit
+
+# Check TypeScript configuration
+npx tsc --showConfig
+
+# Find all type errors with details
+npx tsc --noEmit --pretty false | tee type-errors.log
+
+# Check specific file
+npx tsc --noEmit path/to/file.ts
+```
+
+**Solutions:**
+
+1. **Fix Strict Type Issues:**
+   ```typescript
+   // Problem: Accessing property on potentially undefined object
+   const user = await prisma.user.findUnique({ where: { id } });
+   console.log(user.name); // Error: Object is possibly 'null'
+
+   // Solution 1: Optional chaining
+   console.log(user?.name);
+
+   // Solution 2: Null assertion (use with caution)
+   console.log(user!.name);
+
+   // Solution 3: Proper null check (recommended)
+   if (user) {
+     console.log(user.name);
+   }
+
+   // Problem: Type mismatch in function parameters
+   function greet(name: string) {
+     return `Hello, ${name}`;
+   }
+   const username: string | null = getUsername();
+   greet(username); // Error: Argument of type 'string | null' is not assignable
+
+   // Solution: Type guard
+   if (username) {
+     greet(username);
+   }
+   ```
+
+2. **Fix Missing Type Definitions:**
+   ```bash
+   # Install type definitions for packages that don't include them
+   npm install --save-dev @types/node
+   npm install --save-dev @types/react
+   npm install --save-dev @types/express
+
+   # For custom modules without types
+   // Create types/custom.d.ts
+   declare module 'untyped-package' {
+     export function someFunction(): void;
+   }
+   ```
+
+3. **Configure TypeScript for Better DX:**
+   ```json
+   // tsconfig.json - recommended settings
+   {
+     "compilerOptions": {
+       "target": "ES2022",
+       "lib": ["ES2022", "DOM", "DOM.Iterable"],
+       "module": "ESNext",
+       "moduleResolution": "bundler",
+       "strict": true,
+       "esModuleInterop": true,
+       "skipLibCheck": true,  // Skip checking node_modules types
+       "forceConsistentCasingInFileNames": true,
+       "resolveJsonModule": true,
+       "isolatedModules": true,
+       "incremental": true,  // Faster rebuilds
+       "noUnusedLocals": true,
+       "noUnusedParameters": true,
+       "noFallthroughCasesInSwitch": true,
+       "allowJs": false,  // Enforce TypeScript
+       "checkJs": false
+     }
+   }
+   ```
+
+### WebSocket and Real-Time Communication Issues
+
+#### Issue 7: WebSocket Connection Failures
+
+**Symptom:** "WebSocket connection to 'ws://localhost:5000' failed" in browser console
+
+**Comprehensive Diagnosis:**
+```bash
+# Backend: Check if Socket.IO server is initialized
+# Look for this in backend logs:
+grep -i "socket" backend/logs/*.log
+
+# Test WebSocket endpoint directly
+curl -i -N -H "Connection: Upgrade" -H "Upgrade: websocket" http://localhost:5000/socket.io/
+
+# Frontend: Check browser console for detailed errors
+# Open DevTools → Network → WS tab → Look for failed connections
+
+# Check CORS configuration
+curl -H "Origin: http://localhost:3000" -H "Access-Control-Request-Method: GET" -H "Access-Control-Request-Headers: X-Requested-With" -X OPTIONS -I http://localhost:5000/socket.io/
+
+# Verify backend is listening on correct port
+lsof -i -P | grep :5000
+```
+
+**Advanced Solutions:**
+
+1. **Fix Socket.IO CORS Configuration:**
+   ```typescript
+   // In backend/src/server.ts or socket configuration file
+   import { Server } from 'socket.io';
+   import { createServer } from 'http';
+
+   const httpServer = createServer(app);
+   const io = new Server(httpServer, {
+     cors: {
+       origin: [
+         'http://localhost:3000',
+         'http://localhost:3001',
+         process.env.CLIENT_URL
+       ].filter(Boolean),
+       methods: ['GET', 'POST'],
+       credentials: true,
+       allowedHeaders: ['Content-Type', 'Authorization']
+     },
+     // Connection settings
+     pingTimeout: 60000,
+     pingInterval: 25000,
+     transports: ['websocket', 'polling'],  // Try websocket first
+     // Enable upgrade from polling to websocket
+     allowUpgrades: true,
+     // Cookie settings for sticky sessions
+     cookie: {
+       name: 'io',
+       httpOnly: true,
+       sameSite: 'lax'
+     }
+   });
+   ```
+
+2. **Implement Reconnection Logic on Frontend:**
+   ```typescript
+   // In frontend/lib/websocket-context.tsx
+   import { io, Socket } from 'socket.io-client';
+   import { useEffect, useState } from 'react';
+
+   export function useWebSocket() {
+     const [socket, setSocket] = useState<Socket | null>(null);
+     const [isConnected, setIsConnected] = useState(false);
+     const [reconnectAttempt, setReconnectAttempt] = useState(0);
+
+     useEffect(() => {
+       const socketInstance = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
+         transports: ['websocket', 'polling'],
+         reconnection: true,
+         reconnectionAttempts: 10,
+         reconnectionDelay: 1000,
+         reconnectionDelayMax: 5000,
+         timeout: 20000,
+         autoConnect: true,
+         withCredentials: true,
+         auth: {
+           token: localStorage.getItem('accessToken')
+         }
+       });
+
+       socketInstance.on('connect', () => {
+         console.log('[WebSocket] Connected:', socketInstance.id);
+         setIsConnected(true);
+         setReconnectAttempt(0);
+       });
+
+       socketInstance.on('disconnect', (reason) => {
+         console.warn('[WebSocket] Disconnected:', reason);
+         setIsConnected(false);
+
+         if (reason === 'io server disconnect') {
+           // Server disconnected, manually reconnect
+           socketInstance.connect();
+         }
+       });
+
+       socketInstance.on('connect_error', (error) => {
+         console.error('[WebSocket] Connection Error:', error.message);
+         setReconnectAttempt(prev => prev + 1);
+
+         // If auth error, refresh token and retry
+         if (error.message.includes('authentication')) {
+           refreshAuthToken().then(() => {
+             socketInstance.auth = {
+               token: localStorage.getItem('accessToken')
+             };
+             socketInstance.connect();
+           });
+         }
+       });
+
+       socketInstance.on('reconnect', (attemptNumber) => {
+         console.log('[WebSocket] Reconnected after', attemptNumber, 'attempts');
+       });
+
+       socketInstance.on('reconnect_attempt', (attemptNumber) => {
+         console.log('[WebSocket] Reconnection attempt', attemptNumber);
+       });
+
+       socketInstance.on('reconnect_error', (error) => {
+         console.error('[WebSocket] Reconnection error:', error);
+       });
+
+       socketInstance.on('reconnect_failed', () => {
+         console.error('[WebSocket] Reconnection failed after all attempts');
+         // Notify user to refresh page
+       });
+
+       setSocket(socketInstance);
+
+       return () => {
+         socketInstance.disconnect();
+       };
+     }, []);
+
+     return { socket, isConnected, reconnectAttempt };
+   }
+   ```
+
+3. **Handle WebSocket Behind Reverse Proxy (Nginx):**
+   ```nginx
+   # /etc/nginx/sites-available/nestquarter
+   server {
+     listen 80;
+     server_name api.nestquarter.com;
+
+     # WebSocket specific headers
+     location /socket.io/ {
+       proxy_pass http://localhost:5000;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection "upgrade";
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $scheme;
+
+       # Timeout settings for long-lived connections
+       proxy_read_timeout 86400;
+       proxy_send_timeout 86400;
+       proxy_connect_timeout 86400;
+
+       # Disable buffering for WebSocket
+       proxy_buffering off;
+     }
+
+     # Regular HTTP endpoints
+     location / {
+       proxy_pass http://localhost:5000;
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+     }
+   }
+   ```
+
+4. **Debug WebSocket Events:**
+   ```typescript
+   // Add comprehensive logging
+   socket.onAny((eventName, ...args) => {
+     console.log('[WebSocket Event]', eventName, args);
+   });
+
+   socket.onAnyOutgoing((eventName, ...args) => {
+     console.log('[WebSocket Outgoing]', eventName, args);
+   });
+
+   // Monitor connection lifecycle
+   const events = [
+     'connect',
+     'disconnect',
+     'connect_error',
+     'connect_timeout',
+     'reconnect',
+     'reconnect_attempt',
+     'reconnecting',
+     'reconnect_error',
+     'reconnect_failed',
+     'ping',
+     'pong'
+   ];
+
+   events.forEach(event => {
+     socket.on(event, (...args) => {
+       console.log(`[WebSocket] ${event}:`, ...args);
+     });
+   });
+   ```
+
+### Environment Variable and Configuration Issues
+
+#### Issue 8: Environment Variables Not Loading
+
+**Symptom:** "undefined" values for environment variables, or features not working despite correct .env file
+
+**Diagnosis:**
+```bash
+# Check if .env files exist
+ls -la frontend/.env*
+ls -la backend/.env*
+
+# Print environment variables (be careful in production)
+# Frontend (Next.js)
+cd frontend
+npm run dev -- --debug 2>&1 | grep NEXT_PUBLIC
+
+# Backend
+cd backend
+node -e "console.log(process.env)" | grep -i database
+
+# Check for syntax errors in .env
+cat backend/.env | grep -E "^[^#]" | grep -v "^$"
+
+# Verify .env is not in .gitignore
+git check-ignore -v .env
+
+# Test loading with dotenv directly
+node -r dotenv/config -e "console.log(process.env.DATABASE_URL)"
+```
+
+**Solutions:**
+
+1. **Fix Next.js Environment Variable Loading:**
+   ```bash
+   # Next.js requires NEXT_PUBLIC_ prefix for client-side variables
+
+   # WRONG - won't work in browser
+   API_URL=http://localhost:5000
+
+   # CORRECT - accessible in browser
+   NEXT_PUBLIC_API_URL=http://localhost:5000
+
+   # Restart dev server after changing .env.local
+   # Next.js caches environment variables
+   pkill -f "next dev"
    npm run dev
    ```
 
-3. **Regenerate Prisma Client:**
+2. **Ensure Correct .env File Location:**
    ```bash
-   cd backend
-   npm run prisma:generate
+   # Frontend structure
+   frontend/
+   ├── .env.local          # Local overrides (gitignored)
+   ├── .env.development    # Development defaults
+   ├── .env.production     # Production defaults
+   └── .env                # Base file (optional)
+
+   # Backend structure
+   backend/
+   └── .env                # All backend config (gitignored)
+
+   # Next.js loads .env files in this order (later overrides earlier):
+   # 1. .env
+   # 2. .env.local
+   # 3. .env.[development|production]
+   # 4. .env.[development|production].local
    ```
 
-4. **TypeScript path mapping issues:**
-   - Check `tsconfig.json` paths configuration
-   - Restart TypeScript server in VS Code
-   - Command Palette → "TypeScript: Restart TS Server"
+3. **Fix Multiline Environment Variables:**
+   ```env
+   # Problem: Private keys with newlines
 
-### Build Errors
+   # Solution 1: Use \n explicitly
+   PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC\n-----END PRIVATE KEY-----"
 
-**Symptom:** Build fails with TypeScript or syntax errors
+   # Solution 2: Base64 encode
+   PRIVATE_KEY_BASE64="LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUVW..."
 
-**Solutions:**
-
-1. **Check TypeScript version:**
-   ```bash
-   npx tsc --version
-   # Should be 5.x
+   # Then decode in code:
+   const privateKey = Buffer.from(process.env.PRIVATE_KEY_BASE64!, 'base64').toString('ascii');
    ```
 
-2. **Run type checking:**
-   ```bash
-   # Frontend
-   cd frontend
-   npx tsc --noEmit
+4. **Validate Environment Variables on Startup:**
+   ```typescript
+   // In backend/src/config/env.ts
+   import { z } from 'zod';
 
-   # Backend
-   cd backend
-   npx tsc --noEmit
+   const envSchema = z.object({
+     NODE_ENV: z.enum(['development', 'production', 'test']),
+     PORT: z.string().regex(/^\d+$/).transform(Number),
+     DATABASE_URL: z.string().url(),
+     REDIS_URL: z.string().url(),
+     JWT_SECRET: z.string().min(32),
+     JWT_REFRESH_SECRET: z.string().min(32),
+     SENDGRID_API_KEY: z.string().optional(),
+     CLOUDINARY_CLOUD_NAME: z.string().optional(),
+   });
+
+   export function validateEnv() {
+     try {
+       const env = envSchema.parse(process.env);
+       console.log('✓ Environment variables validated successfully');
+       return env;
+     } catch (error) {
+       console.error('✗ Invalid environment variables:');
+       if (error instanceof z.ZodError) {
+         error.errors.forEach(err => {
+           console.error(`  - ${err.path.join('.')}: ${err.message}`);
+         });
+       }
+       process.exit(1);
+     }
+   }
+
+   // Call in server.ts before starting
+   validateEnv();
    ```
 
-3. **Update dependencies:**
-   ```bash
-   npm update
-   # Or for major updates
-   npm outdated
-   npm install package@latest
+5. **Fix Docker Environment Variables:**
+   ```dockerfile
+   # In Dockerfile, use ARG for build-time and ENV for runtime
+
+   # Build-time variables
+   ARG NODE_ENV=production
+
+   # Runtime variables
+   ENV NODE_ENV=${NODE_ENV}
+   ENV PORT=5000
+
+   # Pass from docker-compose.yml
    ```
 
-### WebSocket Connection Issues
+   ```yaml
+   # docker-compose.yml
+   version: '3.8'
+   services:
+     backend:
+       build: ./backend
+       env_file:
+         - ./backend/.env
+       environment:
+         - DATABASE_URL=${DATABASE_URL}
+         - REDIS_URL=redis://redis:6379
+       ports:
+         - "5000:5000"
+   ```
 
-**Symptom:** Real-time features not working, "WebSocket connection failed"
+### Build and Deployment Issues
+
+#### Issue 9: Production Build Failures
+
+**Symptom:** `npm run build` fails with errors, works fine in development
 
 **Diagnosis:**
-- Open browser console (F12)
-- Look for WebSocket connection errors
-- Check Network tab for WS connections
+```bash
+# Run build with verbose logging
+npm run build -- --debug 2>&1 | tee build.log
+
+# Check for build warnings
+npm run build 2>&1 | grep -i warning
+
+# Verify production dependencies are installed
+npm ls --production
+
+# Check disk space
+df -h
+
+# Check memory usage during build
+# Run in separate terminal while building
+watch -n 1 free -h
+
+# Test production build locally
+npm run build
+npm run start
+# Then test at http://localhost:3000
+```
 
 **Solutions:**
 
-1. **Backend not running:**
-   - Ensure backend server is running on correct port
-   - Verify NEXT_PUBLIC_SOCKET_URL matches backend URL
-
-2. **CORS issues:**
-   - Check backend CORS configuration
-   - Ensure frontend URL is in allowed origins
-
-3. **Firewall or proxy blocking:**
-   - Check if WebSocket connections are allowed
-   - Try without VPN or proxy
-
-### Email Sending Failures
-
-**Symptom:** Emails not being sent, SMTP errors
-
-**Solutions:**
-
-1. **SendGrid API key invalid:**
-   - Verify API key in `.env`
-   - Check SendGrid dashboard for key status
-   - Ensure key has proper permissions
-
-2. **Gmail SMTP issues:**
-   - Use App Password, not regular password
-   - Enable "Less secure app access" (not recommended)
-   - Check Gmail security settings
-
-3. **Email verification:**
-   - Sender email must be verified in SendGrid
-   - Check spam folder for test emails
-   - Review email service logs
-
-### Performance Issues
-
-**Symptom:** Slow page loads, high memory usage
-
-**Solutions:**
-
-1. **Database query optimization:**
+1. **Fix Next.js Build Memory Issues:**
    ```bash
-   # Enable Prisma query logging
-   # In backend, set log level to 'query'
+   # Increase Node.js memory limit
+   # In package.json scripts:
+   {
+     "scripts": {
+       "build": "NODE_OPTIONS='--max-old-space-size=4096' next build"
+     }
+   }
+
+   # Or set environment variable
+   export NODE_OPTIONS="--max-old-space-size=4096"
+   npm run build
    ```
 
-2. **Clear browser cache:**
-   - Hard refresh: Ctrl+Shift+R (Windows/Linux) or Cmd+Shift+R (macOS)
-   - Clear site data in DevTools
+2. **Fix Static Generation Errors:**
+   ```typescript
+   // In frontend/next.config.js
+   module.exports = {
+     // Disable static optimization for specific pages
+     experimental: {
+       isrMemoryCacheSize: 0, // Disable ISR caching
+     },
 
-3. **Check for memory leaks:**
-   - Use Chrome DevTools Memory profiler
-   - Look for detached DOM nodes
-   - Monitor WebSocket connections
+     // Handle missing environment variables gracefully
+     env: {
+       CUSTOM_VAR: process.env.CUSTOM_VAR || 'default_value',
+     },
 
-4. **Optimize images:**
-   - Use Next.js Image component
-   - Enable image optimization in next.config.js
-   - Compress images before upload
+     // Skip TypeScript/ESLint checks during build (not recommended)
+     typescript: {
+       ignoreBuildErrors: false, // Set to true only if absolutely necessary
+     },
+     eslint: {
+       ignoreDuringBuilds: false,
+     },
+   };
+   ```
+
+3. **Fix TypeScript Compilation Errors:**
+   ```bash
+   # Run full type check before build
+   npx tsc --noEmit --skipLibCheck false
+
+   # Check for circular dependencies
+   npx madge --circular --extensions ts,tsx src/
+
+   # Fix common issues
+   # 1. Remove unused imports
+   npx eslint --fix "**/*.{ts,tsx}"
+
+   # 2. Update deprecated APIs
+   npm outdated
+   npm update
+   ```
+
+4. **Optimize Build Performance:**
+   ```javascript
+   // next.config.js
+   module.exports = {
+     // Reduce bundle size
+     productionBrowserSourceMaps: false,
+
+     // Optimize images
+     images: {
+       formats: ['image/avif', 'image/webp'],
+       deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+       minimumCacheTTL: 60,
+     },
+
+     // Enable SWC minification (faster than Terser)
+     swcMinify: true,
+
+     // Optimize fonts
+     optimizeFonts: true,
+
+     // Reduce JavaScript bundle
+     compiler: {
+       removeConsole: process.env.NODE_ENV === 'production',
+     },
+   };
+   ```
+
+#### Issue 10: Deployment-Specific Errors
+
+**Symptom:** Works locally but fails in production (Vercel, Railway, etc.)
+
+**Diagnosis:**
+```bash
+# Check deployment logs
+# Vercel
+vercel logs <deployment-url>
+
+# Railway
+railway logs
+
+# Check environment variables in deployment platform
+vercel env ls
+railway variables
+
+# Test with production build locally
+NODE_ENV=production npm run build
+NODE_ENV=production npm run start
+
+# Check for differences in Node versions
+node --version
+# Compare with deployment platform's Node version
+```
+
+**Solutions:**
+
+1. **Fix Vercel Deployment Issues:**
+   ```json
+   // vercel.json
+   {
+     "buildCommand": "npm run build",
+     "devCommand": "npm run dev",
+     "installCommand": "npm install",
+     "framework": "nextjs",
+     "regions": ["iad1"],
+     "env": {
+       "NEXT_PUBLIC_API_URL": "https://api.yourapp.com"
+     },
+     "build": {
+       "env": {
+         "NODE_ENV": "production",
+         "NEXT_TELEMETRY_DISABLED": "1"
+       }
+     },
+     "functions": {
+       "app/api/**/*.ts": {
+         "memory": 3008,
+         "maxDuration": 60
+       }
+     },
+     "headers": [
+       {
+         "source": "/(.*)",
+         "headers": [
+           {
+             "key": "X-Content-Type-Options",
+             "value": "nosniff"
+           },
+           {
+             "key": "X-Frame-Options",
+             "value": "DENY"
+           }
+         ]
+       }
+     ]
+   }
+   ```
+
+2. **Fix Railway Backend Deployment:**
+   ```json
+   // railway.json (optional)
+   {
+     "$schema": "https://railway.app/railway.schema.json",
+     "build": {
+       "builder": "NIXPACKS",
+       "buildCommand": "npm run build"
+     },
+     "deploy": {
+       "startCommand": "npm run start",
+       "restartPolicyType": "ON_FAILURE",
+       "restartPolicyMaxRetries": 10
+     }
+   }
+   ```
+
+   ```toml
+   # Or use nixpacks.toml for more control
+   [phases.setup]
+   nixPkgs = ["nodejs-18_x", "python3"]
+
+   [phases.install]
+   cmds = ["npm ci"]
+
+   [phases.build]
+   cmds = ["npm run build", "npx prisma generate", "npx prisma migrate deploy"]
+
+   [start]
+   cmd = "npm run start"
+   ```
+
+3. **Handle Database Migrations in Production:**
+   ```bash
+   # In Railway, add build script that runs migrations
+   # package.json
+   {
+     "scripts": {
+       "build": "tsc",
+       "start": "node dist/server.js",
+       "railway:start": "npx prisma migrate deploy && npm run start"
+     }
+   }
+
+   # Set START_COMMAND in Railway to: npm run railway:start
+   ```
+
+4. **Fix CORS in Production:**
+   ```typescript
+   // backend/src/server.ts
+   import cors from 'cors';
+
+   const allowedOrigins = [
+     'http://localhost:3000',
+     process.env.CLIENT_URL,
+     'https://yourapp.vercel.app',
+     'https://www.yourapp.com'
+   ].filter(Boolean);
+
+   app.use(cors({
+     origin: (origin, callback) => {
+       // Allow requests with no origin (mobile apps, Postman, etc.)
+       if (!origin) return callback(null, true);
+
+       if (allowedOrigins.includes(origin)) {
+         callback(null, true);
+       } else {
+         console.warn('CORS blocked request from:', origin);
+         callback(new Error('Not allowed by CORS'));
+       }
+     },
+     credentials: true,
+     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+     allowedHeaders: ['Content-Type', 'Authorization'],
+     exposedHeaders: ['X-Total-Count'],
+     maxAge: 86400 // 24 hours
+   }));
+
+   // Handle preflight
+   app.options('*', cors());
+   ```
+
+### Security and Authentication Issues
+
+#### Issue 11: JWT Token Expiration and Refresh Problems
+
+**Symptom:** Users getting logged out unexpectedly, "Token expired" errors
+
+**Diagnosis:**
+```typescript
+// Add logging to track token lifecycle
+console.log('Token issued at:', new Date().toISOString());
+console.log('Token expires at:', new Date(Date.now() + 15 * 60 * 1000).toISOString());
+
+// Decode JWT to inspect
+const jwt = require('jsonwebtoken');
+const decoded = jwt.decode(token, { complete: true });
+console.log('Token payload:', decoded.payload);
+console.log('Token expiry:', new Date(decoded.payload.exp * 1000));
+```
+
+**Solutions:**
+
+1. **Implement Robust Token Refresh:**
+   ```typescript
+   // frontend/lib/api-client.ts
+   import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+
+   const api = axios.create({
+     baseURL: process.env.NEXT_PUBLIC_API_URL,
+     withCredentials: true
+   });
+
+   let isRefreshing = false;
+   let failedQueue: Array<{
+     resolve: (value?: unknown) => void;
+     reject: (reason?: any) => void;
+   }> = [];
+
+   const processQueue = (error: Error | null, token: string | null = null) => {
+     failedQueue.forEach(prom => {
+       if (error) {
+         prom.reject(error);
+       } else {
+         prom.resolve(token);
+       }
+     });
+     failedQueue = [];
+   };
+
+   // Request interceptor
+   api.interceptors.request.use(
+     (config: InternalAxiosRequestConfig) => {
+       const token = localStorage.getItem('accessToken');
+       if (token && config.headers) {
+         config.headers.Authorization = `Bearer ${token}`;
+       }
+       return config;
+     },
+     (error) => Promise.reject(error)
+   );
+
+   // Response interceptor
+   api.interceptors.response.use(
+     (response) => response,
+     async (error: AxiosError) => {
+       const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+       if (error.response?.status === 401 && !originalRequest._retry) {
+         if (isRefreshing) {
+           // Queue requests while refreshing
+           return new Promise((resolve, reject) => {
+             failedQueue.push({ resolve, reject });
+           })
+             .then(token => {
+               if (originalRequest.headers) {
+                 originalRequest.headers.Authorization = `Bearer ${token}`;
+               }
+               return api(originalRequest);
+             })
+             .catch(err => Promise.reject(err));
+         }
+
+         originalRequest._retry = true;
+         isRefreshing = true;
+
+         try {
+           const refreshToken = localStorage.getItem('refreshToken');
+           const { data } = await axios.post(
+             `${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh`,
+             { refreshToken }
+           );
+
+           localStorage.setItem('accessToken', data.accessToken);
+           localStorage.setItem('refreshToken', data.refreshToken);
+
+           api.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+           processQueue(null, data.accessToken);
+
+           if (originalRequest.headers) {
+             originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+           }
+
+           return api(originalRequest);
+         } catch (refreshError) {
+           processQueue(refreshError as Error, null);
+
+           // Refresh failed, log out user
+           localStorage.removeItem('accessToken');
+           localStorage.removeItem('refreshToken');
+           window.location.href = '/auth/login';
+
+           return Promise.reject(refreshError);
+         } finally {
+           isRefreshing = false;
+         }
+       }
+
+       return Promise.reject(error);
+     }
+   );
+
+   export default api;
+   ```
+
+2. **Implement Sliding Session:**
+   ```typescript
+   // backend/src/middleware/auth.middleware.ts
+   export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+     try {
+       const token = req.headers.authorization?.split(' ')[1];
+
+       if (!token) {
+         return res.status(401).json({ error: 'No token provided' });
+       }
+
+       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
+
+       // Check if token is close to expiry (within 5 minutes)
+       const tokenExp = decoded.exp!;
+       const now = Math.floor(Date.now() / 1000);
+       const timeUntilExpiry = tokenExp - now;
+
+       if (timeUntilExpiry < 300) {
+         // Issue new token
+         const newToken = jwt.sign(
+           { userId: decoded.userId, role: decoded.role },
+           process.env.JWT_SECRET!,
+           { expiresIn: '15m' }
+         );
+
+         // Send new token in response header
+         res.setHeader('X-New-Token', newToken);
+       }
+
+       req.user = decoded;
+       next();
+     } catch (error) {
+       if (error instanceof jwt.TokenExpiredError) {
+         return res.status(401).json({ error: 'Token expired', code: 'TOKEN_EXPIRED' });
+       }
+       return res.status(401).json({ error: 'Invalid token' });
+     }
+   };
+   ```
+
+#### Issue 12: Rate Limiting and Performance Under Load
+
+**Symptom:** API returns 429 Too Many Requests, slow response times during traffic spikes
+
+**Solutions:**
+
+1. **Implement Distributed Rate Limiting with Redis:**
+   ```typescript
+   // backend/src/middleware/rateLimiter.middleware.ts
+   import rateLimit from 'express-rate-limit';
+   import RedisStore from 'rate-limit-redis';
+   import { redis } from '../config/redis';
+
+   export const apiLimiter = rateLimit({
+     store: new RedisStore({
+       client: redis,
+       prefix: 'rl:api:',
+     }),
+     windowMs: 15 * 60 * 1000, // 15 minutes
+     max: 100, // Limit each IP to 100 requests per windowMs
+     message: 'Too many requests from this IP, please try again later',
+     standardHeaders: true,
+     legacyHeaders: false,
+     // Skip rate limiting for trusted IPs
+     skip: (req) => {
+       const trustedIPs = ['127.0.0.1', '::1'];
+       const ip = req.ip || req.socket.remoteAddress;
+       return trustedIPs.includes(ip!);
+     },
+     // Custom key generator (e.g., by user ID instead of IP)
+     keyGenerator: (req) => {
+       return req.user?.id || req.ip || 'unknown';
+     },
+     // Handle rate limit exceeded
+     handler: (req, res) => {
+       res.status(429).json({
+         error: 'Too many requests',
+         retryAfter: res.getHeader('Retry-After'),
+       });
+     },
+   });
+
+   // Stricter limits for authentication endpoints
+   export const authLimiter = rateLimit({
+     store: new RedisStore({
+       client: redis,
+       prefix: 'rl:auth:',
+     }),
+     windowMs: 15 * 60 * 1000,
+     max: 5, // Only 5 login attempts per 15 minutes
+     skipSuccessfulRequests: true, // Don't count successful requests
+   });
+   ```
+
+2. **Implement Request Caching:**
+   ```typescript
+   // backend/src/middleware/cache.middleware.ts
+   import { Request, Response, NextFunction } from 'express';
+   import { redis } from '../config/redis';
+
+   export const cacheMiddleware = (duration: number = 300) => {
+     return async (req: Request, res: Response, next: NextFunction) => {
+       // Only cache GET requests
+       if (req.method !== 'GET') {
+         return next();
+       }
+
+       // Generate cache key from URL and query params
+       const cacheKey = `cache:${req.originalUrl || req.url}`;
+
+       try {
+         // Check if cached response exists
+         const cachedResponse = await redis.get(cacheKey);
+
+         if (cachedResponse) {
+           console.log('[Cache] HIT:', cacheKey);
+           res.setHeader('X-Cache', 'HIT');
+           return res.json(JSON.parse(cachedResponse));
+         }
+
+         console.log('[Cache] MISS:', cacheKey);
+         res.setHeader('X-Cache', 'MISS');
+
+         // Store original json method
+         const originalJson = res.json.bind(res);
+
+         // Override json method to cache response
+         res.json = function(body: any) {
+           // Cache the response
+           redis.setex(cacheKey, duration, JSON.stringify(body))
+             .catch(err => console.error('[Cache] Error storing:', err));
+
+           // Send response
+           return originalJson(body);
+         };
+
+         next();
+       } catch (error) {
+         console.error('[Cache] Error:', error);
+         next();
+       }
+     };
+   };
+
+   // Usage in routes:
+   // app.get('/api/properties', cacheMiddleware(300), getProperties);
+   ```
+
+3. **Database Connection Pooling:**
+   ```typescript
+   // backend/prisma/schema.prisma
+   datasource db {
+     provider = "postgresql"
+     url      = env("DATABASE_URL")
+     // Configure connection pool
+     relationMode = "prisma"
+   }
+
+   // In DATABASE_URL:
+   // postgresql://user:password@host:5432/db?connection_limit=20&pool_timeout=20&connect_timeout=10
+   ```
+
+### Advanced Debugging Techniques
+
+#### Issue 13: Memory Leaks
+
+**Diagnosis:**
+```bash
+# Generate heap snapshot
+node --inspect backend/dist/server.js
+# Then open chrome://inspect and take heap snapshots
+
+# Use clinic.js for performance profiling
+npm install -g clinic
+clinic doctor -- node backend/dist/server.js
+
+# Monitor memory usage
+node --expose-gc --trace-gc backend/dist/server.js
+
+# Use autocannon for load testing
+npm install -g autocannon
+autocannon -c 100 -d 60 http://localhost:5000/api/properties
+```
+
+**Solutions:**
+
+1. **Prevent Common Memory Leaks:**
+   ```typescript
+   // Problem: Event listeners not cleaned up
+   useEffect(() => {
+     const handleResize = () => console.log('resized');
+     window.addEventListener('resize', handleResize);
+
+     // Solution: Cleanup function
+     return () => {
+       window.removeEventListener('resize', handleResize);
+     };
+   }, []);
+
+   // Problem: Timers not cleared
+   useEffect(() => {
+     const timer = setInterval(() => fetchData(), 5000);
+
+     // Solution: Clear on unmount
+     return () => {
+       clearInterval(timer);
+     };
+   }, []);
+
+   // Problem: Unclosed database connections
+   app.on('SIGTERM', async () => {
+     console.log('SIGTERM received, closing connections...');
+     await prisma.$disconnect();
+     await redis.quit();
+     server.close(() => {
+       console.log('Server closed');
+       process.exit(0);
+     });
+   });
+   ```
+
+This comprehensive troubleshooting guide covers real-world issues and advanced solutions. Each section provides detailed diagnosis steps and multiple solution approaches for complex problems.
 
 ## Deployment Guide
 

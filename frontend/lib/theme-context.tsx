@@ -84,9 +84,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [effectiveTheme]);
 
   const setTheme = (newTheme: Theme) => {
+    console.log('[Theme] Setting theme to:', newTheme);
+
+    const newEffectiveTheme = calculateEffectiveTheme(newTheme);
+    console.log('[Theme] Effective theme will be:', newEffectiveTheme);
+
+    // Update state
     setThemeState(newTheme);
-    setEffectiveTheme(calculateEffectiveTheme(newTheme));
+    setEffectiveTheme(newEffectiveTheme);
+
+    // Update localStorage
     localStorage.setItem('theme', newTheme);
+    console.log('[Theme] Saved to localStorage:', newTheme);
+
+    // IMMEDIATELY update DOM (don't wait for useEffect)
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(newEffectiveTheme);
+    console.log('[Theme] Applied class to HTML:', newEffectiveTheme);
+    console.log('[Theme] HTML classes now:', root.className);
   };
 
   const toggleTheme = () => {

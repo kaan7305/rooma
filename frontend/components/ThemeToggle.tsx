@@ -47,6 +47,7 @@ export default function ThemeToggle() {
                   <button
                     key={themeOption.value}
                     onClick={() => {
+                      console.log('[ThemeToggle] Button clicked for theme:', themeOption.value);
                       setTheme(themeOption.value);
                       setShowMenu(false);
                     }}

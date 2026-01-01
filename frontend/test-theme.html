@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+  <div class="p-8">
+    <h1 class="text-3xl font-bold mb-4">Theme Toggle Test</h1>
+    
+    <div class="space-y-4">
+      <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded">
+        <p>Current theme class on HTML: <span id="current-theme">Loading...</span></p>
+        <p>System preference: <span id="system-pref">Loading...</span></p>
+      </div>
+
+      <div class="space-x-2">
+        <button onclick="setTheme('light')" class="px-4 py-2 bg-blue-500 text-white rounded">Light</button>
+        <button onclick="setTheme('dark')" class="px-4 py-2 bg-gray-800 text-white rounded">Dark</button>
+        <button onclick="setTheme('system')" class="px-4 py-2 bg-purple-500 text-white rounded">System</button>
+      </div>
+
+      <div class="mt-8 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
+        <p>This box should change color based on theme</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateDisplay() {
+      const html = document.documentElement;
+      const hasLight = html.classList.contains('light');
+      const hasDark = html.classList.contains('dark');
+      const theme = hasDark ? 'dark' : hasLight ? 'light' : 'none';
+      document.getElementById('current-theme').textContent = theme;
+      
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.getElementById('system-pref').textContent = isDarkMode ? 'Dark' : 'Light';
+    }
+
+    function setTheme(theme) {
+      const html = document.documentElement;
+      
+      // Remove existing theme classes
+      html.classList.remove('light', 'dark');
+      
+      if (theme === 'light') {
+        html.classList.add('light');
+      } else if (theme === 'dark') {
+        html.classList.add('dark');
+      } else if (theme === 'system') {
+        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.classList.add(isDarkMode ? 'dark' : 'light');
+      }
+      
+      localStorage.setItem('theme', theme);
+      updateDisplay();
+    }
+
+    // Initialize
+    const savedTheme = localStorage.getItem('theme') || 'system';
+    setTheme(savedTheme);
+    
+    // Update display every 100ms to catch changes
+    setInterval(updateDisplay, 100);
+  </script>
+</body>
+</html>

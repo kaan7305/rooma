@@ -38,9 +38,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const savedTheme = localStorage.getItem('theme') as Theme;
     if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
       setThemeState(savedTheme);
-      setEffectiveTheme(calculateEffectiveTheme(savedTheme));
+      const effective = calculateEffectiveTheme(savedTheme);
+      setEffectiveTheme(effective);
+
+      // Ensure the class is applied (should already be from blocking script)
+      const root = window.document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(effective);
     } else {
-      setEffectiveTheme(getSystemTheme());
+      const systemTheme = getSystemTheme();
+      setEffectiveTheme(systemTheme);
+      setThemeState('system');
+
+      // Apply system theme
+      const root = window.document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(systemTheme);
     }
   }, []);
 

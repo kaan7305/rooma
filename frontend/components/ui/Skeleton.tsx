@@ -1,7 +1,7 @@
 export function Skeleton({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse bg-gray-200 rounded ${className}`}
+      className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`}
       role="status"
       aria-label="Loading"
     />
@@ -10,7 +10,7 @@ export function Skeleton({ className = '' }: { className?: string }) {
 
 export function PropertyCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden group">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden group">
       <Skeleton className="aspect-[4/3] w-full" />
       <div className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-2">
@@ -27,7 +27,7 @@ export function PropertyCardSkeleton() {
 
 export function PropertyDetailsSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Skeleton className="h-10 w-32" />
@@ -61,7 +61,7 @@ export function PropertyDetailsSkeleton() {
 
           {/* Booking Card Skeleton */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-24 space-y-4">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sticky top-24 space-y-4">
               <Skeleton className="h-8 w-32" />
               <Skeleton className="h-12 w-full" />
               <Skeleton className="h-12 w-full" />
@@ -87,7 +87,7 @@ export function SearchResultsSkeleton() {
 
 export function BookingCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden p-6 space-y-4">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden p-6 space-y-4">
       <div className="flex items-start gap-4">
         <Skeleton className="w-32 h-32 rounded-xl shrink-0" />
         <div className="flex-1 space-y-2">
@@ -106,7 +106,7 @@ export function BookingCardSkeleton() {
 
 export function ListCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 space-y-3">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-3">
       <div className="flex items-start justify-between">
         <div className="flex-1 space-y-2">
           <Skeleton className="h-6 w-1/2" />

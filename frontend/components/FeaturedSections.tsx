@@ -54,7 +54,7 @@ export default function FeaturedSections() {
         {/* Favorite Button */}
         <button
           onClick={(e) => toggleFavorite(e, property.id)}
-          className="absolute top-3 left-3 w-8 h-8 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
+          className="absolute top-3 left-3 w-8 h-8 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
         >
           <Heart
             className={`w-4 h-4 ${
@@ -65,7 +65,7 @@ export default function FeaturedSections() {
           />
         </button>
         {/* Duration Badge */}
-        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+        <div className="absolute top-3 right-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
           <span className="text-xs font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
             {property.duration}
           </span>
@@ -73,13 +73,13 @@ export default function FeaturedSections() {
       </div>
       <div className="space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-gray-900 line-clamp-1 flex-1">{property.title}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-1 flex-1">{property.title}</h3>
           <div className="flex items-center gap-1 shrink-0">
             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-semibold">{property.rating}</span>
+            <span className="text-sm font-semibold dark:text-gray-200">{property.rating}</span>
           </div>
         </div>
-        <p className="text-sm text-gray-600 flex items-center gap-1">
+        <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">
           <MapPin className="w-3 h-3" />
           {property.location}
         </p>
@@ -87,7 +87,7 @@ export default function FeaturedSections() {
           <span className="text-lg font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
             ${property.price.toLocaleString()}
           </span>
-          <span className="text-sm text-gray-600">/month</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">/month</span>
         </div>
       </div>
     </Link>
@@ -103,13 +103,13 @@ export default function FeaturedSections() {
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">New Listings</h2>
-              <p className="text-gray-600 text-sm">Just added this week</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">New Listings</h2>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Just added this week</p>
             </div>
           </div>
           <Link
             href="/search?sort=newest"
-            className="text-rose-600 hover:text-rose-700 font-semibold text-sm flex items-center gap-1"
+            className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-500 font-semibold text-sm flex items-center gap-1"
           >
             View all →
           </Link>
@@ -127,13 +127,13 @@ export default function FeaturedSections() {
               <DollarSign className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Best Value</h2>
-              <p className="text-gray-600 text-sm">Great properties at great prices</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Best Value</h2>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Great properties at great prices</p>
             </div>
           </div>
           <Link
             href="/search?sort=price-low"
-            className="text-rose-600 hover:text-rose-700 font-semibold text-sm flex items-center gap-1"
+            className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-500 font-semibold text-sm flex items-center gap-1"
           >
             View all →
           </Link>
@@ -151,13 +151,13 @@ export default function FeaturedSections() {
               <Award className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Top Rated</h2>
-              <p className="text-gray-600 text-sm">Highest rated by guests</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Top Rated</h2>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Highest rated by guests</p>
             </div>
           </div>
           <Link
             href="/search?sort=rating"
-            className="text-rose-600 hover:text-rose-700 font-semibold text-sm flex items-center gap-1"
+            className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-500 font-semibold text-sm flex items-center gap-1"
           >
             View all →
           </Link>
@@ -168,25 +168,25 @@ export default function FeaturedSections() {
       </section>
 
       {/* Explore by Location */}
-      <section className="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 md:p-12">
+      <section className="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl p-8 md:p-12">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Explore by Location</h2>
-          <p className="text-gray-600">Find your perfect sublet in popular cities</p>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Explore by Location</h2>
+          <p className="text-gray-600 dark:text-gray-300">Find your perfect sublet in popular cities</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {['New York', 'Boston', 'Los Angeles', 'San Francisco', 'Chicago', 'Seattle', 'Austin', 'Miami'].map((city) => (
             <Link
               key={city}
               href={`/search?location=${city}`}
-              className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all"
+              className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-700 p-6 shadow-md hover:shadow-xl transition-all"
             >
               <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <MapPin className="w-8 h-8 text-rose-600" />
+                <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900 dark:to-pink-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MapPin className="w-8 h-8 text-rose-600 dark:text-rose-400" />
                 </div>
                 <div className="text-center">
-                  <h3 className="font-bold text-gray-900 group-hover:text-rose-600 transition-colors">{city}</h3>
-                  <p className="text-xs text-gray-500">{cityPropertyCounts[city]}+ properties</p>
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">{city}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{cityPropertyCounts[city]}+ properties</p>
                 </div>
               </div>
             </Link>

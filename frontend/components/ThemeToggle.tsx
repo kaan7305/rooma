@@ -1,6 +1,6 @@
 'use client';
 
-import { Sun, Moon, Monitor } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/lib/theme-context';
 import { useState } from 'react';
 
@@ -11,7 +11,6 @@ export default function ThemeToggle() {
   const themes = [
     { value: 'light' as const, label: 'Light', icon: Sun },
     { value: 'dark' as const, label: 'Dark', icon: Moon },
-    { value: 'system' as const, label: 'System', icon: Monitor },
   ];
 
   return (
@@ -46,8 +45,15 @@ export default function ThemeToggle() {
                 return (
                   <button
                     key={themeOption.value}
-                    onClick={() => {
-                      console.log('[ThemeToggle] Button clicked for theme:', themeOption.value);
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('[ThemeToggle] ===== CLICK DEBUG =====');
+                      console.log('[ThemeToggle] Button label:', themeOption.label);
+                      console.log('[ThemeToggle] Button value:', themeOption.value);
+                      console.log('[ThemeToggle] Current theme:', theme);
+                      console.log('[ThemeToggle] About to call setTheme with:', themeOption.value);
+                      console.log('[ThemeToggle] =========================');
                       setTheme(themeOption.value);
                       setShowMenu(false);
                     }}
@@ -70,7 +76,6 @@ export default function ThemeToggle() {
             <div className="border-t border-gray-200 dark:border-gray-700 px-3 py-2">
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Current: {effectiveTheme === 'dark' ? 'Dark' : 'Light'}
-                {theme === 'system' && ' (Auto)'}
               </p>
             </div>
           </div>

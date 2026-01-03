@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
@@ -14,61 +14,40 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('system');
+  const [theme, setThemeState] = useState<Theme>('light');
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
-
-  // Check system preference
-  const getSystemTheme = (): 'light' | 'dark' => {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
-  };
-
-  // Calculate effective theme based on user preference and system settings
-  const calculateEffectiveTheme = (userTheme: Theme): 'light' | 'dark' => {
-    if (userTheme === 'system') {
-      return getSystemTheme();
-    }
-    return userTheme;
-  };
 
   // Initialize theme from localStorage
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-      setThemeState(savedTheme);
-      const effective = calculateEffectiveTheme(savedTheme);
-      setEffectiveTheme(effective);
+    // Force clean any invalid theme values
+    const savedTheme = localStorage.getItem('theme');
+    console.log('[Theme Init] Raw localStorage value:', savedTheme);
 
-      // Ensure the class is applied (should already be from blocking script)
-      const root = window.document.documentElement;
-      root.classList.remove('light', 'dark');
-      root.classList.add(effective);
-    } else {
-      const systemTheme = getSystemTheme();
-      setEffectiveTheme(systemTheme);
-      setThemeState('system');
-
-      // Apply system theme
-      const root = window.document.documentElement;
-      root.classList.remove('light', 'dark');
-      root.classList.add(systemTheme);
+    // If it's not exactly 'light' or 'dark', clear it
+    if (savedTheme !== 'light' && savedTheme !== 'dark') {
+      console.log('[Theme Init] Invalid theme detected, clearing and setting to light');
+      localStorage.removeItem('theme');
+      localStorage.setItem('theme', 'light');
     }
+
+    const validTheme = (localStorage.getItem('theme') as Theme) || 'light';
+    console.log('[Theme Init] Using theme:', validTheme);
+
+    setThemeState(validTheme);
+    setEffectiveTheme(validTheme);
+
+    // Apply the class to document - force remove ALL possible classes first
+    const root = window.document.documentElement;
+    root.className = root.className
+      .split(' ')
+      .filter(c => c !== 'light' && c !== 'dark')
+      .join(' ');
+    root.classList.add(validTheme);
+
+    console.log('[Theme Init] Final HTML classes:', root.className);
+    console.log('[Theme Init] Has light class:', root.classList.contains('light'));
+    console.log('[Theme Init] Has dark class:', root.classList.contains('dark'));
   }, []);
-
-  // Listen for system theme changes
-  useEffect(() => {
-    if (theme !== 'system') return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      setEffectiveTheme(e.matches ? 'dark' : 'light');
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
 
   // Apply theme to document
   useEffect(() => {
@@ -86,12 +65,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setTheme = (newTheme: Theme) => {
     console.log('[Theme] Setting theme to:', newTheme);
 
-    const newEffectiveTheme = calculateEffectiveTheme(newTheme);
-    console.log('[Theme] Effective theme will be:', newEffectiveTheme);
-
     // Update state
     setThemeState(newTheme);
-    setEffectiveTheme(newEffectiveTheme);
+    setEffectiveTheme(newTheme);
 
     // Update localStorage
     localStorage.setItem('theme', newTheme);
@@ -100,20 +76,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // IMMEDIATELY update DOM (don't wait for useEffect)
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
-    root.classList.add(newEffectiveTheme);
-    console.log('[Theme] Applied class to HTML:', newEffectiveTheme);
+    root.classList.add(newTheme);
+    console.log('[Theme] Applied class to HTML:', newTheme);
     console.log('[Theme] HTML classes now:', root.className);
   };
 
   const toggleTheme = () => {
-    if (theme === 'system') {
-      const currentEffective = calculateEffectiveTheme('system');
-      const newTheme = currentEffective === 'light' ? 'dark' : 'light';
-      setTheme(newTheme);
-    } else {
-      const newTheme = effectiveTheme === 'light' ? 'dark' : 'light';
-      setTheme(newTheme);
-    }
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
   };
 
   return (

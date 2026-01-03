@@ -35,20 +35,29 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                function getTheme() {
+                try {
                   const savedTheme = localStorage.getItem('theme');
-                  if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-                    if (savedTheme === 'system') {
-                      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                    }
-                    return savedTheme;
-                  }
-                  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                }
+                  console.log('[Blocking Script] Saved theme:', savedTheme);
 
-                const theme = getTheme();
-                document.documentElement.classList.remove('light', 'dark');
-                document.documentElement.classList.add(theme);
+                  // Clean up invalid theme values
+                  if (savedTheme !== 'light' && savedTheme !== 'dark') {
+                    console.log('[Blocking Script] Invalid theme, resetting to light');
+                    localStorage.setItem('theme', 'light');
+                  }
+
+                  const theme = localStorage.getItem('theme') || 'light';
+                  console.log('[Blocking Script] Using theme:', theme);
+
+                  // Remove both classes first
+                  document.documentElement.classList.remove('light', 'dark');
+                  // Add the correct theme
+                  document.documentElement.classList.add(theme);
+
+                  console.log('[Blocking Script] Applied classes:', document.documentElement.className);
+                } catch (e) {
+                  console.error('[Blocking Script] Error:', e);
+                  document.documentElement.classList.add('light');
+                }
               })();
             `,
           }}

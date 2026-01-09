@@ -7,6 +7,10 @@ import type {
   ConfirmPaymentInput,
   RefundPaymentInput,
 } from '../validators/payment.validator';
+import type { 
+  BookingRow, BookingUpdate, 
+  PropertyRow, UserRow 
+} from '../types/supabase-helpers';
 
 /**
  * Create a Stripe payment intent for a booking
@@ -20,7 +24,7 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
     .from('bookings')
     .select('*')
     .eq('id', booking_id)
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -30,15 +34,15 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
   const { data: property } = await supabase
     .from('properties')
     .select('id, title, host_id')
-    .eq('id', booking.property_id)
-    .single();
+    .eq('id', booking.property_id || '')
+    .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'host_id'> | null; error: any };
 
   // Get guest
   const { data: guest } = await supabase
     .from('users')
     .select('id, email, first_name, last_name')
-    .eq('id', booking.guest_id)
-    .single();
+    .eq('id', booking.guest_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'email' | 'first_name' | 'last_name'> | null; error: any };
 
   // Verify user is the guest
   if (booking.guest_id !== userId) {
@@ -82,13 +86,15 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
   });
 
   // Update booking with payment intent ID
-  await supabase
-    .from('bookings')
-    .update({
+  const updateData: BookingUpdate = {
       stripe_payment_intent_id: paymentIntent.id,
       payment_method: payment_method || 'card',
       payment_status: 'pending',
-    })
+  };
+  await (supabase
+    .from('bookings')
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any) as any)
     .eq('id', booking_id);
 
   return {
@@ -111,7 +117,7 @@ export const confirmPayment = async (bookingId: string, userId: string, data: Co
     .from('bookings')
     .select('id, guest_id, stripe_payment_intent_id, payment_status, total_cents')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: Pick<BookingRow, 'id' | 'guest_id' | 'stripe_payment_intent_id' | 'payment_status' | 'total_cents'> | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -136,12 +142,14 @@ export const confirmPayment = async (bookingId: string, userId: string, data: Co
   }
 
   // Update booking payment status
-  await supabase
-    .from('bookings')
-    .update({
+  const updateData: BookingUpdate = {
       payment_status: 'completed',
       booking_status: 'confirmed',
-    })
+  };
+  await (supabase
+    .from('bookings')
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any) as any)
     .eq('id', bookingId);
 
   return {
@@ -162,7 +170,7 @@ export const getPaymentDetails = async (bookingId: string, userId: string) => {
     .from('bookings')
     .select('*')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -172,8 +180,8 @@ export const getPaymentDetails = async (bookingId: string, userId: string) => {
   const { data: property } = await supabase
     .from('properties')
     .select('id, title, host_id')
-    .eq('id', booking.property_id)
-    .single();
+    .eq('id', booking.property_id || '')
+    .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'host_id'> | null; error: any };
 
   // Verify user is the guest or host
   if (booking.guest_id !== userId && property?.host_id !== userId) {
@@ -243,7 +251,7 @@ export const refundPayment = async (
     .from('bookings')
     .select('*')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -253,8 +261,8 @@ export const refundPayment = async (
   const { data: property } = await supabase
     .from('properties')
     .select('id, host_id')
-    .eq('id', booking.property_id)
-    .single();
+    .eq('id', booking.property_id || '')
+    .single() as { data: Pick<PropertyRow, 'id' | 'host_id'> | null; error: any };
 
   // Only host can issue refunds
   if (property?.host_id !== userId) {
@@ -310,12 +318,14 @@ export const refundPayment = async (
   // Update booking payment status
   const newPaymentStatus = refundAmount === booking.total_cents ? 'refunded' : 'partial';
 
-  await supabase
+  const updateData: BookingUpdate = {
+    payment_status: newPaymentStatus,
+    booking_status: 'cancelled',
+  };
+  await (supabase
     .from('bookings')
-    .update({
-      payment_status: newPaymentStatus,
-      booking_status: 'cancelled',
-    })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any) as any)
     .eq('id', bookingId);
 
   return {
@@ -349,12 +359,14 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
 
       if (bookingId) {
         // Update booking status
-        await supabase
-          .from('bookings')
-          .update({
+        const updateData: BookingUpdate = {
             payment_status: 'completed',
             booking_status: 'confirmed',
-          })
+        };
+        await (supabase
+          .from('bookings')
+          // @ts-expect-error - Supabase type inference issue with update()
+          .update(updateData as any) as any)
           .eq('id', bookingId);
       }
       break;
@@ -366,11 +378,13 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
 
       if (bookingId) {
         // Keep payment status as pending, but could add failed attempts tracking
-        await supabase
-          .from('bookings')
-          .update({
+        const updateData: BookingUpdate = {
             payment_status: 'pending',
-          })
+        };
+        await (supabase
+          .from('bookings')
+          // @ts-expect-error - Supabase type inference issue with update()
+          .update(updateData as any) as any)
           .eq('id', bookingId);
       }
       break;
@@ -386,19 +400,21 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
           .from('bookings')
           .select('id')
           .eq('stripe_payment_intent_id', paymentIntentId)
-          .maybeSingle();
+          .maybeSingle() as { data: Pick<BookingRow, 'id'> | null; error: any };
 
         if (booking) {
           // Check if full or partial refund
           const isFullRefund = charge.amount_refunded === charge.amount;
 
-          await supabase
-            .from('bookings')
-            .update({
+          const updateData: BookingUpdate = {
               payment_status: isFullRefund ? 'refunded' : 'partial',
               booking_status: 'cancelled',
-            })
-            .eq('id', booking.id);
+          };
+          await (supabase
+            .from('bookings')
+            // @ts-expect-error - Supabase type inference issue with update()
+            .update(updateData as any) as any)
+            .eq('id', booking.id || '');
         }
       }
       break;

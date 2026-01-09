@@ -5,6 +5,13 @@ import type {
   UploadStudentIdInput,
   UploadGovernmentIdInput,
 } from '../validators/user.validator';
+import type { 
+  UserRow, UserUpdate, 
+  PropertyRow, PropertyPhotoRow, ReviewRow,
+  StudentVerificationRow, StudentVerificationInsert, 
+  IdentityVerificationRow, IdentityVerificationInsert,
+  UserSettingsRow, UserSettingsInsert, UserSettingsUpdate
+} from '../types/supabase-helpers';
 
 /**
  * Get authenticated user's own profile
@@ -14,7 +21,7 @@ export const getMyProfile = async (userId: string) => {
     .from('users')
     .select('id, email, first_name, last_name, user_type, phone, phone_verified, email_verified, date_of_birth, profile_photo_url, bio, student_verified, id_verified, created_at, updated_at, last_login')
     .eq('id', userId)
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'email' | 'first_name' | 'last_name' | 'user_type' | 'phone' | 'phone_verified' | 'email_verified' | 'date_of_birth' | 'profile_photo_url' | 'bio' | 'student_verified' | 'id_verified' | 'created_at' | 'updated_at' | 'last_login'> | null; error: any };
 
   if (findError || !user) {
     throw new NotFoundError('User not found');
@@ -27,15 +34,21 @@ export const getMyProfile = async (userId: string) => {
  * Update user profile
  */
 export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
+  const updateData: UserUpdate = {
+      ...data,
+    updated_at: new Date().toISOString(),
+  } as UserUpdate;
+  if (data.date_of_birth) {
+    updateData.date_of_birth = data.date_of_birth instanceof Date ? data.date_of_birth.toISOString() : data.date_of_birth;
+  }
+
   const { data: user, error: updateError } = await supabase
     .from('users')
-    .update({
-      ...data,
-      updated_at: new Date().toISOString(),
-    })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', userId)
     .select('id, email, first_name, last_name, user_type, phone, phone_verified, email_verified, date_of_birth, profile_photo_url, bio, student_verified, id_verified, created_at, updated_at')
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'email' | 'first_name' | 'last_name' | 'user_type' | 'phone' | 'phone_verified' | 'email_verified' | 'date_of_birth' | 'profile_photo_url' | 'bio' | 'student_verified' | 'id_verified' | 'created_at' | 'updated_at'> | null; error: any };
 
   if (updateError || !user) {
     throw new NotFoundError('User not found');
@@ -53,7 +66,7 @@ export const getUserProfile = async (userId: string) => {
     .from('users')
     .select('id, first_name, last_name, profile_photo_url, bio, user_type, student_verified, id_verified, created_at')
     .eq('id', userId)
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url' | 'bio' | 'user_type' | 'student_verified' | 'id_verified' | 'created_at'> | null; error: any };
 
   if (userError || !user) {
     throw new NotFoundError('User not found');
@@ -65,7 +78,7 @@ export const getUserProfile = async (userId: string) => {
     .select('id, title, city, country, monthly_price_cents')
     .eq('host_id', userId)
     .eq('status', 'active')
-    .limit(6);
+    .limit(6) as { data: Array<Pick<PropertyRow, 'id' | 'title' | 'city' | 'country' | 'monthly_price_cents'>> | null; error: any };
 
   // Get first photo for each property
   const propertiesWithPhotos = await Promise.all(
@@ -73,10 +86,10 @@ export const getUserProfile = async (userId: string) => {
       const { data: photos } = await supabase
         .from('property_photos')
         .select('photo_url')
-        .eq('property_id', property.id)
+        .eq('property_id', property.id || '')
         .order('display_order', { ascending: true })
         .limit(1)
-        .single();
+        .maybeSingle() as { data: Pick<PropertyPhotoRow, 'photo_url'> | null; error: any };
 
       return {
         ...property,
@@ -90,12 +103,12 @@ export const getUserProfile = async (userId: string) => {
     .from('reviews')
     .select('overall_rating')
     .eq('reviewee_id', userId)
-    .eq('status', 'published');
+    .eq('status', 'published') as { data: Array<Pick<ReviewRow, 'overall_rating'>> | null; error: any };
 
   // Calculate average rating
   const avgRating =
     reviews && reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + Number(r.overall_rating), 0) / reviews.length
+      ? reviews.reduce((sum, r) => sum + Number(r.overall_rating || 0), 0) / reviews.length
       : null;
 
   return {
@@ -116,23 +129,25 @@ export const uploadStudentId = async (userId: string, data: UploadStudentIdInput
     .select('id')
     .eq('user_id', userId)
     .in('verification_status', ['pending', 'approved'])
-    .maybeSingle();
+    .maybeSingle() as { data: Pick<StudentVerificationRow, 'id'> | null; error: any };
 
   if (existing) {
     throw new BadRequestError('Student verification already submitted or approved');
   }
 
-  const { data: verification, error: createError } = await supabase
-    .from('student_verifications')
-    .insert({
+  const verificationData: StudentVerificationInsert = {
       user_id: userId,
       university_name: data.university_name,
       university_email: data.university_email,
       student_id_photo_url: data.student_id_photo_url,
       verification_status: 'pending',
-    })
+  };
+
+  const { data: verification, error: createError } = await supabase
+    .from('student_verifications')
+    .insert(verificationData as any)
     .select()
-    .single();
+    .single() as { data: StudentVerificationRow | null; error: any };
 
   if (createError || !verification) {
     throw new Error(createError?.message || 'Failed to create student verification');
@@ -151,25 +166,27 @@ export const uploadGovernmentId = async (userId: string, data: UploadGovernmentI
     .select('id')
     .eq('user_id', userId)
     .in('verification_status', ['pending', 'approved'])
-    .maybeSingle();
+    .maybeSingle() as { data: Pick<IdentityVerificationRow, 'id'> | null; error: any };
 
   if (existing) {
     throw new BadRequestError('ID verification already submitted or approved');
   }
 
   // Hash ID number for privacy (if provided, though not in current schema)
-  const { data: verification, error: createError } = await supabase
-    .from('identity_verifications')
-    .insert({
+  const verificationData: IdentityVerificationInsert = {
       user_id: userId,
       id_type: data.id_type,
       id_front_photo_url: data.id_front_photo_url,
-      id_back_photo_url: data.id_back_photo_url,
+    id_back_photo_url: data.id_back_photo_url || null,
       verification_status: 'pending',
       provider: 'manual',
-    })
+  };
+
+  const { data: verification, error: createError } = await supabase
+    .from('identity_verifications')
+    .insert(verificationData as any)
     .select()
-    .single();
+    .single() as { data: IdentityVerificationRow | null; error: any };
 
   if (createError || !verification) {
     throw new Error(createError?.message || 'Failed to create identity verification');
@@ -184,12 +201,14 @@ export const uploadGovernmentId = async (userId: string, data: UploadGovernmentI
 export const verifyEmail = async (userId: string, _token: string) => {
   // TODO: Implement token validation logic
   // For now, just mark as verified
+  const updateData: UserUpdate = { email_verified: true };
   const { data: user, error: updateError } = await supabase
     .from('users')
-    .update({ email_verified: true })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', userId)
     .select('id, email, email_verified')
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'email' | 'email_verified'> | null; error: any };
 
   if (updateError || !user) {
     throw new NotFoundError('User not found');
@@ -204,12 +223,14 @@ export const verifyEmail = async (userId: string, _token: string) => {
 export const verifyPhone = async (userId: string, _code: string) => {
   // TODO: Implement code validation logic with Twilio
   // For now, just mark as verified
+  const updateData: UserUpdate = { phone_verified: true };
   const { data: user, error: updateError } = await supabase
     .from('users')
-    .update({ phone_verified: true })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', userId)
     .select('id, phone, phone_verified')
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'phone' | 'phone_verified'> | null; error: any };
 
   if (updateError || !user) {
     throw new NotFoundError('User not found');
@@ -226,15 +247,16 @@ export const getUserSettings = async (userId: string) => {
     .from('user_settings')
     .select('*')
     .eq('user_id', userId)
-    .maybeSingle();
+    .maybeSingle() as { data: UserSettingsRow | null; error: any };
 
   // Create default settings if not exists
   if (!settings) {
+    const settingsData: UserSettingsInsert = { user_id: userId };
     const { data: newSettings, error: createError } = await supabase
       .from('user_settings')
-      .insert({ user_id: userId })
+      .insert(settingsData as any)
       .select()
-      .single();
+      .single() as { data: UserSettingsRow | null; error: any };
 
     if (createError || !newSettings) {
       throw new Error(createError?.message || 'Failed to create user settings');
@@ -273,19 +295,21 @@ export const updateUserSettings = async (
     .from('user_settings')
     .select('user_id')
     .eq('user_id', userId)
-    .maybeSingle();
+    .maybeSingle() as { data: Pick<UserSettingsRow, 'user_id'> | null; error: any };
 
   if (existing) {
     // Update existing
+    const updateData: UserSettingsUpdate = {
+      ...data,
+      updated_at: new Date().toISOString(),
+    };
     const { data: settings, error: updateError } = await supabase
       .from('user_settings')
-      .update({
-        ...data,
-        updated_at: new Date().toISOString(),
-      })
+      // @ts-expect-error - Supabase type inference issue with update()
+      .update(updateData as any)
       .eq('user_id', userId)
       .select()
-      .single();
+      .single() as { data: UserSettingsRow | null; error: any };
 
     if (updateError || !settings) {
       throw new Error(updateError?.message || 'Failed to update user settings');
@@ -294,19 +318,20 @@ export const updateUserSettings = async (
     return settings;
   } else {
     // Create new
+    const settingsData: UserSettingsInsert = {
+      user_id: userId,
+      ...data,
+    } as UserSettingsInsert;
     const { data: settings, error: createError } = await supabase
       .from('user_settings')
-      .insert({
-        user_id: userId,
-        ...data,
-      })
+      .insert(settingsData as any)
       .select()
-      .single();
+      .single() as { data: UserSettingsRow | null; error: any };
 
     if (createError || !settings) {
       throw new Error(createError?.message || 'Failed to create user settings');
     }
 
-    return settings;
+  return settings;
   }
 };

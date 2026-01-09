@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../types/database.types';
 import config from './env';
 
 // Supabase Client singleton
 declare global {
   // eslint-disable-next-line no-var
-  var supabase: ReturnType<typeof createClient> | undefined;
+  var supabase: ReturnType<typeof createClient<Database>> | undefined;
 }
 
 const supabaseUrl = config.supabase.url;
@@ -16,7 +17,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase =
   global.supabase ||
-  createClient(supabaseUrl, supabaseServiceKey, {
+  createClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,

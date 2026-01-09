@@ -5,19 +5,25 @@ import type {
   UpdateWishlistInput,
   AddToWishlistInput,
 } from '../validators/wishlist.validator';
+import type { 
+  WishlistRow, WishlistInsert, WishlistUpdate, WishlistItemInsert,
+  WishlistItemRow, PropertyRow, PropertyPhotoRow, UserRow
+} from '../types/supabase-helpers';
 
 /**
  * Create new wishlist
  */
 export const createWishlist = async (userId: string, data: CreateWishlistInput) => {
-  const { data: wishlist, error: createError } = await supabase
-    .from('wishlists')
-    .insert({
+  const wishlistData: WishlistInsert = {
       user_id: userId,
       name: data.name,
-    })
+  };
+
+  const { data: wishlist, error: createError } = await supabase
+    .from('wishlists')
+    .insert(wishlistData as any)
     .select()
-    .single();
+    .single() as { data: WishlistRow | null; error: any };
 
   if (createError || !wishlist) {
     throw new Error(createError?.message || 'Failed to create wishlist');
@@ -34,7 +40,7 @@ export const getUserWishlists = async (userId: string) => {
     .from('wishlists')
     .select('*')
     .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) as { data: WishlistRow[] | null; error: any };
 
   if (error) {
     throw new Error(error.message);
@@ -46,8 +52,8 @@ export const getUserWishlists = async (userId: string) => {
       const { data: items } = await supabase
         .from('wishlist_items')
         .select('property_id, added_at')
-        .eq('wishlist_id', wishlist.id)
-        .order('added_at', { ascending: false });
+        .eq('wishlist_id', wishlist.id || '')
+        .order('added_at', { ascending: false }) as { data: Array<Pick<WishlistItemRow, 'property_id' | 'added_at'>> | null; error: any };
 
       // Get property details for each item
       const itemsWithProperties = await Promise.all(
@@ -55,8 +61,8 @@ export const getUserWishlists = async (userId: string) => {
           const { data: property } = await supabase
             .from('properties')
             .select('id, title, city, country, monthly_price_cents, status')
-            .eq('id', item.property_id)
-            .single();
+            .eq('id', item.property_id || '')
+            .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'city' | 'country' | 'monthly_price_cents' | 'status'> | null; error: any };
 
           if (!property) return null;
 
@@ -64,22 +70,22 @@ export const getUserWishlists = async (userId: string) => {
           const { data: photos } = await supabase
             .from('property_photos')
             .select('photo_url')
-            .eq('property_id', property.id)
+            .eq('property_id', property.id || '')
             .order('display_order', { ascending: true })
-            .limit(1);
+            .limit(1) as { data: Array<Pick<PropertyPhotoRow, 'photo_url'>> | null; error: any };
 
           return {
             ...item,
-            property: {
+          property: {
               ...property,
               photos: photos || [],
-            },
+              },
           };
         })
       );
 
       return {
-        ...wishlist,
+    ...wishlist,
         items: itemsWithProperties.filter(i => i !== null),
         item_count: itemsWithProperties.filter(i => i !== null).length,
       };
@@ -97,7 +103,7 @@ export const getWishlistById = async (wishlistId: string, userId: string) => {
     .from('wishlists')
     .select('*')
     .eq('id', wishlistId)
-    .single();
+    .single() as { data: WishlistRow | null; error: any };
 
   if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
@@ -113,7 +119,7 @@ export const getWishlistById = async (wishlistId: string, userId: string) => {
     .from('wishlist_items')
     .select('property_id, added_at')
     .eq('wishlist_id', wishlistId)
-    .order('added_at', { ascending: false });
+    .order('added_at', { ascending: false }) as { data: Array<Pick<WishlistItemRow, 'property_id' | 'added_at'>> | null; error: any };
 
   // Get property details for each item
   const itemsWithProperties = await Promise.all(
@@ -121,8 +127,8 @@ export const getWishlistById = async (wishlistId: string, userId: string) => {
       const { data: property } = await supabase
         .from('properties')
         .select('id, title, description, property_type, city, country, bedrooms, bathrooms, max_guests, monthly_price_cents, status, host_id')
-        .eq('id', item.property_id)
-        .single();
+        .eq('id', item.property_id || '')
+        .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'description' | 'property_type' | 'city' | 'country' | 'bedrooms' | 'bathrooms' | 'max_guests' | 'monthly_price_cents' | 'status' | 'host_id'> | null; error: any };
 
       if (!property) return null;
 
@@ -130,16 +136,16 @@ export const getWishlistById = async (wishlistId: string, userId: string) => {
       const { data: photos } = await supabase
         .from('property_photos')
         .select('photo_url')
-        .eq('property_id', property.id)
+        .eq('property_id', property.id || '')
         .order('display_order', { ascending: true })
-        .limit(3);
+        .limit(3) as { data: Array<Pick<PropertyPhotoRow, 'photo_url'>> | null; error: any };
 
       // Get host
       const { data: host } = await supabase
         .from('users')
         .select('id, first_name, last_name, profile_photo_url')
-        .eq('id', property.host_id)
-        .single();
+        .eq('id', property.host_id || '')
+        .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
 
       return {
         ...item,
@@ -167,7 +173,7 @@ export const updateWishlist = async (wishlistId: string, userId: string, data: U
     .from('wishlists')
     .select('id, user_id')
     .eq('id', wishlistId)
-    .single();
+    .single() as { data: Pick<WishlistRow, 'id' | 'user_id'> | null; error: any };
 
   if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
@@ -177,12 +183,14 @@ export const updateWishlist = async (wishlistId: string, userId: string, data: U
     throw new ForbiddenError('You can only update your own wishlists');
   }
 
+  const updateData: WishlistUpdate = { name: data.name };
   const { data: updatedWishlist, error: updateError } = await supabase
     .from('wishlists')
-    .update({ name: data.name })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', wishlistId)
     .select()
-    .single();
+    .single() as { data: WishlistRow | null; error: any };
 
   if (updateError || !updatedWishlist) {
     throw new Error(updateError?.message || 'Failed to update wishlist');
@@ -193,7 +201,7 @@ export const updateWishlist = async (wishlistId: string, userId: string, data: U
     .from('wishlist_items')
     .select('property_id, added_at')
     .eq('wishlist_id', wishlistId)
-    .order('added_at', { ascending: false });
+    .order('added_at', { ascending: false }) as { data: Array<Pick<WishlistItemRow, 'property_id' | 'added_at'>> | null; error: any };
 
   // Get property details
   const itemsWithProperties = await Promise.all(
@@ -201,24 +209,24 @@ export const updateWishlist = async (wishlistId: string, userId: string, data: U
       const { data: property } = await supabase
         .from('properties')
         .select('id, title, city, country, monthly_price_cents')
-        .eq('id', item.property_id)
-        .single();
+        .eq('id', item.property_id || '')
+        .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'city' | 'country' | 'monthly_price_cents'> | null; error: any };
 
       if (!property) return null;
 
       const { data: photos } = await supabase
         .from('property_photos')
         .select('photo_url')
-        .eq('property_id', property.id)
+        .eq('property_id', property.id || '')
         .order('display_order', { ascending: true })
-        .limit(1);
+        .limit(1) as { data: Array<Pick<PropertyPhotoRow, 'photo_url'>> | null; error: any };
 
       return {
         ...item,
-        property: {
+          property: {
           ...property,
           photos: photos || [],
-        },
+              },
       };
     })
   );
@@ -237,7 +245,7 @@ export const deleteWishlist = async (wishlistId: string, userId: string) => {
     .from('wishlists')
     .select('id, user_id')
     .eq('id', wishlistId)
-    .single();
+    .single() as { data: Pick<WishlistRow, 'id' | 'user_id'> | null; error: any };
 
   if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
@@ -264,7 +272,7 @@ export const addToWishlist = async (wishlistId: string, userId: string, data: Ad
     .from('wishlists')
     .select('id, user_id')
     .eq('id', wishlistId)
-    .single();
+    .single() as { data: Pick<WishlistRow, 'id' | 'user_id'> | null; error: any };
 
   if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
@@ -279,7 +287,7 @@ export const addToWishlist = async (wishlistId: string, userId: string, data: Ad
     .from('properties')
     .select('id, status')
     .eq('id', data.property_id)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'id' | 'status'> | null; error: any };
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -291,21 +299,23 @@ export const addToWishlist = async (wishlistId: string, userId: string, data: Ad
     .select('*')
     .eq('wishlist_id', wishlistId)
     .eq('property_id', data.property_id)
-    .maybeSingle();
+    .maybeSingle() as { data: WishlistItemRow | null; error: any };
 
   if (existingItem) {
     throw new BadRequestError('Property already in wishlist');
   }
 
   // Add property to wishlist
-  const { data: wishlistItem, error: createError } = await supabase
-    .from('wishlist_items')
-    .insert({
+  const itemData: WishlistItemInsert = {
       wishlist_id: wishlistId,
       property_id: data.property_id,
-    })
+  };
+
+  const { data: wishlistItem, error: createError } = await supabase
+    .from('wishlist_items')
+    .insert(itemData as any)
     .select()
-    .single();
+    .single() as { data: WishlistItemRow | null; error: any };
 
   if (createError || !wishlistItem) {
     throw new Error(createError?.message || 'Failed to add property to wishlist');
@@ -316,7 +326,7 @@ export const addToWishlist = async (wishlistId: string, userId: string, data: Ad
     .from('properties')
     .select('id, title, description, property_type, city, country, bedrooms, bathrooms, max_guests, monthly_price_cents, status')
     .eq('id', data.property_id)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'description' | 'property_type' | 'city' | 'country' | 'bedrooms' | 'bathrooms' | 'max_guests' | 'monthly_price_cents' | 'status'> | null; error: any };
 
   // Get photos
   const { data: photos } = await supabase
@@ -324,7 +334,7 @@ export const addToWishlist = async (wishlistId: string, userId: string, data: Ad
     .select('photo_url')
     .eq('property_id', data.property_id)
     .order('display_order', { ascending: true })
-    .limit(3);
+    .limit(3) as { data: Array<Pick<PropertyPhotoRow, 'photo_url'>> | null; error: any };
 
   return {
     ...wishlistItem,
@@ -344,7 +354,7 @@ export const removeFromWishlist = async (wishlistId: string, propertyId: string,
     .from('wishlists')
     .select('id, user_id')
     .eq('id', wishlistId)
-    .single();
+    .single() as { data: Pick<WishlistRow, 'id' | 'user_id'> | null; error: any };
 
   if (wishlistError || !wishlist) {
     throw new NotFoundError('Wishlist not found');
@@ -360,7 +370,7 @@ export const removeFromWishlist = async (wishlistId: string, propertyId: string,
     .select('*')
     .eq('wishlist_id', wishlistId)
     .eq('property_id', propertyId)
-    .maybeSingle();
+    .maybeSingle() as { data: WishlistItemRow | null; error: any };
 
   if (itemError || !item) {
     throw new NotFoundError('Property not found in wishlist');
@@ -384,13 +394,13 @@ export const isPropertyWishlisted = async (userId: string, propertyId: string) =
   const { data: wishlists } = await supabase
     .from('wishlists')
     .select('id')
-    .eq('user_id', userId);
+    .eq('user_id', userId) as { data: Array<Pick<WishlistRow, 'id'>> | null; error: any };
 
   if (!wishlists || wishlists.length === 0) {
     return { is_wishlisted: false, wishlist_id: null };
   }
 
-  const wishlistIds = wishlists.map(w => w.id);
+  const wishlistIds = wishlists.map(w => w.id || '').filter(id => id);
 
   // Check if property is in any of user's wishlists
   const { data: wishlistItem } = await supabase
@@ -398,7 +408,7 @@ export const isPropertyWishlisted = async (userId: string, propertyId: string) =
     .select('wishlist_id')
     .eq('property_id', propertyId)
     .in('wishlist_id', wishlistIds)
-    .maybeSingle();
+    .maybeSingle() as { data: Pick<WishlistItemRow, 'wishlist_id'> | null; error: any };
 
   return {
     is_wishlisted: !!wishlistItem,
@@ -416,24 +426,26 @@ export const getOrCreateDefaultWishlist = async (userId: string) => {
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: true })
-    .limit(1);
+    .limit(1) as { data: WishlistRow[] | null; error: any };
 
   // Create if doesn't exist
   if (!existingWishlists || existingWishlists.length === 0) {
-    const { data: wishlist, error: createError } = await supabase
-      .from('wishlists')
-      .insert({
+    const wishlistData: WishlistInsert = {
         user_id: userId,
         name: 'My Wishlist',
-      })
+    };
+
+    const { data: wishlist, error: createError } = await supabase
+      .from('wishlists')
+      .insert(wishlistData as any)
       .select()
-      .single();
+      .single() as { data: WishlistRow | null; error: any };
 
     if (createError || !wishlist) {
       throw new Error(createError?.message || 'Failed to create default wishlist');
-    }
+  }
 
-    return wishlist;
+  return wishlist;
   }
 
   return existingWishlists[0];

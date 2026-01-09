@@ -1,5 +1,5 @@
 import { transporter, emailConfig } from '../config/email';
-import handlebars from 'handlebars';
+// import handlebars from 'handlebars'; // Reserved for future template support
 
 /**
  * Send generic email

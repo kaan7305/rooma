@@ -10,6 +10,7 @@ import conversationRoutes from './conversation.routes';
 import paymentRoutes from './payment.routes';
 import payoutRoutes from './payout.routes';
 import uploadRoutes from './upload.routes';
+import testRoutes from './test.routes';
 
 const router = Router();
 
@@ -45,5 +46,10 @@ router.use('/payouts', payoutRoutes);
 
 // Upload routes
 router.use('/upload', uploadRoutes);
+
+// Test routes (development only)
+if (process.env.NODE_ENV === 'development') {
+  router.use('/test', testRoutes);
+}
 
 export default router;

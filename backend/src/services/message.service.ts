@@ -5,6 +5,11 @@ import type {
   SendMessageInput,
   GetMessagesInput,
 } from '../validators/message.validator';
+import type { 
+  UserRow, PropertyRow, BookingRow, 
+  ConversationRow, ConversationInsert, ConversationUpdate,
+  MessageRow, MessageInsert, MessageUpdate
+} from '../types/supabase-helpers';
 
 /**
  * Create or get existing conversation
@@ -23,7 +28,7 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
     .from('users')
     .select('id')
     .eq('id', participant_id)
-    .single();
+    .single() as { data: Pick<UserRow, 'id'> | null; error: any };
 
   if (userError || !otherUser) {
     throw new NotFoundError('User not found');
@@ -35,7 +40,7 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
       .from('properties')
       .select('id')
       .eq('id', property_id)
-      .single();
+      .single() as { data: Pick<PropertyRow, 'id'> | null; error: any };
 
     if (propertyError || !property) {
       throw new NotFoundError('Property not found');
@@ -48,7 +53,7 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
       .from('bookings')
       .select('id, guest_id, property_id')
       .eq('id', booking_id)
-      .single();
+      .single() as { data: Pick<BookingRow, 'id' | 'guest_id' | 'property_id'> | null; error: any };
 
     if (bookingError || !booking) {
       throw new NotFoundError('Booking not found');
@@ -58,8 +63,8 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
     const { data: property } = await supabase
       .from('properties')
       .select('host_id')
-      .eq('id', booking.property_id)
-      .single();
+      .eq('id', booking.property_id || '')
+      .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
 
     if (!property) {
       throw new NotFoundError('Booking property not found');
@@ -78,8 +83,8 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
   let query = supabase
     .from('conversations')
     .select('*')
-    .eq('participant_1_id', part1)
-    .eq('participant_2_id', part2);
+    .eq('participant_1_id', part1 || '')
+    .eq('participant_2_id', part2 || '');
 
   if (property_id) {
     query = query.eq('property_id', property_id);
@@ -87,15 +92,18 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
     query = query.is('property_id', null);
   }
 
-  const { data: existingConversations } = await query.limit(1);
+  const { data: existingConversations } = await query.limit(1) as { data: ConversationRow[] | null; error: any };
 
   if (existingConversations && existingConversations.length > 0) {
     const existingConversation = existingConversations[0];
+    if (!existingConversation) {
+      throw new Error('Conversation not found');
+    }
 
     // Get participants
     const [participant1, participant2] = await Promise.all([
-      supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', existingConversation.participant_1_id).single(),
-      supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', existingConversation.participant_2_id).single(),
+      (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', existingConversation.participant_1_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
+      (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', existingConversation.participant_2_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
     ]);
 
     // Get property if exists
@@ -104,16 +112,16 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
       const { data: propData } = await supabase
         .from('properties')
         .select('id, title, city, country')
-        .eq('id', existingConversation.property_id)
-        .single();
+        .eq('id', existingConversation.property_id || '')
+        .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'city' | 'country'> | null; error: any };
 
       if (propData) {
         const { data: photos } = await supabase
           .from('property_photos')
           .select('photo_url')
-          .eq('property_id', propData.id)
+          .eq('property_id', propData.id || '')
           .order('display_order', { ascending: true })
-          .limit(1);
+          .limit(1) as { data: Array<{ photo_url: string }> | null; error: any };
         property = { ...propData, photos: photos || [] };
       }
     }
@@ -122,17 +130,17 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
     const { data: messages } = await supabase
       .from('messages')
       .select('*')
-      .eq('conversation_id', existingConversation.id)
+      .eq('conversation_id', existingConversation.id || '')
       .order('created_at', { ascending: false })
-      .limit(1);
+      .limit(1) as { data: MessageRow[] | null; error: any };
 
     // Get unread count
     const { count: unreadCount } = await supabase
       .from('messages')
       .select('*', { count: 'exact', head: true })
-      .eq('conversation_id', existingConversation.id)
+      .eq('conversation_id', existingConversation.id || '')
       .eq('recipient_id', userId)
-      .is('read_at', null);
+      .is('read_at', null) as { count: number | null; error: any };
 
     return {
       ...existingConversation,
@@ -145,16 +153,18 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
   }
 
   // Create new conversation
-  const { data: newConversation, error: createError } = await supabase
-    .from('conversations')
-    .insert({
-      participant_1_id: part1,
-      participant_2_id: part2,
+  const conversationData: ConversationInsert = {
+    participant_1_id: part1 || '',
+    participant_2_id: part2 || '',
       property_id: property_id || null,
       booking_id: booking_id || null,
-    })
+  };
+
+  const { data: newConversation, error: createError } = await supabase
+    .from('conversations')
+    .insert(conversationData as any)
     .select()
-    .single();
+    .single() as { data: ConversationRow | null; error: any };
 
   if (createError || !newConversation) {
     throw new Error(createError?.message || 'Failed to create conversation');
@@ -162,8 +172,8 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
 
   // Get participants
   const [participant1, participant2] = await Promise.all([
-    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', part1).single(),
-    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', part2).single(),
+    (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', part1 || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
+    (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', part2 || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
   ]);
 
   // Get property if exists
@@ -172,16 +182,16 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
     const { data: propData } = await supabase
       .from('properties')
       .select('id, title, city, country')
-      .eq('id', newConversation.property_id)
-      .single();
+      .eq('id', newConversation.property_id || '')
+      .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'city' | 'country'> | null; error: any };
 
     if (propData) {
       const { data: photos } = await supabase
         .from('property_photos')
         .select('photo_url')
-        .eq('property_id', propData.id)
+        .eq('property_id', propData.id || '')
         .order('display_order', { ascending: true })
-        .limit(1);
+        .limit(1) as { data: Array<{ photo_url: string }> | null; error: any };
       property = { ...propData, photos: photos || [] };
     }
   }
@@ -205,7 +215,7 @@ export const getUserConversations = async (userId: string) => {
     .from('conversations')
     .select('*')
     .or(`participant_1_id.eq.${userId},participant_2_id.eq.${userId}`)
-    .order('last_message_at', { ascending: false });
+    .order('last_message_at', { ascending: false }) as { data: ConversationRow[] | null; error: any };
 
   if (error) {
     throw new Error(error.message);
@@ -216,8 +226,8 @@ export const getUserConversations = async (userId: string) => {
     (conversations || []).map(async (conv) => {
       // Get participants
       const [participant1, participant2] = await Promise.all([
-        supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conv.participant_1_id).single(),
-        supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conv.participant_2_id).single(),
+        (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conv.participant_1_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
+        (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conv.participant_2_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
       ]);
 
       // Get property if exists
@@ -226,16 +236,16 @@ export const getUserConversations = async (userId: string) => {
         const { data: propData } = await supabase
           .from('properties')
           .select('id, title, city, country')
-          .eq('id', conv.property_id)
-          .single();
+          .eq('id', conv.property_id || '')
+          .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'city' | 'country'> | null; error: any };
 
         if (propData) {
           const { data: photos } = await supabase
             .from('property_photos')
             .select('photo_url')
-            .eq('property_id', propData.id)
+            .eq('property_id', propData.id || '')
             .order('display_order', { ascending: true })
-            .limit(1);
+            .limit(1) as { data: Array<{ photo_url: string }> | null; error: any };
           property = { ...propData, photos: photos || [] };
         }
       }
@@ -244,17 +254,17 @@ export const getUserConversations = async (userId: string) => {
       const { data: messages } = await supabase
         .from('messages')
         .select('*')
-        .eq('conversation_id', conv.id)
+        .eq('conversation_id', conv.id || '')
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(1) as { data: MessageRow[] | null; error: any };
 
       // Get unread count
       const { count: unreadCount } = await supabase
         .from('messages')
         .select('*', { count: 'exact', head: true })
-        .eq('conversation_id', conv.id)
+        .eq('conversation_id', conv.id || '')
         .eq('recipient_id', userId)
-        .is('read_at', null);
+        .is('read_at', null) as { count: number | null; error: any };
 
       // Determine the other participant
       const otherParticipant =
@@ -284,7 +294,7 @@ export const getConversationById = async (conversationId: string, userId: string
     .from('conversations')
     .select('*')
     .eq('id', conversationId)
-    .single();
+    .single() as { data: ConversationRow | null; error: any };
 
   if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
@@ -297,8 +307,8 @@ export const getConversationById = async (conversationId: string, userId: string
 
   // Get participants
   const [participant1, participant2] = await Promise.all([
-    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conversation.participant_1_id).single(),
-    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conversation.participant_2_id).single(),
+    (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conversation.participant_1_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
+    (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', conversation.participant_2_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
   ]);
 
   // Get property if exists
@@ -307,16 +317,16 @@ export const getConversationById = async (conversationId: string, userId: string
     const { data: propData } = await supabase
       .from('properties')
       .select('id, title, city, country')
-      .eq('id', conversation.property_id)
-      .single();
+      .eq('id', conversation.property_id || '')
+      .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'city' | 'country'> | null; error: any };
 
     if (propData) {
       const { data: photos } = await supabase
         .from('property_photos')
         .select('photo_url')
-        .eq('property_id', propData.id)
+        .eq('property_id', propData.id || '')
         .order('display_order', { ascending: true })
-        .limit(1);
+        .limit(1) as { data: Array<{ photo_url: string }> | null; error: any };
       property = { ...propData, photos: photos || [] };
     }
   }
@@ -327,7 +337,7 @@ export const getConversationById = async (conversationId: string, userId: string
     .select('*', { count: 'exact', head: true })
     .eq('conversation_id', conversationId)
     .eq('recipient_id', userId)
-    .is('read_at', null);
+    .is('read_at', null) as { count: number | null; error: any };
 
   const otherParticipant =
     participant1.data?.id === userId ? participant2.data : participant1.data;
@@ -356,7 +366,7 @@ export const sendMessage = async (
     .from('conversations')
     .select('id, participant_1_id, participant_2_id')
     .eq('id', conversationId)
-    .single();
+    .single() as { data: Pick<ConversationRow, 'id' | 'participant_1_id' | 'participant_2_id'> | null; error: any };
 
   if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
@@ -373,16 +383,18 @@ export const sendMessage = async (
       : conversation.participant_1_id;
 
   // Create message
-  const { data: message, error: messageError } = await supabase
-    .from('messages')
-    .insert({
+  const messageData: MessageInsert = {
       conversation_id: conversationId,
       sender_id: userId,
-      recipient_id: recipientId,
+    recipient_id: recipientId || '',
       message_text: data.message_text,
-    })
+  };
+
+  const { data: message, error: messageError } = await supabase
+    .from('messages')
+    .insert(messageData as any)
     .select()
-    .single();
+    .single() as { data: MessageRow | null; error: any };
 
   if (messageError || !message) {
     throw new Error(messageError?.message || 'Failed to create message');
@@ -390,20 +402,22 @@ export const sendMessage = async (
 
   // Get sender and recipient
   const [sender, recipient] = await Promise.all([
-    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', userId).single(),
-    supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', recipientId).single(),
+    (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', userId).single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
+    (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', recipientId || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any },
   ]);
 
   // Update conversation's last_message_at
-  await supabase
+  const updateData: ConversationUpdate = { last_message_at: new Date().toISOString() };
+  await (supabase
     .from('conversations')
-    .update({ last_message_at: new Date().toISOString() })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any) as any)
     .eq('id', conversationId);
 
   return {
     ...message,
-    sender: sender.data || null,
-    recipient: recipient.data || null,
+    sender: sender || null,
+    recipient: recipient || null,
   };
 };
 
@@ -421,7 +435,7 @@ export const getMessages = async (
     .from('conversations')
     .select('id, participant_1_id, participant_2_id')
     .eq('id', conversationId)
-    .single();
+    .single() as { data: Pick<ConversationRow, 'id' | 'participant_1_id' | 'participant_2_id'> | null; error: any };
 
   if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
@@ -447,16 +461,16 @@ export const getMessages = async (
       .from('messages')
       .select('created_at')
       .eq('id', before_id)
-      .single();
+      .single() as { data: Pick<MessageRow, 'created_at'> | null; error: any };
 
     if (beforeMessage) {
-      query = query.lt('created_at', beforeMessage.created_at);
+      query = query.lt('created_at', beforeMessage.created_at || '');
     }
   }
 
   query = query.order('created_at', { ascending: false }).range(skip, to);
 
-  const { data: messages, error: messagesError, count } = await query;
+  const { data: messages, error: messagesError, count } = await query as { data: MessageRow[] | null; error: any; count: number | null };
 
   if (messagesError) {
     throw new Error(messagesError.message);
@@ -466,14 +480,14 @@ export const getMessages = async (
   const messagesWithUsers = await Promise.all(
     (messages || []).map(async (msg) => {
       const [sender, recipient] = await Promise.all([
-        msg.sender_id ? supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', msg.sender_id).single() : { data: null },
-        msg.recipient_id ? supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', msg.recipient_id).single() : { data: null },
+        msg.sender_id ? (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', msg.sender_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any } : { data: null },
+        msg.recipient_id ? (await supabase.from('users').select('id, first_name, last_name, profile_photo_url').eq('id', msg.recipient_id || '').single()) as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any } : { data: null },
       ]);
 
       return {
         ...msg,
-        sender: sender.data || null,
-        recipient: recipient.data || null,
+        sender: sender || null,
+        recipient: recipient || null,
       };
     })
   );
@@ -499,7 +513,7 @@ export const markConversationAsRead = async (conversationId: string, userId: str
     .from('conversations')
     .select('id, participant_1_id, participant_2_id')
     .eq('id', conversationId)
-    .single();
+    .single() as { data: Pick<ConversationRow, 'id' | 'participant_1_id' | 'participant_2_id'> | null; error: any };
 
   if (convError || !conversation) {
     throw new NotFoundError('Conversation not found');
@@ -510,13 +524,15 @@ export const markConversationAsRead = async (conversationId: string, userId: str
   }
 
   // Mark all unread messages where user is the recipient as read
+  const updateData: MessageUpdate = { read_at: new Date().toISOString() };
   const { data: updatedMessages, error: updateError } = await supabase
     .from('messages')
-    .update({ read_at: new Date().toISOString() })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('conversation_id', conversationId)
     .eq('recipient_id', userId)
     .is('read_at', null)
-    .select();
+    .select() as { data: MessageRow[] | null; error: any };
 
   if (updateError) {
     throw new Error(updateError.message);

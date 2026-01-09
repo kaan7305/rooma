@@ -7,6 +7,11 @@ import type {
   SearchPropertiesInput,
   AddPhotoInput,
 } from '../validators/property.validator';
+import type { 
+  PropertyRow, PropertyInsert, PropertyUpdate, 
+  UserRow, PropertyPhotoRow, PropertyPhotoInsert,
+  BookingRow, ReviewRow, UniversityRow, PropertyAmenityInsert
+} from '../types/supabase-helpers';
 
 /**
  * Create new property listing
@@ -19,7 +24,7 @@ export const createProperty = async (hostId: string, data: CreatePropertyInput) 
     .from('users')
     .select('user_type')
     .eq('id', hostId)
-    .single();
+    .single() as { data: Pick<UserRow, 'user_type'> | null; error: any };
 
   if (hostError || !host || (host.user_type !== 'host' && host.user_type !== 'both')) {
     throw new ForbiddenError('Only hosts can create properties');
@@ -31,7 +36,7 @@ export const createProperty = async (hostId: string, data: CreatePropertyInput) 
       .from('universities')
       .select('id')
       .eq('id', university_id)
-      .single();
+      .single() as { data: Pick<UniversityRow, 'id'> | null; error: any };
 
     if (uniError || !university) {
       throw new NotFoundError('University not found');
@@ -39,17 +44,19 @@ export const createProperty = async (hostId: string, data: CreatePropertyInput) 
   }
 
   // Create property
-  const { data: property, error: createError } = await supabase
-    .from('properties')
-    .insert({
+  const propertyInsertData: PropertyInsert = {
       ...propertyData,
       host_id: hostId,
       status: PROPERTY_STATUS.PENDING_REVIEW, // Pending admin verification
-      nearest_university_id: university_id,
-      distance_to_university_km: distance_to_university_km,
-    })
+    nearest_university_id: university_id || null,
+    distance_to_university_km: distance_to_university_km || null,
+  };
+
+  const { data: property, error: createError } = await supabase
+    .from('properties')
+    .insert(propertyInsertData as any)
     .select()
-    .single();
+    .single() as { data: PropertyRow | null; error: any };
 
   if (createError || !property) {
     throw new Error(createError?.message || 'Failed to create property');
@@ -57,33 +64,33 @@ export const createProperty = async (hostId: string, data: CreatePropertyInput) 
 
   // Create property amenities if provided
   if (amenity_ids && amenity_ids.length > 0) {
-    const amenityData = amenity_ids.map((amenityId) => ({
+    const amenityData: PropertyAmenityInsert[] = amenity_ids.map((amenityId) => ({
       property_id: property.id,
       amenity_id: amenityId,
     }));
 
-    await supabase.from('property_amenities').insert(amenityData);
+    await supabase.from('property_amenities').insert(amenityData as any);
   }
 
   // Get amenities
   const { data: propertyAmenities } = await supabase
     .from('property_amenities')
-    .select('amenity_id, amenity:amenities(*)')
-    .eq('property_id', property.id);
+    .select('amenity_id')
+    .eq('property_id', property.id) as { data: Array<{ amenity_id: string }> | null; error: any };
 
   // Get nearest university
   const { data: nearestUniversity } = await supabase
     .from('universities')
     .select('*')
-    .eq('id', property.nearest_university_id)
-    .maybeSingle();
+    .eq('id', property.nearest_university_id || '')
+    .maybeSingle() as { data: UniversityRow | null; error: any };
 
   // Get host
   const { data: hostData } = await supabase
     .from('users')
     .select('id, first_name, last_name, profile_photo_url, student_verified, id_verified')
     .eq('id', hostId)
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url' | 'student_verified' | 'id_verified'> | null; error: any };
 
   return {
     ...property,
@@ -101,7 +108,7 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
     .from('properties')
     .select('*')
     .eq('id', propertyId)
-    .single();
+    .single() as { data: PropertyRow | null; error: any };
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -116,28 +123,28 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
   const { data: host } = await supabase
     .from('users')
     .select('id, first_name, last_name, profile_photo_url, bio, student_verified, id_verified, created_at')
-    .eq('id', property.host_id)
-    .single();
+    .eq('id', property.host_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url' | 'bio' | 'student_verified' | 'id_verified' | 'created_at'> | null; error: any };
 
   // Get photos
   const { data: photos } = await supabase
     .from('property_photos')
     .select('*')
     .eq('property_id', propertyId)
-    .order('display_order', { ascending: true });
+    .order('display_order', { ascending: true }) as { data: PropertyPhotoRow[] | null; error: any };
 
   // Get amenities
   const { data: propertyAmenities } = await supabase
     .from('property_amenities')
-    .select('amenity_id, amenity:amenities(*)')
-    .eq('property_id', propertyId);
+    .select('amenity_id')
+    .eq('property_id', propertyId) as { data: Array<{ amenity_id: string }> | null; error: any };
 
   // Get nearest university
   const { data: nearestUniversity } = await supabase
     .from('universities')
     .select('*')
-    .eq('id', property.nearest_university_id)
-    .maybeSingle();
+    .eq('id', property.nearest_university_id || '')
+    .maybeSingle() as { data: UniversityRow | null; error: any };
 
   // Get reviews
   const { data: reviews } = await supabase
@@ -146,7 +153,7 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
     .eq('property_id', propertyId)
     .eq('status', 'published')
     .order('created_at', { ascending: false })
-    .limit(10);
+    .limit(10) as { data: Array<Pick<ReviewRow, 'id' | 'overall_rating' | 'review_text' | 'created_at' | 'reviewer_id'>> | null; error: any };
 
   // Get reviewers for reviews
   const reviewsWithReviewers = await Promise.all(
@@ -154,8 +161,8 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
       const { data: reviewer } = await supabase
         .from('users')
         .select('id, first_name, last_name, profile_photo_url')
-        .eq('id', review.reviewer_id)
-        .single();
+        .eq('id', review.reviewer_id || '')
+        .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
 
       return {
         ...review,
@@ -169,7 +176,7 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
     .from('bookings')
     .select('check_in_date, check_out_date, booking_status')
     .eq('property_id', propertyId)
-    .in('booking_status', ['confirmed', 'completed']);
+    .in('booking_status', ['confirmed', 'completed']) as { data: Array<Pick<BookingRow, 'check_in_date' | 'check_out_date' | 'booking_status'>> | null; error: any };
 
   // Calculate average rating
   const avgRating =
@@ -264,22 +271,23 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
     };
   }
 
-  // Build orderBy clause
-  let orderBy: any = {};
-  switch (sort_by) {
-    case 'price_asc':
-      orderBy = { monthly_price_cents: 'asc' };
-      break;
-    case 'price_desc':
-      orderBy = { monthly_price_cents: 'desc' };
-      break;
-    case 'distance':
-      orderBy = { distance_to_university_km: 'asc' };
-      break;
-    case 'created_at':
-    default:
-      orderBy = { created_at: 'desc' };
-  }
+  // Build orderBy clause (not used in Supabase, handled via .order())
+  // Supabase uses .order() method instead of orderBy object
+  // let orderBy: any = {};
+  // switch (sort_by) {
+  //   case 'price_asc':
+  //     orderBy = { monthly_price_cents: 'asc' };
+  //     break;
+  //   case 'price_desc':
+  //     orderBy = { monthly_price_cents: 'desc' };
+  //     break;
+  //   case 'distance':
+  //     orderBy = { distance_to_university_km: 'asc' };
+  //     break;
+  //   case 'created_at':
+  //   default:
+  //     orderBy = { created_at: 'desc' };
+  // }
 
   // Build base query
   let query = supabase
@@ -341,7 +349,7 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
   const to = skip + limit - 1;
   query = query.order(orderColumn, { ascending: orderAscending }).range(skip, to);
 
-  const { data: propertiesData, error, count } = await query;
+  const { data: propertiesData, error, count } = await query as { data: PropertyRow[] | null; error: any; count: number | null };
 
   if (error) {
     throw new Error(error.message);
@@ -356,14 +364,14 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
       const { data: propertyAmenities } = await supabase
         .from('property_amenities')
         .select('property_id')
-        .eq('amenity_id', amenityId);
+        .eq('amenity_id', amenityId) as { data: Array<{ property_id: string }> | null; error: any };
       
-      (propertyAmenities || []).forEach(pa => propertyIdsWithAmenities.add(pa.property_id));
+      (propertyAmenities || []).forEach(pa => propertyIdsWithAmenities.add(pa.property_id || ''));
     }
 
     // Properties must have ALL specified amenities
     filteredProperties = filteredProperties.filter(p => 
-      amenity_ids.every(amenityId => propertyIdsWithAmenities.has(p.id))
+      amenity_ids.every(() => propertyIdsWithAmenities.has(p.id || ''))
     );
   }
 
@@ -372,7 +380,7 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
     const checkInDate = new Date(check_in).toISOString().split('T')[0];
     const checkOutDate = new Date(check_out).toISOString().split('T')[0];
 
-    const propertyIds = filteredProperties.map(p => p.id);
+    const propertyIds = filteredProperties.map(p => p.id || '').filter(id => id);
     
     // Get all bookings that overlap with the search period
     const { data: overlappingBookings } = await supabase
@@ -380,58 +388,47 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
       .select('property_id')
       .in('property_id', propertyIds)
       .in('booking_status', ['confirmed', 'completed'])
-      .or(`and(check_in_date.lte.${checkOutDate},check_out_date.gt.${checkInDate}),and(check_in_date.lt.${checkOutDate},check_out_date.gte.${checkOutDate}),and(check_in_date.gte.${checkInDate},check_out_date.lte.${checkOutDate})`);
+      .or(`and(check_in_date.lte.${checkOutDate},check_out_date.gt.${checkInDate}),and(check_in_date.lt.${checkOutDate},check_out_date.gte.${checkOutDate}),and(check_in_date.gte.${checkInDate},check_out_date.lte.${checkOutDate})`) as { data: Array<Pick<BookingRow, 'property_id'>> | null; error: any };
 
-    const bookedPropertyIds = new Set((overlappingBookings || []).map(b => b.property_id));
-    filteredProperties = filteredProperties.filter(p => !bookedPropertyIds.has(p.id));
+    const bookedPropertyIds = new Set((overlappingBookings || []).map(b => b.property_id || '').filter(id => id));
+    filteredProperties = filteredProperties.filter(p => !bookedPropertyIds.has(p.id || ''));
   }
 
   // Get related data for each property
   const properties = await Promise.all(
     filteredProperties.map(async (property) => {
-      const [host, photos, nearestUniversity, reviews] = await Promise.all([
-        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', property.host_id).single(),
-        supabase.from('property_photos').select('*').eq('property_id', property.id).order('display_order', { ascending: true }).limit(1),
-        property.nearest_university_id ? supabase.from('universities').select('id, name, city, country').eq('id', property.nearest_university_id).single() : { data: null },
-        supabase.from('reviews').select('overall_rating').eq('property_id', property.id).eq('status', 'published'),
+      const [hostResult, photosResult, nearestUniversityResult, reviewsResult] = await Promise.all([
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', property.host_id || '').single(),
+        supabase.from('property_photos').select('*').eq('property_id', property.id || '').order('display_order', { ascending: true }).limit(1),
+        property.nearest_university_id ? supabase.from('universities').select('id, name, city, country').eq('id', property.nearest_university_id || '').single() : { data: null },
+        supabase.from('reviews').select('overall_rating').eq('property_id', property.id || '').eq('status', 'published'),
       ]);
 
-      const avgRating =
-        reviews.data && reviews.data.length > 0
-          ? reviews.data.reduce((sum, r) => sum + Number(r.overall_rating), 0) / reviews.data.length
-          : null;
+      const host = hostResult.data as Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url' | 'student_verified' | 'id_verified'> | null;
+      const photos = photosResult.data as PropertyPhotoRow[] | null;
+      const nearestUniversity = nearestUniversityResult.data as Pick<UniversityRow, 'id' | 'name' | 'city' | 'country'> | null;
+      const reviews = reviewsResult.data as Array<Pick<ReviewRow, 'overall_rating'>> | null;
 
-      return {
+    const avgRating =
+        reviews && reviews.length > 0
+          ? reviews.reduce((sum: number, r) => sum + Number(r.overall_rating || 0), 0) / reviews.length
+        : null;
+
+    return {
         ...property,
-        host: host.data || null,
-        photos: photos.data || [],
-        nearest_university: nearestUniversity.data || null,
-        average_rating: avgRating,
-        total_reviews: reviews.data?.length || 0,
-      };
+        host: host || null,
+        photos: photos || [],
+        nearest_university: nearestUniversity || null,
+      average_rating: avgRating,
+        total_reviews: reviews?.length || 0,
+    };
     })
   );
 
   const total = count || 0;
 
-  // Add average rating to each property
-  const propertiesWithRatings = properties.map((property) => {
-    const avgRating =
-      property.reviews.length > 0
-        ? property.reviews.reduce((sum, r) => sum + Number(r.overall_rating), 0) / property.reviews.length
-        : null;
-
-    const { reviews, ...propertyData } = property;
-
-    return {
-      ...propertyData,
-      average_rating: avgRating,
-      total_reviews: reviews.length,
-    };
-  });
-
   return {
-    properties: propertiesWithRatings,
+    properties,
     pagination: {
       page,
       limit,
@@ -450,7 +447,7 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
     .from('properties')
     .select('host_id')
     .eq('id', propertyId)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
 
   if (propertyError || !existingProperty) {
     throw new NotFoundError('Property not found');
@@ -468,7 +465,7 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
       .from('universities')
       .select('id')
       .eq('id', university_id)
-      .single();
+      .single() as { data: Pick<UniversityRow, 'id'> | null; error: any };
 
     if (uniError || !university) {
       throw new NotFoundError('University not found');
@@ -476,23 +473,26 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
   }
 
   // Update property
+  const updateData: PropertyUpdate = {
+      ...propertyData,
+    nearest_university_id: university_id || null,
+    distance_to_university_km: distance_to_university_km || null,
+    updated_at: new Date().toISOString(),
+  };
+
   const { data: property, error: updateError } = await supabase
     .from('properties')
-    .update({
-      ...propertyData,
-      nearest_university_id: university_id,
-      distance_to_university_km: distance_to_university_km,
-      updated_at: new Date().toISOString(),
-    })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', propertyId)
     .select()
-    .single();
+    .single() as { data: PropertyRow | null; error: any };
 
   if (updateError || !property) {
     throw new Error(updateError?.message || 'Failed to update property');
   }
 
-  // Update amenities if provided
+      // Update amenities if provided
   if (amenity_ids !== undefined) {
     // Delete all existing amenities
     await supabase
@@ -502,34 +502,34 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
 
     // Create new amenities
     if (amenity_ids.length > 0) {
-      const amenityData = amenity_ids.map((amenityId) => ({
+      const amenityData: PropertyAmenityInsert[] = amenity_ids.map((amenityId) => ({
         property_id: propertyId,
         amenity_id: amenityId,
       }));
 
-      await supabase.from('property_amenities').insert(amenityData);
+      await supabase.from('property_amenities').insert(amenityData as any);
     }
   }
 
   // Get amenities
   const { data: propertyAmenities } = await supabase
     .from('property_amenities')
-    .select('amenity_id, amenity:amenities(*)')
-    .eq('property_id', propertyId);
+    .select('amenity_id')
+    .eq('property_id', propertyId) as { data: Array<{ amenity_id: string }> | null; error: any };
 
   // Get nearest university
   const { data: nearestUniversity } = await supabase
     .from('universities')
     .select('*')
-    .eq('id', property.nearest_university_id)
-    .maybeSingle();
+    .eq('id', property.nearest_university_id || '')
+    .maybeSingle() as { data: UniversityRow | null; error: any };
 
   // Get photos
   const { data: photos } = await supabase
     .from('property_photos')
     .select('*')
     .eq('property_id', propertyId)
-    .order('display_order', { ascending: true });
+    .order('display_order', { ascending: true }) as { data: PropertyPhotoRow[] | null; error: any };
 
   return {
     ...property,
@@ -548,7 +548,7 @@ export const deleteProperty = async (propertyId: string, hostId: string) => {
     .from('properties')
     .select('host_id')
     .eq('id', propertyId)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
 
   if (propertyError || !existingProperty) {
     throw new NotFoundError('Property not found');
@@ -563,19 +563,21 @@ export const deleteProperty = async (propertyId: string, hostId: string) => {
     .from('bookings')
     .select('*', { count: 'exact', head: true })
     .eq('property_id', propertyId)
-    .in('booking_status', ['confirmed', 'completed']);
+    .in('booking_status', ['confirmed', 'completed']) as { count: number | null; error: any };
 
   if ((activeBookings || 0) > 0) {
     throw new BadRequestError('Cannot delete property with active bookings');
   }
 
   // Soft delete by setting status to inactive
-  await supabase
-    .from('properties')
-    .update({
+  const updateData: PropertyUpdate = {
       status: PROPERTY_STATUS.INACTIVE,
-      updated_at: new Date().toISOString(),
-    })
+    updated_at: new Date().toISOString(),
+  };
+  await (supabase
+    .from('properties')
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any) as any)
     .eq('id', propertyId);
 
   return { message: 'Property deleted successfully' };
@@ -590,7 +592,7 @@ export const addPhoto = async (propertyId: string, hostId: string, data: AddPhot
     .from('properties')
     .select('host_id')
     .eq('id', propertyId)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -604,7 +606,7 @@ export const addPhoto = async (propertyId: string, hostId: string, data: AddPhot
   const { count: photoCount } = await supabase
     .from('property_photos')
     .select('*', { count: 'exact', head: true })
-    .eq('property_id', propertyId);
+    .eq('property_id', propertyId) as { count: number | null; error: any };
 
   // Limit to 20 photos per property
   if ((photoCount || 0) >= 20) {
@@ -614,16 +616,18 @@ export const addPhoto = async (propertyId: string, hostId: string, data: AddPhot
   // Set display order to last if not provided
   const displayOrder = data.display_order ?? (photoCount || 0);
 
-  const { data: photo, error: createError } = await supabase
-    .from('property_photos')
-    .insert({
+  const photoData: PropertyPhotoInsert = {
       property_id: propertyId,
       photo_url: data.photo_url,
-      caption: data.caption,
+    caption: data.caption || null,
       display_order: displayOrder,
-    })
+  };
+
+  const { data: photo, error: createError } = await supabase
+    .from('property_photos')
+    .insert(photoData as any)
     .select()
-    .single();
+    .single() as { data: PropertyPhotoRow | null; error: any };
 
   if (createError || !photo) {
     throw new Error(createError?.message || 'Failed to create photo');
@@ -641,7 +645,7 @@ export const deletePhoto = async (propertyId: string, photoId: string, hostId: s
     .from('properties')
     .select('host_id')
     .eq('id', propertyId)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -657,7 +661,7 @@ export const deletePhoto = async (propertyId: string, photoId: string, hostId: s
     .select('*')
     .eq('id', photoId)
     .eq('property_id', propertyId)
-    .maybeSingle();
+    .maybeSingle() as { data: PropertyPhotoRow | null; error: any };
 
   if (photoError || !photo) {
     throw new NotFoundError('Photo not found');
@@ -679,7 +683,7 @@ export const getAvailability = async (propertyId: string) => {
     .from('properties')
     .select('id')
     .eq('id', propertyId)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'id'> | null; error: any };
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -691,7 +695,7 @@ export const getAvailability = async (propertyId: string) => {
     .select('check_in_date, check_out_date, booking_status')
     .eq('property_id', propertyId)
     .in('booking_status', ['confirmed', 'completed'])
-    .order('check_in_date', { ascending: true });
+    .order('check_in_date', { ascending: true }) as { data: Array<Pick<BookingRow, 'check_in_date' | 'check_out_date' | 'booking_status'>> | null; error: any };
 
   return {
     property_id: property.id,
@@ -711,7 +715,7 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
     .from('properties')
     .select('id, status')
     .eq('id', propertyId)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'id' | 'status'> | null; error: any };
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -727,7 +731,7 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
     .eq('property_id', propertyId)
     .eq('status', 'published')
     .order('created_at', { ascending: false })
-    .range(skip, to);
+    .range(skip, to) as { data: ReviewRow[] | null; error: any; count: number | null };
 
   if (reviewsError) {
     throw new Error(reviewsError.message);
@@ -739,8 +743,8 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
       const { data: reviewer } = await supabase
         .from('users')
         .select('id, first_name, last_name, profile_photo_url')
-        .eq('id', review.reviewer_id)
-        .single();
+        .eq('id', review.reviewer_id || '')
+        .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
 
       return {
         ...review,
@@ -756,17 +760,17 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
     .from('reviews')
     .select('overall_rating, cleanliness_rating, accuracy_rating, communication_rating, location_rating, value_rating')
     .eq('property_id', propertyId)
-    .eq('status', 'published');
+    .eq('status', 'published') as { data: Array<Pick<ReviewRow, 'overall_rating' | 'cleanliness_rating' | 'accuracy_rating' | 'communication_rating' | 'location_rating' | 'value_rating'>> | null; error: any };
 
   const avgRatings =
-    allReviews.length > 0
+    allReviews && allReviews.length > 0
       ? {
-          overall: allReviews.reduce((sum, r) => sum + Number(r.overall_rating), 0) / allReviews.length,
-          cleanliness: allReviews.reduce((sum, r) => sum + Number(r.cleanliness_rating), 0) / allReviews.length,
-          accuracy: allReviews.reduce((sum, r) => sum + Number(r.accuracy_rating), 0) / allReviews.length,
-          communication: allReviews.reduce((sum, r) => sum + Number(r.communication_rating), 0) / allReviews.length,
-          location: allReviews.reduce((sum, r) => sum + Number(r.location_rating), 0) / allReviews.length,
-          value: allReviews.reduce((sum, r) => sum + Number(r.value_rating), 0) / allReviews.length,
+          overall: allReviews.reduce((sum, r) => sum + Number(r.overall_rating || 0), 0) / allReviews.length,
+          cleanliness: allReviews.reduce((sum, r) => sum + Number(r.cleanliness_rating || 0), 0) / allReviews.length,
+          accuracy: allReviews.reduce((sum, r) => sum + Number(r.accuracy_rating || 0), 0) / allReviews.length,
+          communication: allReviews.reduce((sum, r) => sum + Number(r.communication_rating || 0), 0) / allReviews.length,
+          location: allReviews.reduce((sum, r) => sum + Number(r.location_rating || 0), 0) / allReviews.length,
+          value: allReviews.reduce((sum, r) => sum + Number(r.value_rating || 0), 0) / allReviews.length,
         }
       : null;
 

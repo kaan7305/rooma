@@ -3,6 +3,7 @@ import { hashPassword, comparePassword } from '../utils/bcrypt';
 import { generateTokens, verifyRefreshToken } from '../utils/jwt';
 import { ConflictError, UnauthorizedError, NotFoundError } from '../utils/errors';
 import type { RegisterInput, LoginInput } from '../validators/auth.validator';
+import type { UserInsert, UserUpdate, UserRow } from '../types/supabase-helpers';
 
 /**
  * Register a new user
@@ -25,21 +26,23 @@ export const register = async (data: RegisterInput) => {
   const password_hash = await hashPassword(password);
 
   // Create user
-  const { data: user, error: createError } = await supabase
-    .from('users')
-    .insert({
+  const insertData: UserInsert = {
       email,
       password_hash,
       first_name,
       last_name,
       user_type,
-      phone,
-      date_of_birth,
+    phone: phone || null,
+    date_of_birth: date_of_birth ? date_of_birth.toISOString().split('T')[0] : null,
       email_verified: false,
       phone_verified: false,
-    })
+  };
+
+  const { data: user, error: createError } = await supabase
+    .from('users')
+    .insert(insertData as any)
     .select('id, email, first_name, last_name, user_type, phone, date_of_birth, email_verified, phone_verified, student_verified, id_verified, profile_photo_url, created_at')
-    .single();
+    .single() as { data: UserRow | null; error: any };
 
   if (createError || !user) {
     throw new Error(createError?.message || 'Failed to create user');
@@ -72,7 +75,7 @@ export const login = async (data: LoginInput) => {
     .from('users')
     .select('id, email, password_hash, first_name, last_name, user_type, phone, date_of_birth, email_verified, phone_verified, student_verified, id_verified, profile_photo_url, created_at')
     .eq('email', email)
-    .single();
+    .single() as { data: UserRow | null; error: any };
 
   if (findError || !user) {
     throw new UnauthorizedError('Invalid email or password');
@@ -91,10 +94,14 @@ export const login = async (data: LoginInput) => {
   }
 
   // Update last login
-  await supabase
+  const updateData: UserUpdate = {
+    last_login: new Date().toISOString(),
+  };
+  await (supabase
     .from('users')
-    .update({ last_login: new Date().toISOString() })
-    .eq('id', user.id);
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any) as any)
+    .eq('id', user.id || '');
 
   // Generate tokens
   const tokens = generateTokens({
@@ -124,7 +131,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
     .from('users')
     .select('id, email, user_type')
     .eq('id', decoded.userId)
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'email' | 'user_type'> | null; error: any };
 
   if (findError || !user) {
     throw new UnauthorizedError('User not found');
@@ -148,7 +155,7 @@ export const getCurrentUser = async (userId: string) => {
     .from('users')
     .select('id, email, first_name, last_name, user_type, phone, phone_verified, email_verified, date_of_birth, profile_photo_url, bio, student_verified, id_verified, created_at, updated_at, last_login')
     .eq('id', userId)
-    .single();
+    .single() as { data: UserRow | null; error: any };
 
   if (findError || !user) {
     throw new NotFoundError('User not found');

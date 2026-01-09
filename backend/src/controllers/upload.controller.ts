@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as uploadService from '../services/upload.service';
 import { BadRequestError, UnauthorizedError } from '../utils/errors';
 import supabase from '../config/supabase';
+import type { PropertyRow, PropertyPhotoInsert, PropertyPhotoRow, UserUpdate } from '../types/supabase-helpers';
 
 // Extend Request type to include file and files from multer
 interface MulterRequest extends Request {
@@ -43,12 +44,14 @@ export const uploadProfilePhoto = async (
     });
 
     // Update user's profile photo in database
+    const updateData: UserUpdate = { profile_photo_url: uploadResult.url };
     const { data: user, error: updateError } = await supabase
       .from('users')
-      .update({ profile_photo_url: uploadResult.url })
+      // @ts-expect-error - Supabase type inference issue with update()
+      .update(updateData as any)
       .eq('id', userId)
       .select('id, profile_photo_url')
-      .single();
+      .single() as { data: { id: string; profile_photo_url: string | null } | null; error: any };
 
     if (updateError || !user) {
       throw new Error(updateError?.message || 'Failed to update profile photo');
@@ -93,7 +96,7 @@ export const uploadPropertyPhotos = async (
       .from('properties')
       .select('host_id')
       .eq('id', property_id)
-      .single();
+      .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
 
     if (propertyError || !property) {
       throw new BadRequestError('Property not found');
@@ -116,21 +119,21 @@ export const uploadPropertyPhotos = async (
       .select('display_order')
       .eq('property_id', property_id)
       .order('display_order', { ascending: false })
-      .limit(1);
+      .limit(1) as { data: Array<{ display_order: number }> | null };
 
     const startOrder = existingPhotos && existingPhotos.length > 0 && existingPhotos[0] ? existingPhotos[0].display_order + 1 : 0;
 
     // Create photo records in database
     const photoRecordsData = uploadResults.map((result, index) => ({
-      property_id,
-      photo_url: result.url,
-      display_order: startOrder + index,
-    }));
+            property_id,
+            photo_url: result.url,
+            display_order: startOrder + index,
+    })) as PropertyPhotoInsert[];
 
     const { data: photoRecords, error: createError } = await supabase
       .from('property_photos')
-      .insert(photoRecordsData)
-      .select();
+      .insert(photoRecordsData as any)
+      .select() as { data: PropertyPhotoRow[] | null; error: any };
 
     if (createError || !photoRecords) {
       throw new Error(createError?.message || 'Failed to create photo records');
@@ -199,8 +202,8 @@ export const deletePropertyPhoto = async (
     const { data: photo, error: photoError } = await supabase
       .from('property_photos')
       .select('photo_url, property_id')
-      .eq('id', id)
-      .single();
+      .eq('id', id || '')
+      .single() as { data: Pick<PropertyPhotoRow, 'photo_url' | 'property_id'> | null; error: any };
 
     if (photoError || !photo) {
       throw new BadRequestError('Photo not found');
@@ -211,7 +214,7 @@ export const deletePropertyPhoto = async (
       .from('properties')
       .select('host_id')
       .eq('id', photo.property_id)
-      .single();
+      .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
 
     if (propertyError || !property) {
       throw new BadRequestError('Property not found');
@@ -234,7 +237,7 @@ export const deletePropertyPhoto = async (
     await supabase
       .from('property_photos')
       .delete()
-      .eq('id', id);
+      .eq('id', id || '');
 
     res.status(200).json({
       message: 'Photo deleted successfully',

@@ -3,6 +3,7 @@ import { verifyAccessToken } from '../utils/jwt';
 import { UnauthorizedError, ForbiddenError } from '../utils/errors';
 import supabase from '../config/supabase';
 import { USER_TYPES } from '../utils/constants';
+import type { UserRow } from '../types/supabase-helpers';
 
 /**
  * Middleware to require authentication
@@ -139,7 +140,7 @@ export const requireEmailVerified = async (
       .from('users')
       .select('email_verified')
       .eq('id', userId)
-      .single();
+      .single() as { data: Pick<UserRow, 'email_verified'> | null; error: any };
 
     if (findError || !user) {
       return next(new UnauthorizedError('User not found'));

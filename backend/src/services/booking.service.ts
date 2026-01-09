@@ -7,6 +7,7 @@ import type {
   CancelBookingInput,
   DeclineBookingInput,
 } from '../validators/booking.validator';
+import type { PropertyRow, BookingRow, BookingInsert, BookingUpdate, UserRow, PropertyPhotoRow } from '../types/supabase-helpers';
 
 /**
  * Helper: Calculate nights between two dates
@@ -67,7 +68,7 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
     .from('properties')
     .select('id, host_id, title, status, max_guests, minimum_stay_weeks, maximum_stay_months, monthly_price_cents, cleaning_fee_cents, security_deposit_cents')
     .eq('id', property_id)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'id' | 'host_id' | 'title' | 'status' | 'max_guests' | 'minimum_stay_weeks' | 'maximum_stay_months' | 'monthly_price_cents' | 'cleaning_fee_cents' | 'security_deposit_cents'> | null; error: any };
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -99,19 +100,16 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
 
   // Check availability - no overlapping confirmed bookings
   // Get all bookings for this property with overlapping dates
-  const checkInStr = checkIn.toISOString().split('T')[0];
-  const checkOutStr = checkOut.toISOString().split('T')[0];
-  
   const { data: existingBookings } = await supabase
     .from('bookings')
     .select('id, check_in_date, check_out_date')
     .eq('property_id', property_id)
-    .in('booking_status', [BOOKING_STATUS.CONFIRMED, BOOKING_STATUS.PENDING]);
+    .in('booking_status', [BOOKING_STATUS.CONFIRMED, BOOKING_STATUS.PENDING]) as { data: Array<Pick<BookingRow, 'id' | 'check_in_date' | 'check_out_date'>> | null; error: any };
 
   // Filter for overlapping bookings in JavaScript
   const overlappingBookings = existingBookings?.filter((booking) => {
-    const existingCheckIn = new Date(booking.check_in_date);
-    const existingCheckOut = new Date(booking.check_out_date);
+    const existingCheckIn = new Date(booking.check_in_date || '');
+    const existingCheckOut = new Date(booking.check_out_date || '');
     
     // Check if dates overlap
     return (
@@ -134,24 +132,26 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
   );
 
   // Create booking
-  const { data: booking, error: createError } = await supabase
-    .from('bookings')
-    .insert({
+  const bookingData: BookingInsert = {
       property_id,
       guest_id: guestId,
-      host_id: property.host_id,
-      check_in_date: checkIn.toISOString().split('T')[0],
-      check_out_date: checkOut.toISOString().split('T')[0],
+    host_id: property.host_id || '',
+    check_in_date: checkIn.toISOString().split('T')[0] || '',
+    check_out_date: checkOut.toISOString().split('T')[0] || '',
       nights,
       guest_count,
-      purpose_of_stay,
-      special_requests,
+    purpose_of_stay: purpose_of_stay || null,
+    special_requests: special_requests || null,
       ...pricing,
       booking_status: BOOKING_STATUS.PENDING,
       payment_status: 'pending',
-    })
+  };
+
+  const { data: booking, error: createError } = await supabase
+    .from('bookings')
+    .insert(bookingData as any)
     .select()
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (createError || !booking) {
     throw new Error(createError?.message || 'Failed to create booking');
@@ -162,7 +162,7 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
     .from('properties')
     .select('id, title, address_line1, city, country')
     .eq('id', property_id)
-    .single();
+    .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'address_line1' | 'city' | 'country'> | null; error: any };
 
   // Get property photos
   const { data: photos } = await supabase
@@ -170,14 +170,14 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
     .select('photo_url')
     .eq('property_id', property_id)
     .order('display_order', { ascending: true })
-    .limit(1);
+    .limit(1) as { data: Array<{ photo_url: string }> | null; error: any };
 
   // Get host details
   const { data: host } = await supabase
     .from('users')
     .select('id, first_name, last_name, profile_photo_url')
     .eq('id', property.host_id)
-    .single();
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
 
   // TODO: Send notification to host about new booking request
   // TODO: Create conversation between guest and host
@@ -256,7 +256,7 @@ export const getBookings = async (userId: string, filters: GetBookingsInput) => 
   const to = from + limit - 1;
   query = query.order('created_at', { ascending: false }).range(from, to);
 
-  const { data: bookings, error, count } = await query;
+  const { data: bookings, error, count } = await query as { data: BookingRow[] | null; error: any; count: number | null };
 
   if (error) {
     throw new Error(error.message);
@@ -269,30 +269,30 @@ export const getBookings = async (userId: string, filters: GetBookingsInput) => 
       const { data: property } = await supabase
         .from('properties')
         .select('id, title, address_line1, city, country')
-        .eq('id', booking.property_id)
-        .single();
+        .eq('id', booking.property_id || '')
+        .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'address_line1' | 'city' | 'country'> | null; error: any };
 
       // Get property photos
       const { data: photos } = await supabase
         .from('property_photos')
         .select('photo_url')
-        .eq('property_id', booking.property_id)
+        .eq('property_id', booking.property_id || '')
         .order('display_order', { ascending: true })
-        .limit(1);
+        .limit(1) as { data: Array<{ photo_url: string }> | null; error: any };
 
       // Get guest
       const { data: guest } = await supabase
         .from('users')
         .select('id, first_name, last_name, profile_photo_url')
-        .eq('id', booking.guest_id)
-        .single();
+        .eq('id', booking.guest_id || '')
+        .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
 
       // Get host
       const { data: host } = await supabase
         .from('users')
         .select('id, first_name, last_name, profile_photo_url')
-        .eq('id', booking.host_id)
-        .single();
+        .eq('id', booking.host_id || '')
+        .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
 
       return {
         ...booking,
@@ -322,7 +322,7 @@ export const getBookingById = async (bookingId: string, userId: string) => {
     .from('bookings')
     .select('*')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -337,29 +337,29 @@ export const getBookingById = async (bookingId: string, userId: string) => {
   const { data: property } = await supabase
     .from('properties')
     .select('id, title, description, property_type, address_line1, address_line2, city, state_province, postal_code, country, bedrooms, bathrooms, max_guests, cancellation_policy')
-    .eq('id', booking.property_id)
-    .single();
+    .eq('id', booking.property_id || '')
+    .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'description' | 'property_type' | 'address_line1' | 'address_line2' | 'city' | 'state_province' | 'postal_code' | 'country' | 'bedrooms' | 'bathrooms' | 'max_guests' | 'cancellation_policy'> | null; error: any };
 
   // Get property photos
   const { data: photos } = await supabase
     .from('property_photos')
     .select('photo_url, caption')
-    .eq('property_id', booking.property_id)
-    .order('display_order', { ascending: true });
+    .eq('property_id', booking.property_id || '')
+    .order('display_order', { ascending: true }) as { data: Array<Pick<PropertyPhotoRow, 'photo_url' | 'caption'>> | null; error: any };
 
   // Get guest
   const { data: guest } = await supabase
     .from('users')
     .select('id, first_name, last_name, email, phone, profile_photo_url, student_verified, id_verified')
-    .eq('id', booking.guest_id)
-    .single();
+    .eq('id', booking.guest_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'email' | 'phone' | 'profile_photo_url' | 'student_verified' | 'id_verified'> | null; error: any };
 
   // Get host
   const { data: host } = await supabase
     .from('users')
     .select('id, first_name, last_name, email, phone, profile_photo_url, student_verified, id_verified')
-    .eq('id', booking.host_id)
-    .single();
+    .eq('id', booking.host_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'email' | 'phone' | 'profile_photo_url' | 'student_verified' | 'id_verified'> | null; error: any };
 
   return {
     ...booking,
@@ -377,7 +377,7 @@ export const acceptBooking = async (bookingId: string, hostId: string) => {
     .from('bookings')
     .select('id, host_id, booking_status')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: Pick<BookingRow, 'id' | 'host_id' | 'booking_status'> | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -391,16 +391,19 @@ export const acceptBooking = async (bookingId: string, hostId: string) => {
     throw new BadRequestError('Only pending bookings can be accepted');
   }
 
+  const updateData: BookingUpdate = {
+      booking_status: BOOKING_STATUS.CONFIRMED,
+    confirmed_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
   const { data: updatedBooking, error: updateError } = await supabase
     .from('bookings')
-    .update({
-      booking_status: BOOKING_STATUS.CONFIRMED,
-      confirmed_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', bookingId)
     .select()
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (updateError || !updatedBooking) {
     throw new Error(updateError?.message || 'Failed to update booking');
@@ -410,15 +413,15 @@ export const acceptBooking = async (bookingId: string, hostId: string) => {
   const { data: property } = await supabase
     .from('properties')
     .select('id, title')
-    .eq('id', updatedBooking.property_id)
-    .single();
+    .eq('id', updatedBooking.property_id || '')
+    .single() as { data: Pick<PropertyRow, 'id' | 'title'> | null; error: any };
 
   // Get guest
   const { data: guest } = await supabase
     .from('users')
     .select('id, first_name, last_name, email')
-    .eq('id', updatedBooking.guest_id)
-    .single();
+    .eq('id', updatedBooking.guest_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'email'> | null; error: any };
 
   // TODO: Send notification to guest about accepted booking
   // TODO: Create calendar entries for the booking
@@ -439,7 +442,7 @@ export const declineBooking = async (bookingId: string, hostId: string, data: De
     .from('bookings')
     .select('id, host_id, booking_status')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: Pick<BookingRow, 'id' | 'host_id' | 'booking_status'> | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -453,18 +456,21 @@ export const declineBooking = async (bookingId: string, hostId: string, data: De
     throw new BadRequestError('Only pending bookings can be declined');
   }
 
-  const { data: updatedBooking, error: updateError } = await supabase
-    .from('bookings')
-    .update({
+  const updateData: BookingUpdate = {
       booking_status: BOOKING_STATUS.CANCELLED,
       cancellation_reason: data.decline_reason,
       cancelled_by: hostId,
-      cancelled_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
+    cancelled_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  const { data: updatedBooking, error: updateError } = await supabase
+    .from('bookings')
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', bookingId)
     .select()
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (updateError || !updatedBooking) {
     throw new Error(updateError?.message || 'Failed to update booking');
@@ -474,8 +480,8 @@ export const declineBooking = async (bookingId: string, hostId: string, data: De
   const { data: guest } = await supabase
     .from('users')
     .select('id, first_name, email')
-    .eq('id', updatedBooking.guest_id)
-    .single();
+    .eq('id', updatedBooking.guest_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'email'> | null; error: any };
 
   // TODO: Send notification to guest about declined booking
   // TODO: Process refund if any payment was made
@@ -494,7 +500,7 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
     .from('bookings')
     .select('id, guest_id, host_id, booking_status, check_in_date, payment_status, property_id')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: Pick<BookingRow, 'id' | 'guest_id' | 'host_id' | 'booking_status' | 'check_in_date' | 'payment_status' | 'property_id'> | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -512,14 +518,13 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
     throw new BadRequestError('Cannot cancel a completed booking');
   }
 
-  // Get property for cancellation policy
-  const { data: property } = await supabase
-    .from('properties')
-    .select('cancellation_policy')
-    .eq('id', booking.property_id)
-    .single();
-
   // TODO: Implement cancellation policy logic for refunds
+  // Get property for cancellation policy (commented out as it's not used yet)
+  // const { data: property } = await supabase
+  //   .from('properties')
+  //   .select('cancellation_policy')
+  //   .eq('id', booking.property_id || '')
+  //   .single() as { data: Pick<PropertyRow, 'cancellation_policy'> | null; error: any };
   // Calculate refund based on cancellation policy and days until check-in
   // const daysUntilCheckIn = Math.ceil(
   //   (new Date(booking.check_in_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
@@ -528,18 +533,21 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
   // - Moderate: Full refund up to 5 days before check-in
   // - Strict: 50% refund up to 7 days before check-in
 
-  const { data: updatedBooking, error: updateError } = await supabase
-    .from('bookings')
-    .update({
+  const updateData: BookingUpdate = {
       booking_status: BOOKING_STATUS.CANCELLED,
       cancellation_reason: data.cancellation_reason,
       cancelled_by: userId,
-      cancelled_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
+    cancelled_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  const { data: updatedBooking, error: updateError } = await supabase
+    .from('bookings')
+    // @ts-expect-error - Supabase type inference issue with update()
+    .update(updateData as any)
     .eq('id', bookingId)
     .select()
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (updateError || !updatedBooking) {
     throw new Error(updateError?.message || 'Failed to update booking');
@@ -549,22 +557,22 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
   const { data: propertyData } = await supabase
     .from('properties')
     .select('id, title')
-    .eq('id', updatedBooking.property_id)
-    .single();
+    .eq('id', updatedBooking.property_id || '')
+    .single() as { data: Pick<PropertyRow, 'id' | 'title'> | null; error: any };
 
   // Get guest
   const { data: guest } = await supabase
     .from('users')
     .select('id, first_name, email')
-    .eq('id', updatedBooking.guest_id)
-    .single();
+    .eq('id', updatedBooking.guest_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'email'> | null; error: any };
 
   // Get host
   const { data: host } = await supabase
     .from('users')
     .select('id, first_name, email')
-    .eq('id', updatedBooking.host_id)
-    .single();
+    .eq('id', updatedBooking.host_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'email'> | null; error: any };
 
   // TODO: Process refund based on cancellation policy
   // TODO: Send notifications to both parties
@@ -586,7 +594,7 @@ export const getBookingInvoice = async (bookingId: string, userId: string) => {
     .from('bookings')
     .select('*')
     .eq('id', bookingId)
-    .single();
+    .single() as { data: BookingRow | null; error: any };
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -601,22 +609,15 @@ export const getBookingInvoice = async (bookingId: string, userId: string) => {
   const { data: property } = await supabase
     .from('properties')
     .select('id, title, address_line1, address_line2, city, state_province, postal_code, country')
-    .eq('id', booking.property_id)
-    .single();
+    .eq('id', booking.property_id || '')
+    .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'address_line1' | 'address_line2' | 'city' | 'state_province' | 'postal_code' | 'country'> | null; error: any };
 
   // Get guest
   const { data: guest } = await supabase
     .from('users')
     .select('id, first_name, last_name, email')
-    .eq('id', booking.guest_id)
-    .single();
-
-  // Get host
-  const { data: host } = await supabase
-    .from('users')
-    .select('id, first_name, last_name')
-    .eq('id', booking.host_id)
-    .single();
+    .eq('id', booking.guest_id || '')
+    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'email'> | null; error: any };
 
   // Format invoice data
   return {

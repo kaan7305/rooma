@@ -1,125 +1,123 @@
 # NestQuarter Backend API
 
-Backend API for NestQuarter - Global student housing platform
+Global student housing platform backend built with Express.js and Supabase.
 
-## Tech Stack
-
-- **Runtime:** Node.js v18+
-- **Framework:** Express.js
-- **Language:** TypeScript
-- **Database:** PostgreSQL
-- **ORM:** Prisma
-- **Cache:** Redis
-- **Payments:** Stripe
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ installed
-- PostgreSQL 15+ installed and running
-- Redis installed and running (optional for development)
-- npm or yarn package manager
+- Node.js 18+ 
+- npm or yarn
+- Supabase account and project
 
 ### Installation
 
-1. Install dependencies:
 ```bash
+# Install dependencies
 npm install
-```
 
-2. Set up environment variables:
-```bash
+# Set up environment variables
 cp .env.example .env
-# Edit .env with your local configuration
-```
+# Edit .env with your Supabase credentials
 
-3. Set up the database:
-```bash
-# Create PostgreSQL database
-createdb nestquarter_dev
+# Build the project
+npm run build
 
-# Run migrations (after Prisma schema is created)
-npm run prisma:migrate
-
-# Generate Prisma Client
-npm run prisma:generate
-```
-
-### Development
-
-Start the development server:
-```bash
+# Start development server
 npm run dev
 ```
 
-The API will be available at `http://localhost:5000`
+## 📝 Environment Variables
 
-Health check: `http://localhost:5000/health`
+Create a `.env` file in the root directory:
 
-### Available Scripts
+```env
+NODE_ENV=development
+PORT=5000
+JWT_SECRET=your-jwt-secret
+JWT_REFRESH_SECRET=your-refresh-secret
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run prisma:generate` - Generate Prisma Client
-- `npm run prisma:migrate` - Run database migrations
-- `npm run prisma:studio` - Open Prisma Studio (database GUI)
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint errors
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check code formatting
+## 🧪 Testing
 
-## Project Structure
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+**Note**: Tests require a valid Supabase connection. Make sure your `.env` file has correct Supabase credentials before running tests.
+
+## 📚 API Documentation
+
+The API is available at `http://localhost:5000/api`
+
+### Main Endpoints
+
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - User login
+- `POST /api/auth/refresh` - Refresh access token
+- `GET /api/users/me` - Get current user profile
+- `GET /api/properties` - List properties
+- `POST /api/properties` - Create property (host only)
+- `GET /api/bookings` - List bookings
+- `POST /api/bookings` - Create booking
+
+## 🛠️ Development
+
+```bash
+# Development mode with auto-reload
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+```
+
+## 📦 Project Structure
 
 ```
 backend/
 ├── src/
-│   ├── config/           # Configuration files
-│   ├── controllers/      # Request handlers
-│   ├── middleware/       # Express middleware
+│   ├── __tests__/       # Test files
+│   ├── config/          # Configuration files
+│   ├── controllers/     # Route controllers
+│   ├── middleware/      # Express middleware
 │   ├── routes/          # API routes
 │   ├── services/        # Business logic
-│   ├── validators/      # Request validation schemas
-│   ├── utils/           # Utility functions
 │   ├── types/           # TypeScript types
-│   ├── prisma/          # Prisma schema & migrations
-│   ├── jobs/            # Background jobs
-│   ├── websocket/       # WebSocket handlers
+│   ├── utils/           # Utility functions
+│   ├── validators/      # Request validators
 │   ├── app.ts           # Express app setup
 │   └── server.ts        # Server entry point
-├── .env                 # Environment variables (local)
-├── .env.example         # Environment variables template
-├── tsconfig.json        # TypeScript configuration
-├── package.json         # Dependencies & scripts
-└── README.md
+├── prisma/              # Database schema
+└── package.json
 ```
 
-## API Documentation
+## 🔧 Tech Stack
 
-API endpoints will be documented using Swagger/OpenAPI (coming soon).
+- **Runtime**: Node.js with TypeScript
+- **Framework**: Express.js
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: JWT
+- **Validation**: Zod
+- **Testing**: Jest + Supertest
 
-Base URL: `/api`
-
-### Health Check
-- `GET /health` - Check server status
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login
-- `POST /api/auth/logout` - Logout
-- `POST /api/auth/refresh-token` - Refresh access token
-
-(More endpoints will be added as development progresses)
-
-## Database Schema
-
-The database schema is defined in `src/prisma/schema.prisma` following the exact specifications from the NestQuarter platform design proposal.
-
-## Contributing
-
-This is a private project. Please follow the established code style and conventions.
-
-## License
+## 📄 License
 
 MIT

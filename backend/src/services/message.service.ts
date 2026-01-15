@@ -1,4 +1,4 @@
-import supabase from '../config/supabase';
+import prisma from '../config/prisma';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import type {
   CreateConversationInput,
@@ -19,47 +19,47 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
   }
 
   // Verify other participant exists
-  const { data: otherUser, error: userError } = await supabase
-    .from('users')
-    .select('id')
-    .eq('id', participant_id)
-    .single();
+  const otherUser = await prisma.user.findUnique({
+    where: { id: participant_id },
+    select: { id: true },
+  });
 
-  if (userError || !otherUser) {
+  if (!otherUser) {
     throw new NotFoundError('User not found');
   }
 
   // Verify property exists if provided
   if (property_id) {
-    const { data: property, error: propertyError } = await supabase
-      .from('properties')
-      .select('id')
-      .eq('id', property_id)
-      .single();
+    const property = await prisma.property.findUnique({
+      where: { id: property_id },
+      select: { id: true },
+    });
 
-    if (propertyError || !property) {
+    if (!property) {
       throw new NotFoundError('Property not found');
     }
   }
 
   // Verify booking exists if provided
   if (booking_id) {
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .select('id, guest_id, property_id')
-      .eq('id', booking_id)
-      .single();
+    const booking = await prisma.booking.findUnique({
+      where: { id: booking_id },
+      select: {
+        id: true,
+        guest_id: true,
+        property_id: true,
+      },
+    });
 
-    if (bookingError || !booking) {
+    if (!booking) {
       throw new NotFoundError('Booking not found');
     }
 
     // Get property to check host_id
-    const { data: property } = await supabase
-      .from('properties')
-      .select('host_id')
-      .eq('id', booking.property_id)
-      .single();
+    const property = await prisma.property.findUnique({
+      where: { id: booking.property_id || '' },
+      select: { host_id: true },
+    });
 
     if (!property) {
       throw new NotFoundError('Booking property not found');
@@ -75,19 +75,13 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
   const [part1, part2] = [userId, participant_id].sort();
 
   // Try to find existing conversation
-  let query = supabase
-    .from('conversations')
-    .select('*')
-    .eq('participant_1_id', part1)
-    .eq('participant_2_id', part2);
-
-  if (property_id) {
-    query = query.eq('property_id', property_id);
-  } else {
-    query = query.is('property_id', null);
-  }
-
-  const { data: existingConversations } = await query.limit(1);
+  const existingConversation = await prisma.conversation.findFirst({
+    where: {
+      participant_1_id: part1,
+      participant_2_id: part2,
+      property_id: property_id || null,
+    },
+  });
 
   if (existingConversations && existingConversations.length > 0) {
     const existingConversation = existingConversations[0];

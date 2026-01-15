@@ -93,11 +93,11 @@ export default function HomePage() {
         {/* Background Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white dark:via-gray-900/50 dark:to-gray-900 pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-12 pb-20">
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-8 pb-20">
           {/* Hero Text */}
           <div className="text-center mb-10">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-rose-600 dark:text-rose-400">
                 Find Your Perfect Sublet
               </span>
             </h1>
@@ -182,7 +182,7 @@ export default function HomePage() {
                 {/* Search Button */}
                 <button
                   onClick={handleSearch}
-                  className="bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-8 py-4 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 font-semibold"
+                  className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-8 py-4 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 font-semibold"
                 >
                   <Search className="w-5 h-5" />
                   <span className="hidden md:inline">Search</span>
@@ -217,13 +217,13 @@ export default function HomePage() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-0 pb-12">
         {/* Recently Viewed Section */}
         <RecentlyViewed />
 
         {/* Section Title */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+        <div className="mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
             Popular sublets right now
           </h2>
           <p className="text-gray-600 mt-2">Handpicked by our community of students and young professionals</p>
@@ -245,7 +245,7 @@ export default function HomePage() {
                 />
                 {/* Duration Badge */}
                 <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-                  <span className="text-xs font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                  <span className="text-xs font-bold text-rose-600 dark:text-rose-400">
                     {sublet.duration}
                   </span>
                 </div>
@@ -274,7 +274,7 @@ export default function HomePage() {
                 <p className="text-sm text-gray-600">{sublet.location}</p>
                 <p className="text-sm text-gray-500">{sublet.type} · {sublet.beds} bed{sublet.beds > 1 ? 's' : ''}</p>
                 <div className="flex items-baseline gap-1 pt-1">
-                  <span className="text-lg font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                  <span className="text-lg font-bold text-rose-600 dark:text-rose-400">
                     ${sublet.price}
                   </span>
                   <span className="text-sm text-gray-600">/ month</span>
@@ -291,7 +291,7 @@ export default function HomePage() {
 
         {/* Why Choose NestQuarter */}
         <section className="mt-24 bg-gradient-to-br from-white via-rose-50/30 to-purple-50/30 rounded-3xl p-12 shadow-xl border border-gray-100">
-          <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-12 animate-fade-in">
+          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 animate-fade-in">
             Why sublet with NestQuarter?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -325,7 +325,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-sm font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              <h3 className="text-sm font-bold text-rose-600 dark:text-rose-400 mb-4">
                 Support
               </h3>
               <ul className="space-y-3 text-sm text-gray-600">
@@ -335,7 +335,7 @@ export default function HomePage() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              <h3 className="text-sm font-bold text-rose-600 dark:text-rose-400 mb-4">
                 Community
               </h3>
               <ul className="space-y-3 text-sm text-gray-600">
@@ -345,7 +345,7 @@ export default function HomePage() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              <h3 className="text-sm font-bold text-rose-600 dark:text-rose-400 mb-4">
                 Hosting
               </h3>
               <ul className="space-y-3 text-sm text-gray-600">
@@ -355,7 +355,7 @@ export default function HomePage() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              <h3 className="text-sm font-bold text-rose-600 dark:text-rose-400 mb-4">
                 NestQuarter
               </h3>
               <ul className="space-y-3 text-sm text-gray-600">
@@ -365,7 +365,7 @@ export default function HomePage() {
               </ul>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="mt-12 pt-2 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-600">© 2024 NestQuarter, Inc. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <Link href="/privacy" className="hover:text-rose-600 transition-colors">Privacy</Link>

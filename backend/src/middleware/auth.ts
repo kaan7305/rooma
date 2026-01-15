@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt';
 import { UnauthorizedError, ForbiddenError } from '../utils/errors';
-import supabase from '../config/supabase';
+import prisma from '../config/prisma';
 import { USER_TYPES } from '../utils/constants';
 
 /**
@@ -135,13 +135,12 @@ export const requireEmailVerified = async (
       return next(new UnauthorizedError('Authentication required'));
     }
 
-    const { data: user, error: findError } = await supabase
-      .from('users')
-      .select('email_verified')
-      .eq('id', userId)
-      .single();
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email_verified: true },
+    });
 
-    if (findError || !user) {
+    if (!user) {
       return next(new UnauthorizedError('User not found'));
     }
 

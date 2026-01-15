@@ -1,4 +1,4 @@
-import supabase from '../config/supabase';
+import prisma from '../config/prisma';
 import { hashPassword, comparePassword } from '../utils/bcrypt';
 import { generateTokens, verifyRefreshToken } from '../utils/jwt';
 import { ConflictError, UnauthorizedError, NotFoundError } from '../utils/errors';
@@ -11,11 +11,10 @@ export const register = async (data: RegisterInput) => {
   const { email, password, first_name, last_name, user_type, phone, date_of_birth } = data;
 
   // Check if user already exists
-  const { data: existingUser } = await supabase
-    .from('users')
-    .select('id')
-    .eq('email', email)
-    .maybeSingle();
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true },
+  });
 
   if (existingUser) {
     throw new ConflictError('A user with this email already exists');
@@ -25,25 +24,34 @@ export const register = async (data: RegisterInput) => {
   const password_hash = await hashPassword(password);
 
   // Create user
-  const { data: user, error: createError } = await supabase
-    .from('users')
-    .insert({
+  const user = await prisma.user.create({
+    data: {
       email,
       password_hash,
       first_name,
       last_name,
       user_type,
       phone,
-      date_of_birth,
+      date_of_birth: date_of_birth ? new Date(date_of_birth) : null,
       email_verified: false,
       phone_verified: false,
-    })
-    .select('id, email, first_name, last_name, user_type, phone, date_of_birth, email_verified, phone_verified, student_verified, id_verified, profile_photo_url, created_at')
-    .single();
-
-  if (createError || !user) {
-    throw new Error(createError?.message || 'Failed to create user');
-  }
+    },
+    select: {
+      id: true,
+      email: true,
+      first_name: true,
+      last_name: true,
+      user_type: true,
+      phone: true,
+      date_of_birth: true,
+      email_verified: true,
+      phone_verified: true,
+      student_verified: true,
+      id_verified: true,
+      profile_photo_url: true,
+      created_at: true,
+    },
+  });
 
   // Generate tokens
   const tokens = generateTokens({
@@ -68,13 +76,27 @@ export const login = async (data: LoginInput) => {
   const { email, password } = data;
 
   // Find user by email
-  const { data: user, error: findError } = await supabase
-    .from('users')
-    .select('id, email, password_hash, first_name, last_name, user_type, phone, date_of_birth, email_verified, phone_verified, student_verified, id_verified, profile_photo_url, created_at')
-    .eq('email', email)
-    .single();
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      email: true,
+      password_hash: true,
+      first_name: true,
+      last_name: true,
+      user_type: true,
+      phone: true,
+      date_of_birth: true,
+      email_verified: true,
+      phone_verified: true,
+      student_verified: true,
+      id_verified: true,
+      profile_photo_url: true,
+      created_at: true,
+    },
+  });
 
-  if (findError || !user) {
+  if (!user) {
     throw new UnauthorizedError('Invalid email or password');
   }
 
@@ -91,10 +113,10 @@ export const login = async (data: LoginInput) => {
   }
 
   // Update last login
-  await supabase
-    .from('users')
-    .update({ last_login: new Date().toISOString() })
-    .eq('id', user.id);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { last_login: new Date() },
+  });
 
   // Generate tokens
   const tokens = generateTokens({
@@ -120,13 +142,16 @@ export const refreshAccessToken = async (refreshToken: string) => {
   const decoded = verifyRefreshToken(refreshToken);
 
   // Verify user still exists
-  const { data: user, error: findError } = await supabase
-    .from('users')
-    .select('id, email, user_type')
-    .eq('id', decoded.userId)
-    .single();
+  const user = await prisma.user.findUnique({
+    where: { id: decoded.userId },
+    select: {
+      id: true,
+      email: true,
+      user_type: true,
+    },
+  });
 
-  if (findError || !user) {
+  if (!user) {
     throw new UnauthorizedError('User not found');
   }
 
@@ -144,13 +169,29 @@ export const refreshAccessToken = async (refreshToken: string) => {
  * Get current user profile
  */
 export const getCurrentUser = async (userId: string) => {
-  const { data: user, error: findError } = await supabase
-    .from('users')
-    .select('id, email, first_name, last_name, user_type, phone, phone_verified, email_verified, date_of_birth, profile_photo_url, bio, student_verified, id_verified, created_at, updated_at, last_login')
-    .eq('id', userId)
-    .single();
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      first_name: true,
+      last_name: true,
+      user_type: true,
+      phone: true,
+      phone_verified: true,
+      email_verified: true,
+      date_of_birth: true,
+      profile_photo_url: true,
+      bio: true,
+      student_verified: true,
+      id_verified: true,
+      created_at: true,
+      updated_at: true,
+      last_login: true,
+    },
+  });
 
-  if (findError || !user) {
+  if (!user) {
     throw new NotFoundError('User not found');
   }
 

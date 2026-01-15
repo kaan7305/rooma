@@ -364,7 +364,7 @@ export default function FavoritesPage() {
             onClick={() => setActiveTab('properties')}
             className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 ${
               activeTab === 'properties'
-                ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                ? 'bg-rose-600 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -375,7 +375,7 @@ export default function FavoritesPage() {
             onClick={() => setActiveTab('requests')}
             className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 ${
               activeTab === 'requests'
-                ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                ? 'bg-rose-600 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -386,7 +386,7 @@ export default function FavoritesPage() {
             onClick={() => setActiveTab('roommates')}
             className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 ${
               activeTab === 'roommates'
-                ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                ? 'bg-rose-600 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -407,7 +407,7 @@ export default function FavoritesPage() {
                 <p className="text-gray-600 mb-6">Start exploring and save your favorite properties!</p>
                 <Link
                   href="/"
-                  className="inline-block bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+                  className="inline-block bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                   Browse Properties
                 </Link>
@@ -488,7 +488,7 @@ export default function FavoritesPage() {
                 <p className="text-gray-600 mb-6">Browse guest requests and save the ones you're interested in!</p>
                 <Link
                   href="/guest-requests"
-                  className="inline-block bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+                  className="inline-block bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                   Browse Guest Requests
                 </Link>
@@ -577,7 +577,7 @@ export default function FavoritesPage() {
                     {/* View Button */}
                     <Link
                       href="/guest-requests"
-                      className="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                     >
                       View Request
                     </Link>
@@ -600,7 +600,7 @@ export default function FavoritesPage() {
                 <p className="text-gray-600 mb-6">Browse roommate listings and save the ones you're interested in!</p>
                 <Link
                   href="/roommate-finder"
-                  className="inline-block bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+                  className="inline-block bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                   Browse Roommate Listings
                 </Link>
@@ -718,7 +718,7 @@ export default function FavoritesPage() {
                       {/* View Button */}
                       <Link
                         href="/roommate-finder"
-                        className="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                        className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                       >
                         View Listing
                       </Link>

@@ -1,10 +1,10 @@
-# NestQuarter - Global Student Housing Platform
+# ROOMA - Global Student Housing Platform
 
-NestQuarter is a comprehensive full-stack platform designed to connect students with verified housing opportunities worldwide. The application leverages modern web technologies to provide a seamless experience for both property seekers and hosts, featuring real-time communication, advanced search capabilities, and intelligent property recommendations.
+ROOMA is a comprehensive full-stack platform designed to connect students with verified housing opportunities worldwide. The application leverages modern web technologies to provide a seamless experience for both property seekers and hosts, featuring real-time communication, advanced search capabilities, and intelligent property recommendations.
 
 ## Overview
 
-This platform addresses the critical need for reliable, student-friendly housing solutions across different cities and countries. Built with scalability and user experience in mind, NestQuarter offers a feature-rich environment where students can discover, compare, and book accommodation while hosts can efficiently manage their properties and communicate with potential tenants.
+This platform addresses the critical need for reliable, student-friendly housing solutions across different cities and countries. Built with scalability and user experience in mind, ROOMA offers a feature-rich environment where students can discover, compare, and book accommodation while hosts can efficiently manage their properties and communicate with potential tenants.
 
 ## Key Features
 
@@ -201,7 +201,7 @@ Before beginning the installation process, ensure your development environment m
 
 ## Detailed Installation Instructions
 
-This section provides comprehensive step-by-step instructions for setting up the NestQuarter platform on your local development environment. Follow each step carefully to ensure proper configuration.
+This section provides comprehensive step-by-step instructions for setting up the ROOMA platform on your local development environment. Follow each step carefully to ensure proper configuration.
 
 ### Step 1: Repository Setup
 
@@ -425,19 +425,19 @@ Within the PostgreSQL shell, execute:
 
 ```sql
 -- Create the database
-CREATE DATABASE nestquarter;
+CREATE DATABASE ROOMA;
 
 -- Create a dedicated user (recommended for security)
-CREATE USER nestquarter_user WITH PASSWORD 'your_secure_password_here';
+CREATE USER ROOMA_user WITH PASSWORD 'your_secure_password_here';
 
 -- Grant all privileges on the database to the user
-GRANT ALL PRIVILEGES ON DATABASE nestquarter TO nestquarter_user;
+GRANT ALL PRIVILEGES ON DATABASE ROOMA TO ROOMA_user;
 
 -- Grant schema privileges (PostgreSQL 15+)
-\c nestquarter
-GRANT ALL ON SCHEMA public TO nestquarter_user;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO nestquarter_user;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO nestquarter_user;
+\c ROOMA
+GRANT ALL ON SCHEMA public TO ROOMA_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ROOMA_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ROOMA_user;
 
 -- List databases to verify creation
 \l
@@ -450,7 +450,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO nestquarter_user;
 
 ```bash
 # Connect to the new database
-psql -U nestquarter_user -d nestquarter -h localhost
+psql -U ROOMA_user -d ROOMA -h localhost
 
 # If successful, you should see the database prompt
 # Type \q to exit
@@ -625,7 +625,7 @@ docker pull redis:7-alpine
 
 # Run Redis container
 docker run -d \
-  --name nestquarter-redis \
+  --name ROOMA-redis \
   -p 6379:6379 \
   redis:7-alpine
 
@@ -633,7 +633,7 @@ docker run -d \
 docker ps | grep redis
 
 # Connect to Redis CLI in container
-docker exec -it nestquarter-redis redis-cli
+docker exec -it ROOMA-redis redis-cli
 ```
 
 ### Step 6: Environment Variables Configuration
@@ -769,7 +769,7 @@ SERVER_TIMEOUT=30000
 # Format: postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=SCHEMA
 
 # Local development example:
-DATABASE_URL="postgresql://nestquarter_user:your_password@localhost:5432/nestquarter?schema=public"
+DATABASE_URL="postgresql://ROOMA_user:your_password@localhost:5432/ROOMA?schema=public"
 
 # Railway example:
 # DATABASE_URL="postgresql://postgres:password@containers-us-west-123.railway.app:5432/railway"
@@ -816,7 +816,7 @@ JWT_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 
 # Token issuer (optional)
-JWT_ISSUER=nestquarter-api
+JWT_ISSUER=ROOMA-api
 
 # ============================================
 # EMAIL CONFIGURATION (SENDGRID)
@@ -828,10 +828,10 @@ JWT_ISSUER=nestquarter-api
 SENDGRID_API_KEY=
 
 # Sender email address (must be verified in SendGrid)
-SENDGRID_FROM_EMAIL=noreply@nestquarter.com
+SENDGRID_FROM_EMAIL=noreply@ROOMA.com
 
 # Sender display name
-SENDGRID_FROM_NAME=NestQuarter
+SENDGRID_FROM_NAME=ROOMA
 
 # Email template IDs (if using SendGrid templates)
 SENDGRID_WELCOME_TEMPLATE=
@@ -875,7 +875,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 CLOUDINARY_UPLOAD_PRESET=
 
 # Folder structure in Cloudinary
-CLOUDINARY_FOLDER=nestquarter/properties
+CLOUDINARY_FOLDER=ROOMA/properties
 
 # ============================================
 # FILE STORAGE (AWS S3 ALTERNATIVE)
@@ -890,7 +890,7 @@ AWS_SECRET_ACCESS_KEY=your_secret_access_key
 AWS_REGION=us-east-1
 
 # S3 bucket name
-AWS_BUCKET_NAME=nestquarter-uploads
+AWS_BUCKET_NAME=ROOMA-uploads
 
 # S3 bucket ACL (optional)
 AWS_S3_ACL=public-read
@@ -1154,7 +1154,7 @@ If migrations fail, check:
 
 ```bash
 # 1. Verify database connection
-psql -U nestquarter_user -d nestquarter -h localhost -c "SELECT version();"
+psql -U ROOMA_user -d ROOMA -h localhost -c "SELECT version();"
 
 # 2. Check DATABASE_URL in .env
 echo $DATABASE_URL  # Should show your connection string
@@ -1195,7 +1195,7 @@ npx nodemon src/server.ts
 **Successful backend startup should display:**
 
 ```
-[INFO] Starting NestQuarter API Server...
+[INFO] Starting ROOMA API Server...
 [INFO] Environment: development
 [INFO] Port: 5000
 [INFO] Database: Connecting to PostgreSQL...
@@ -1247,7 +1247,7 @@ brew services list | grep postgresql  # macOS
 sudo systemctl status postgresql  # Linux
 
 # Test database connection
-psql -U nestquarter_user -d nestquarter -h localhost
+psql -U ROOMA_user -d ROOMA -h localhost
 
 # Check DATABASE_URL format in .env
 ```
@@ -1296,7 +1296,7 @@ PORT=3001 npm run dev
 Open your browser and navigate to:
 - http://localhost:3000
 
-You should see the NestQuarter homepage with:
+You should see the ROOMA homepage with:
 - Navigation bar with theme toggle
 - Hero section with search functionality
 - Featured property sections
@@ -1376,7 +1376,7 @@ Or use `tmux` or `screen` for terminal multiplexing:
 
 ```bash
 # Using tmux
-tmux new-session -s nestquarter
+tmux new-session -s ROOMA
 # Split window: Ctrl+B then "
 # Switch panes: Ctrl+B then arrow keys
 # Run backend in one pane, frontend in another
@@ -1497,7 +1497,7 @@ Frontend console should show:
    - Check backend console for slow query warnings
    - Use Prisma Studio to inspect data structure
 
-Congratulations! Your NestQuarter development environment is now fully configured and running. You can begin developing new features or testing existing functionality.
+Congratulations! Your ROOMA development environment is now fully configured and running. You can begin developing new features or testing existing functionality.
 
 ## Project Structure
 
@@ -2052,7 +2052,7 @@ The application implements a secure JWT-based authentication system with the fol
 
 ## Theming System
 
-NestQuarter includes a comprehensive dark mode implementation that respects user preferences and system settings.
+ROOMA includes a comprehensive dark mode implementation that respects user preferences and system settings.
 
 **Theme Options:**
 
@@ -2096,7 +2096,7 @@ The theming system uses Tailwind CSS's class-based dark mode strategy combined w
 
 ## Comprehensive Troubleshooting Guide
 
-This section provides detailed diagnostic procedures and solutions for common and advanced issues you may encounter while developing or deploying the NestQuarter platform.
+This section provides detailed diagnostic procedures and solutions for common and advanced issues you may encounter while developing or deploying the ROOMA platform.
 
 ### Database Connection and Query Issues
 
@@ -2131,8 +2131,8 @@ sudo netstat -tlnp | grep 5432
 # Expected output: tcp 0 0 127.0.0.1:5432 0.0.0.0:* LISTEN <PID>/postgres
 
 # Step 3: Test connection with psql
-psql -U nestquarter_user -d nestquarter -h localhost -p 5432
-# If successful, you should see: nestquarter=>
+psql -U ROOMA_user -d ROOMA -h localhost -p 5432
+# If successful, you should see: ROOMA=>
 
 # Step 4: Check PostgreSQL logs for errors
 # macOS
@@ -2170,7 +2170,7 @@ echo $DATABASE_URL
 
    # Update DATABASE_URL in .env to match the actual port
    # If PostgreSQL is on port 5433 instead of 5432:
-   DATABASE_URL="postgresql://user:password@localhost:5433/nestquarter"
+   DATABASE_URL="postgresql://user:password@localhost:5433/ROOMA"
    ```
 
 3. **Authentication Failure (pg_hba.conf):**
@@ -2204,14 +2204,14 @@ echo $DATABASE_URL
    \du
 
    # Grant necessary permissions
-   GRANT ALL PRIVILEGES ON DATABASE nestquarter TO nestquarter_user;
+   GRANT ALL PRIVILEGES ON DATABASE ROOMA TO ROOMA_user;
 
    # For PostgreSQL 15+, also grant schema permissions
-   \c nestquarter
-   GRANT ALL ON SCHEMA public TO nestquarter_user;
-   GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO nestquarter_user;
-   GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO nestquarter_user;
-   ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO nestquarter_user;
+   \c ROOMA
+   GRANT ALL ON SCHEMA public TO ROOMA_user;
+   GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ROOMA_user;
+   GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ROOMA_user;
+   ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO ROOMA_user;
    ```
 
 5. **Firewall Blocking Connection:**
@@ -2260,7 +2260,7 @@ log = ["query", "info", "warn", "error"]
 DEBUG=prisma:query npm run dev
 
 # Identify slow queries in PostgreSQL
-psql -U postgres -d nestquarter
+psql -U postgres -d ROOMA
 
 # Show currently running queries
 SELECT pid, now() - pg_stat_activity.query_start AS duration, query
@@ -2395,7 +2395,7 @@ EXPLAIN ANALYZE SELECT * FROM "Property" WHERE location = 'Boston' AND price < 2
 npx prisma migrate status
 
 # View migration history in database
-psql -U nestquarter_user -d nestquarter -c "SELECT * FROM _prisma_migrations ORDER BY finished_at DESC;"
+psql -U ROOMA_user -d ROOMA -c "SELECT * FROM _prisma_migrations ORDER BY finished_at DESC;"
 
 # Check for schema drift
 npx prisma migrate diff --from-schema-datamodel prisma/schema.prisma --to-schema-database $DATABASE_URL --script
@@ -2447,10 +2447,10 @@ cat prisma/migrations/20240101000000_migration_name/migration.sql
 4. **Recover from Catastrophic Migration Failure:**
    ```bash
    # Step 1: Backup current database
-   pg_dump -U nestquarter_user nestquarter > backup_$(date +%Y%m%d_%H%M%S).sql
+   pg_dump -U ROOMA_user ROOMA > backup_$(date +%Y%m%d_%H%M%S).sql
 
    # Step 2: Reset migration table (destructive - use with caution)
-   psql -U nestquarter_user -d nestquarter -c "DROP TABLE IF EXISTS _prisma_migrations CASCADE;"
+   psql -U ROOMA_user -d ROOMA -c "DROP TABLE IF EXISTS _prisma_migrations CASCADE;"
 
    # Step 3: Re-initialize migrations
    npx prisma migrate deploy
@@ -2990,10 +2990,10 @@ lsof -i -P | grep :5000
 
 3. **Handle WebSocket Behind Reverse Proxy (Nginx):**
    ```nginx
-   # /etc/nginx/sites-available/nestquarter
+   # /etc/nginx/sites-available/ROOMA
    server {
      listen 80;
-     server_name api.nestquarter.com;
+     server_name api.ROOMA.com;
 
      # WebSocket specific headers
      location /socket.io/ {
@@ -3983,7 +3983,7 @@ Before deploying to production, verify:
 
 ## Contributing
 
-Contributions to NestQuarter are welcome and appreciated. Whether you're fixing bugs, improving documentation, or adding new features, your input helps make the platform better for everyone.
+Contributions to ROOMA are welcome and appreciated. Whether you're fixing bugs, improving documentation, or adding new features, your input helps make the platform better for everyone.
 
 ### Getting Started
 
@@ -4122,7 +4122,7 @@ See the LICENSE file in the repository for the full license text.
 
 ## Support and Contact
 
-If you encounter issues or have questions about NestQuarter:
+If you encounter issues or have questions about ROOMA:
 
 **For Bugs and Technical Issues:**
 1. Check the Troubleshooting section above
@@ -4146,7 +4146,7 @@ If you encounter issues or have questions about NestQuarter:
 
 ## Acknowledgments
 
-NestQuarter is built with the support of many excellent open-source projects and tools:
+ROOMA is built with the support of many excellent open-source projects and tools:
 
 **Core Technologies:**
 - [Next.js](https://nextjs.org/) - React framework for production-grade applications

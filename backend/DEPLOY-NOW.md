@@ -96,8 +96,18 @@ Click **"Add Variable"** for each:
 #### Required Variables:
 
 ```
-DATABASE_URL
-Value: ${{Postgres.DATABASE_URL}}
+SUPABASE_URL
+Value: https://your-project.supabase.co
+```
+
+```
+SUPABASE_SERVICE_ROLE_KEY
+Value: your_supabase_service_role_key
+```
+
+```
+EMAIL_VERIFICATION_SECRET
+Value: your_email_verification_secret (optional)
 ```
 
 ```
@@ -151,22 +161,11 @@ After adding all variables:
 
 ---
 
-## ✅ Step 5: Link PostgreSQL Database
+## ✅ Step 5: Configure Supabase
 
-### If Your Database is in Same Railway Project:
-
-**Great news!** Railway automatically links it via `${{Postgres.DATABASE_URL}}`
-
-Nothing to do here! ✓
-
-### If Your Database is External:
-
-1. Go to Variables tab
-2. Find `DATABASE_URL`
-3. Replace with your connection string:
-   ```
-   postgresql://postgres:LMMetlrLPQsWOqYMXEVtqNupliqxwmIa@gondola.proxy.rlwy.net:24062/railway
-   ```
+1. Create a Supabase project
+2. Copy `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+3. Add them to your Railway variables
 
 ---
 
@@ -260,18 +259,10 @@ If all tests pass, your API is **LIVE** in production!
 
 ## 📋 Next Steps
 
-### 1. Seed Production Database (Optional)
+### 1. Seed Production Data (Optional)
 
-If you want test data in production:
-
-```bash
-# In Railway dashboard → your service → "Deploy Logs"
-# Look for shell/terminal access or use Railway CLI:
-
-railway login
-railway link
-railway run npm run prisma:seed
-```
+If you want test data in production, use the Supabase SQL editor or your own scripts
+against the Supabase project. No Prisma seed is required.
 
 ### 2. Update Postman Collection
 
@@ -290,7 +281,7 @@ In Railway:
 
 - **Logs**: Railway Dashboard → Deploy Logs
 - **Metrics**: Railway Dashboard → Metrics tab
-- **Database**: Use Prisma Studio connected to production
+- **Database**: Use the Supabase dashboard (SQL editor, table editor)
 
 ### 5. Update CORS_ORIGIN
 
@@ -311,19 +302,19 @@ When you deploy your frontend:
 3. Common issues:
    - Missing environment variable
    - TypeScript compilation error
-   - Prisma migration error
+   - Invalid Supabase credentials
 
 ### Database Connection Failed?
 
-1. Verify `DATABASE_URL` is set correctly
-2. Check Railway PostgreSQL is running
-3. Try using the direct connection string
+1. Verify `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+2. Confirm the Supabase project is running
+3. Check your API logs for auth/permission errors
 
 ### API Returns 500 Errors?
 
 1. Check Deploy Logs for errors
 2. Verify all environment variables are set
-3. Check database migrations ran successfully
+3. Verify Supabase credentials and schema
 
 ### Cannot Access API?
 

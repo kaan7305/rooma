@@ -5,14 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "build": "prisma generate && tsc",
+    "build": "tsc",
     "start": "node dist/server.js",
-    "deploy": "prisma migrate deploy && npm start",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:migrate:deploy": "prisma migrate deploy",
-    "prisma:studio": "prisma studio",
-    "prisma:seed": "ts-node prisma/seed-simple.ts",
+    "deploy": "npm start",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -29,7 +24,6 @@
   "author": "NestQuarter Team",
   "license": "MIT",
   "dependencies": {
-    "@prisma/client": "^6.19.0",
     "@sendgrid/mail": "^8.1.6",
     "@supabase/supabase-js": "^2.89.0",
     "bcrypt": "^6.0.0",
@@ -71,15 +65,11 @@
     "jest": "^29.7.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.6.2",
-    "prisma": "^6.19.0",
     "supabase": "^2.70.5",
     "supertest": "^6.3.4",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seed-simple.ts"
   }
 }

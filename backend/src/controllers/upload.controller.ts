@@ -125,9 +125,9 @@ export const uploadPropertyPhotos = async (
 
     // Create photo records in database
     const photoRecordsData = uploadResults.map((result, index) => ({
-            property_id,
-            photo_url: result.url,
-            display_order: startOrder + index,
+      property_id,
+      photo_url: result.url,
+      display_order: startOrder + index,
     })) as PropertyPhotoInsert[];
 
     const { data: photoRecords, error: createError } = await supabase

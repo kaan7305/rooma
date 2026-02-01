@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as authService from '../services/auth.service';
-import type { RegisterInput, LoginInput, RefreshTokenInput } from '../validators/auth.validator';
+import * as userService from '../services/user.service';
+import type { RegisterInput, LoginInput, RefreshTokenInput, VerifyEmailInput } from '../validators/auth.validator';
 
 /**
  * POST /api/auth/register
@@ -89,6 +90,24 @@ export const getMe = async (req: Request, res: Response, next: NextFunction): Pr
     const user = await authService.getCurrentUser(userId);
 
     res.status(200).json({
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/verify-email
+ * Verify email using token + code (no auth required)
+ */
+export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token, code }: VerifyEmailInput = req.body;
+    const user = await userService.verifyEmail(null, token, code);
+
+    res.status(200).json({
+      message: 'Email verified successfully',
       data: user,
     });
   } catch (error) {

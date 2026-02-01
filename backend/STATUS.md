@@ -296,7 +296,7 @@ The backend is complete, but you haven't started the frontend yet.
 - Authentication/Authorization
 - TypeScript
 - Node.js/Express
-- Prisma ORM
+- Supabase (PostgreSQL)
 
 ### Frontend (Upcoming):
 You'll need to learn:

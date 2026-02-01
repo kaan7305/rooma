@@ -5,10 +5,16 @@ import type {
   SendMessageInput,
   GetMessagesInput,
 } from '../validators/message.validator';
-import type { 
-  UserRow, PropertyRow, BookingRow, 
-  ConversationRow, ConversationInsert, ConversationUpdate,
-  MessageRow, MessageInsert, MessageUpdate
+import type {
+  UserRow,
+  PropertyRow,
+  BookingRow,
+  ConversationRow,
+  ConversationInsert,
+  ConversationUpdate,
+  MessageRow,
+  MessageInsert,
+  MessageUpdate,
 } from '../types/supabase-helpers';
 
 /**
@@ -156,8 +162,8 @@ export const createOrGetConversation = async (userId: string, data: CreateConver
   const conversationData: ConversationInsert = {
     participant_1_id: part1 || '',
     participant_2_id: part2 || '',
-      property_id: property_id || null,
-      booking_id: booking_id || null,
+    property_id: property_id || null,
+    booking_id: booking_id || null,
   };
 
   const { data: newConversation, error: createError } = await supabase

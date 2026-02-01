@@ -1,16 +1,24 @@
 import supabase from '../config/supabase';
 import { NotFoundError, BadRequestError } from '../utils/errors';
+import { verifyEmailVerificationToken } from '../utils/jwt';
 import type {
   UpdateProfileInput,
   UploadStudentIdInput,
   UploadGovernmentIdInput,
 } from '../validators/user.validator';
-import type { 
-  UserRow, UserUpdate, 
-  PropertyRow, PropertyPhotoRow, ReviewRow,
-  StudentVerificationRow, StudentVerificationInsert, 
-  IdentityVerificationRow, IdentityVerificationInsert,
-  UserSettingsRow, UserSettingsInsert, UserSettingsUpdate
+import type {
+  UserRow,
+  UserUpdate,
+  PropertyRow,
+  PropertyPhotoRow,
+  ReviewRow,
+  StudentVerificationRow,
+  StudentVerificationInsert,
+  IdentityVerificationRow,
+  IdentityVerificationInsert,
+  UserSettingsRow,
+  UserSettingsInsert,
+  UserSettingsUpdate,
 } from '../types/supabase-helpers';
 
 /**
@@ -35,7 +43,7 @@ export const getMyProfile = async (userId: string) => {
  */
 export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
   const updateData: UserUpdate = {
-      ...data,
+    ...data,
     updated_at: new Date().toISOString(),
   } as UserUpdate;
   if (data.date_of_birth) {
@@ -136,11 +144,11 @@ export const uploadStudentId = async (userId: string, data: UploadStudentIdInput
   }
 
   const verificationData: StudentVerificationInsert = {
-      user_id: userId,
-      university_name: data.university_name,
-      university_email: data.university_email,
-      student_id_photo_url: data.student_id_photo_url,
-      verification_status: 'pending',
+    user_id: userId,
+    university_name: data.university_name,
+    university_email: data.university_email,
+    student_id_photo_url: data.student_id_photo_url,
+    verification_status: 'pending',
   };
 
   const { data: verification, error: createError } = await supabase
@@ -174,12 +182,12 @@ export const uploadGovernmentId = async (userId: string, data: UploadGovernmentI
 
   // Hash ID number for privacy (if provided, though not in current schema)
   const verificationData: IdentityVerificationInsert = {
-      user_id: userId,
-      id_type: data.id_type,
-      id_front_photo_url: data.id_front_photo_url,
+    user_id: userId,
+    id_type: data.id_type,
+    id_front_photo_url: data.id_front_photo_url,
     id_back_photo_url: data.id_back_photo_url || null,
-      verification_status: 'pending',
-      provider: 'manual',
+    verification_status: 'pending',
+    provider: 'manual',
   };
 
   const { data: verification, error: createError } = await supabase
@@ -196,17 +204,26 @@ export const uploadGovernmentId = async (userId: string, data: UploadGovernmentI
 };
 
 /**
- * Verify email (placeholder - will implement with email service)
+ * Verify email
+ * If requestedUserId is provided, it must match the token payload.
  */
-export const verifyEmail = async (userId: string, _token: string) => {
-  // TODO: Implement token validation logic
-  // For now, just mark as verified
+export const verifyEmail = async (requestedUserId: string | null, token: string, code: string) => {
+  const payload = verifyEmailVerificationToken(token);
+
+  if (requestedUserId && payload.userId !== requestedUserId) {
+    throw new NotFoundError('User not found');
+  }
+
+  if (payload.code !== code) {
+    throw new BadRequestError('Verification code is invalid');
+  }
+
   const updateData: UserUpdate = { email_verified: true };
   const { data: user, error: updateError } = await supabase
     .from('users')
     // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any)
-    .eq('id', userId)
+    .eq('id', payload.userId)
     .select('id, email, email_verified')
     .single() as { data: Pick<UserRow, 'id' | 'email' | 'email_verified'> | null; error: any };
 

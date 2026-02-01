@@ -62,8 +62,11 @@ Railway is the easiest option since you already have your PostgreSQL database th
 In Railway dashboard, go to **Variables** tab and add:
 
 ```bash
-# Database (Already connected if using Railway PostgreSQL)
-DATABASE_URL=${{Postgres.DATABASE_URL}}
+# Supabase
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+# Optional: override JWT secret for email verification tokens
+EMAIL_VERIFICATION_SECRET=your_email_verification_secret
 
 # Server
 NODE_ENV=production
@@ -98,12 +101,11 @@ TWILIO_PHONE_NUMBER=+1234567890
 
 ### Step 4: Connect Database
 
-If your PostgreSQL database is in the same Railway project:
-- Railway automatically sets `DATABASE_URL` via `${{Postgres.DATABASE_URL}}`
-- No manual configuration needed!
+This backend uses Supabase directly. Set these environment variables in your host:
 
-If using external database:
-- Set `DATABASE_URL` manually with your connection string
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- (Optional) `EMAIL_VERIFICATION_SECRET`
 
 ### Step 5: Deploy!
 
@@ -111,16 +113,10 @@ If using external database:
 2. **Check deployment logs** in Railway dashboard
 3. **Get your URL**: Railway provides a URL like `nestquarter-api.railway.app`
 
-### Step 6: Run Database Migrations
+### Step 6: Verify Supabase Credentials
 
-Migrations run automatically with the `deploy` script!
-
-The `npm run deploy` command executes:
-```bash
-prisma migrate deploy && npm start
-```
-
-This ensures your database schema is up-to-date before starting the server.
+No Prisma migrations are required. Ensure your Supabase project is provisioned and the
+environment variables above are set before starting the server.
 
 ### Step 7: Test Production API
 
@@ -160,10 +156,10 @@ curl -X POST https://your-app.railway.app/api/auth/login \
 ### Step 4: Add Environment Variables
 Same as Railway (see above)
 
-### Step 5: Create PostgreSQL Database
-1. Click "New +" → "PostgreSQL"
-2. Copy the internal database URL
-3. Add to your web service as `DATABASE_URL`
+### Step 5: Configure Supabase
+1. Create a Supabase project
+2. Copy `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+3. Add them to your web service environment variables
 
 ---
 
@@ -195,7 +191,7 @@ heroku config:set CORS_ORIGIN=https://your-frontend.com
 ### Step 4: Deploy
 ```bash
 git push heroku main
-heroku run npm run prisma:migrate:deploy
+heroku run npm run start
 ```
 
 ### Step 5: Open App
@@ -252,24 +248,16 @@ git push heroku main
 
 ## 📊 Post-Deployment
 
-### 1. Seed Production Database (Optional)
+### 1. Seed Production Data (Optional)
 
-```bash
-# Railway
-railway run npm run prisma:seed
-
-# Heroku
-heroku run npm run prisma:seed
-
-# Render (via shell)
-# Connect to shell in dashboard and run: npm run prisma:seed
-```
+Use the Supabase SQL editor or scripts against your Supabase project if you need
+starter data. No Prisma seed is required.
 
 ### 2. Monitor Your API
 
 - **Health Check**: `https://your-api.com/health`
 - **Logs**: Check Railway/Render/Heroku dashboard
-- **Database**: Use Prisma Studio locally connected to production
+- **Database**: Use the Supabase dashboard (SQL editor, table editor)
 
 ### 3. Set Up Custom Domain (Optional)
 
@@ -297,20 +285,19 @@ REACT_APP_API_URL=https://your-api.railway.app
 **Check logs** for specific error:
 - Missing dependencies? `npm install` the package
 - TypeScript errors? Fix in code and push again
-- Prisma errors? Ensure migrations are up to date
+- Supabase errors? Verify credentials and project status
 
 ### Database Connection Fails
 
-1. Check `DATABASE_URL` is set correctly
-2. Ensure database is in same region (for Railway)
-3. Check database is running and accessible
-4. Verify connection string format
+1. Check `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+2. Ensure the Supabase project is active
+3. Verify service role key permissions
 
 ### App Crashes on Start
 
 1. Check environment variables are set
 2. Review startup logs
-3. Ensure `npm run deploy` runs migrations first
+3. Ensure Supabase credentials are available at startup
 4. Check Node.js version compatibility
 
 ### Cannot Access API

@@ -4,6 +4,7 @@ import { validate } from '../middleware/validation';
 import { requireAuth } from '../middleware/auth';
 import {
   updateProfileSchema,
+  verifyEmailSchema,
   verifyPhoneSchema,
   uploadStudentIdSchema,
   uploadGovernmentIdSchema,
@@ -30,7 +31,7 @@ router.patch('/me', requireAuth, validate(updateProfileSchema), userController.u
  * @desc    Verify email address
  * @access  Private
  */
-router.post('/verify-email', requireAuth, userController.verifyEmail);
+router.post('/verify-email', requireAuth, validate(verifyEmailSchema), userController.verifyEmail);
 
 /**
  * @route   POST /api/users/verify-phone

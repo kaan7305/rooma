@@ -3,10 +3,10 @@
 ## ✅ Phase 1 (COMPLETED): Core Backend Integration
 
 ### 1.1 Database & Schema ✅
-- **Prisma Setup**: Complete PostgreSQL integration with comprehensive schema
-- **Database Connection**: Connected to existing `nestquarter` database
-- **Models**: 13 comprehensive models including User, Property, Booking, Message, Review, etc.
-- **Location**: `prisma/schema.prisma`, `lib/prisma.ts`
+- **Supabase Setup**: Supabase (PostgreSQL) integration with typed queries
+- **Database Connection**: Supabase project credentials via environment variables
+- **Models**: 13 comprehensive tables including User, Property, Booking, Message, Review, etc.
+- **Location**: `backend/src/config/supabase.ts`, `backend/src/types/database.types.ts`
 
 ### 1.2 Authentication System ✅
 - **JWT Implementation**: Access tokens (15min) + Refresh tokens (7 days)
@@ -303,8 +303,8 @@ Each store needs to:
 ## 📊 Overall Progress
 
 ### Completed ✅
-- [x] Database schema and migrations
-- [x] Prisma client setup
+- [x] Database schema (Supabase)
+- [x] Supabase client setup
 - [x] Authentication API (login, register, logout, refresh)
 - [x] Properties API (CRUD)
 - [x] Bookings API (create, list, cancel)

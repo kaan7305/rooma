@@ -1,15 +1,17 @@
 import supabase from '../config/supabase';
 import { hashPassword, comparePassword } from '../utils/bcrypt';
-import { generateTokens, verifyRefreshToken } from '../utils/jwt';
+import { generateTokens, verifyRefreshToken, generateEmailVerificationToken } from '../utils/jwt';
 import { ConflictError, UnauthorizedError, NotFoundError } from '../utils/errors';
 import type { RegisterInput, LoginInput } from '../validators/auth.validator';
 import type { UserInsert, UserUpdate, UserRow } from '../types/supabase-helpers';
+import { sendVerificationEmail } from './email.service';
 
 /**
  * Register a new user
  */
 export const register = async (data: RegisterInput) => {
   const { email, password, first_name, last_name, user_type, phone, date_of_birth } = data;
+  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
 
   // Check if user already exists
   const { data: existingUser } = await supabase
@@ -27,15 +29,15 @@ export const register = async (data: RegisterInput) => {
 
   // Create user
   const insertData: UserInsert = {
-      email,
-      password_hash,
-      first_name,
-      last_name,
-      user_type,
+    email,
+    password_hash,
+    first_name,
+    last_name,
+    user_type,
     phone: phone || null,
     date_of_birth: date_of_birth ? date_of_birth.toISOString().split('T')[0] : null,
-      email_verified: false,
-      phone_verified: false,
+    email_verified: false,
+    phone_verified: false,
   };
 
   const { data: user, error: createError } = await supabase
@@ -55,8 +57,13 @@ export const register = async (data: RegisterInput) => {
     user_type: user.user_type,
   });
 
-  // TODO: Send verification email
-  // This will be implemented when email service is added
+  // Send verification email (non-blocking)
+  const verificationToken = generateEmailVerificationToken({
+    userId: user.id,
+    email: user.email,
+    code: verificationCode,
+  });
+  void sendVerificationEmail(user.email, user.first_name || 'there', verificationToken, verificationCode);
 
   return {
     user,
@@ -175,8 +182,7 @@ export const logout = async () => {
   return { message: 'Logged out successfully' };
 };
 
-// TODO: Implement these functions when email service is added
-// - verifyEmail
+// TODO: Implement these functions
 // - resendVerificationEmail
 // - forgotPassword
 // - resetPassword

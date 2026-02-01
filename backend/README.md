@@ -105,7 +105,6 @@ backend/
 │   ├── validators/      # Request validators
 │   ├── app.ts           # Express app setup
 │   └── server.ts        # Server entry point
-├── prisma/              # Database schema
 └── package.json
 ```
 

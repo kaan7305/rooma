@@ -3,6 +3,7 @@ import * as userService from '../services/user.service';
 import { UnauthorizedError } from '../utils/errors';
 import type {
   UpdateProfileInput,
+  VerifyEmailInput,
   VerifyPhoneInput,
   UploadStudentIdInput,
   UploadGovernmentIdInput,
@@ -118,9 +119,9 @@ export const uploadGovernmentId = async (req: Request, res: Response, next: Next
 export const verifyEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId: string = getAuthUserId(req);
-    const { token } = req.body;
+    const { token, code }: VerifyEmailInput = req.body;
 
-    const user = await userService.verifyEmail(userId, token);
+    const user = await userService.verifyEmail(userId, token, code);
 
     res.status(200).json({
       message: 'Email verified successfully',

@@ -8,6 +8,12 @@ interface TokenPayload {
   user_type: string;
 }
 
+interface EmailVerificationPayload {
+  userId: string;
+  email: string;
+  code: string;
+}
+
 /**
  * Generate access token (short-lived, 15 minutes)
  */
@@ -70,4 +76,27 @@ export const generateTokens = (payload: TokenPayload) => {
     accessToken: generateAccessToken(payload),
     refreshToken: generateRefreshToken(payload),
   };
+};
+
+/**
+ * Generate email verification token (24h)
+ */
+export const generateEmailVerificationToken = (payload: EmailVerificationPayload) => {
+  const secret = process.env.EMAIL_VERIFICATION_SECRET || config.jwt.secret;
+  return jwt.sign(payload, secret, { expiresIn: '24h' });
+};
+
+/**
+ * Verify email verification token
+ */
+export const verifyEmailVerificationToken = (token: string): EmailVerificationPayload => {
+  const secret = process.env.EMAIL_VERIFICATION_SECRET || config.jwt.secret;
+  try {
+    return jwt.verify(token, secret) as EmailVerificationPayload;
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new Error('Verification link has expired');
+    }
+    throw new Error('Invalid verification token');
+  }
 };

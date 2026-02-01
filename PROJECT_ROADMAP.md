@@ -78,12 +78,13 @@ SMTP_PASS=app_specific_password
 - [ ] Option A: Supabase (free tier available)
 - [ ] Option B: Railway PostgreSQL
 - [ ] Option C: Neon.tech (serverless PostgreSQL)
-- [ ] Run Prisma migrations on production database
-- [ ] Seed initial data (universities, amenities)
+- [ ] Verify Supabase project and credentials
+- [ ] Seed initial data (universities, amenities) via Supabase SQL editor
 
 **Environment Variables Needed:**
 ```env
-DATABASE_URL=postgresql://user:password@host:5432/database
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
 ---
@@ -212,7 +213,7 @@ DATABASE_URL=postgresql://user:password@host:5432/database
 - [ ] Implement rate limiting per user
 - [ ] Add request validation on all routes
 - [ ] Implement CSRF protection
-- [ ] Add SQL injection protection (Prisma handles this)
+- [ ] Add SQL injection protection (parameterized Supabase queries)
 - [ ] Review file upload security
 
 ### 3.4 Performance Optimization
@@ -349,14 +350,12 @@ DATABASE_URL=postgresql://user:password@host:5432/database
 5. Deploy
 ```
 
-### 6.3 Database Migration
+### 6.3 Database Setup
 **Priority: CRITICAL**
 
-```bash
-# Run on production:
-npx prisma migrate deploy
-npx prisma db seed  # If seed script exists
-```
+- Verify Supabase project is provisioned
+- Set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+- Seed data via Supabase SQL editor if needed
 
 ### 6.4 Post-Deployment Verification
 
@@ -479,7 +478,6 @@ npx prisma db seed  # If seed script exists
 cd backend
 npm install
 cp .env.example .env  # Configure your env vars
-npx prisma migrate dev
 npm run dev
 
 # Frontend (new terminal)
@@ -553,7 +551,7 @@ npm start
 - **SendGrid Documentation**: https://docs.sendgrid.com
 - **Vercel Documentation**: https://vercel.com/docs
 - **Railway Documentation**: https://docs.railway.app
-- **Prisma Documentation**: https://www.prisma.io/docs
+- **Supabase Documentation**: https://supabase.com/docs
 
 ---
 

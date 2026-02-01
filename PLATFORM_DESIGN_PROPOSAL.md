@@ -847,7 +847,7 @@ This document outlines the complete design, architecture, and go-to-market strat
 - **API:** Node.js + Express (or NestJS for structure)
 - **Language:** TypeScript
 - **Database:** PostgreSQL (primary) + Redis (caching, sessions)
-- **ORM:** Prisma or TypeORM
+- **Database:** Supabase (PostgreSQL)
 - **File Storage:** AWS S3 or Cloudinary
 - **Email:** SendGrid or Postmark
 - **SMS:** Twilio

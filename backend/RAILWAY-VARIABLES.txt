@@ -5,7 +5,9 @@ COPY-PASTE THESE INTO RAILWAY
 In Railway Dashboard → Variables tab → Raw Editor
 Paste all of this:
 
-DATABASE_URL=${{Postgres.DATABASE_URL}}
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+EMAIL_VERIFICATION_SECRET=your_email_verification_secret
 NODE_ENV=production
 PORT=3000
 JWT_SECRET=0482b6546a0308b210a0c6684ebd644bcec9c096180620354ac412aed7d918c8f58ad5a55b056a8e1ef8c37b03a16cad79021c599b749fbc96b188c8890122c5

@@ -52,7 +52,7 @@ export const searchUniversities = async (filters: SearchUniversitiesInput) => {
   }
 
   // If proximity search is requested, we need to fetch all universities first
-  // and then filter by distance (Prisma doesn't support geospatial queries natively)
+  // and then filter by distance (Supabase/Postgres geospatial can be added later)
   let universities;
   let total;
 

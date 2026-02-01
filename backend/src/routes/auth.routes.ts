@@ -6,6 +6,7 @@ import {
   registerSchema,
   loginSchema,
   refreshTokenSchema,
+  verifyEmailSchema,
 } from '../validators/auth.validator';
 
 const router = Router();
@@ -30,6 +31,13 @@ router.post('/login', validate(loginSchema), authController.login);
  * @access  Public
  */
 router.post('/refresh-token', validate(refreshTokenSchema), authController.refreshToken);
+
+/**
+ * @route   POST /api/auth/verify-email
+ * @desc    Verify email address (token + code)
+ * @access  Public
+ */
+router.post('/verify-email', validate(verifyEmailSchema), authController.verifyEmail);
 
 /**
  * @route   POST /api/auth/logout

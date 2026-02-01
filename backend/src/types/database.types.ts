@@ -1,6 +1,6 @@
 /**
  * Supabase Database Types
- * Generated from Prisma schema for type-safe Supabase queries
+ * Generated from the Supabase schema for type-safe Supabase queries
  */
 
 export type Json =
@@ -731,4 +731,3 @@ export interface Database {
     }
   }
 }
-

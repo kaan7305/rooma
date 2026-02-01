@@ -32,36 +32,6 @@ export const errorHandler = (
     return;
   }
 
-  // Handle Prisma errors
-  if (err.constructor.name === 'PrismaClientKnownRequestError') {
-    const prismaError = err as any;
-
-    // Unique constraint violation
-    if (prismaError.code === 'P2002') {
-      res.status(409).json({
-        error: 'A record with this value already exists',
-        field: prismaError.meta?.target?.[0],
-      });
-      return;
-    }
-
-    // Foreign key constraint violation
-    if (prismaError.code === 'P2003') {
-      res.status(400).json({
-        error: 'Invalid reference to related record',
-      });
-      return;
-    }
-
-    // Record not found
-    if (prismaError.code === 'P2025') {
-      res.status(404).json({
-        error: 'Record not found',
-      });
-      return;
-    }
-  }
-
   // Log error for debugging
   console.error('Error:', err);
 

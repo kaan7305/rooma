@@ -202,7 +202,7 @@ Your full-stack student housing platform is **COMPLETE** and ready to use!
 - **Runtime:** Node.js + Express
 - **Language:** TypeScript
 - **Database:** PostgreSQL
-- **ORM:** Prisma
+- **Database:** Supabase (PostgreSQL)
 - **Auth:** JWT
 - **Validation:** Zod
 - **File Upload:** Multer + Cloudinary (ready)

@@ -19,7 +19,6 @@ router.get('/supabase', async (_req: Request, res: Response) => {
       config: {
         url: process.env.SUPABASE_URL || 'not set',
         keyLength: process.env.SUPABASE_SERVICE_ROLE_KEY?.length || 0,
-        keyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 20) || 'not set',
         keyFormat: process.env.SUPABASE_SERVICE_ROLE_KEY?.startsWith('eyJ') ? 'JWT (correct)' : 'Non-JWT (may be wrong)',
       },
     };
@@ -244,4 +243,3 @@ router.post('/supabase/write', async (req: Request, res: Response) => {
 });
 
 export default router;
-

@@ -1,0 +1,39 @@
+Localhost setup (backend + frontend)
+
+Prereqs:
+- Node.js (LTS)
+- npm
+- Supabase project (URL + Service Role Key)
+
+1) Clone and install
+- git clone <repo>
+- cd subletting
+
+Backend:
+- cd backend
+- npm install
+- cp .env.example .env
+- Set these in backend/.env:
+  - SUPABASE_URL
+  - SUPABASE_SERVICE_ROLE_KEY
+  - JWT_SECRET
+  - JWT_REFRESH_SECRET
+  - FRONTEND_URL=http://localhost:3000
+- npm run dev
+  - API runs at http://localhost:5000
+
+Frontend:
+- cd frontend
+- npm install
+- Ensure frontend env points to backend API:
+  - NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api
+- npm run dev
+  - App runs at http://localhost:3000
+
+Quick checks:
+- Backend health: http://localhost:5000/health
+- Supabase test (dev only): http://localhost:5000/api/test/supabase
+
+Notes:
+- If Supabase env vars are missing, backend will refuse to start.
+- Use the Supabase dashboard (SQL editor/table editor) to inspect data.

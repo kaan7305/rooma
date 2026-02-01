@@ -1,6 +1,6 @@
 # ROOMA - Global Student Housing Platform
 
-ROOMA is a comprehensive full-stack platform designed to connect students with verified housing opportunities worldwide. The application leverages modern web technologies to provide a seamless experience for both property seekers and hosts, featuring real-time communication, advanced search capabilities, and intelligent property recommendations.
+Global student housing platform built with Next.js + Express + Supabase, featuring advanced search, real-time messaging, bookings, Stripe payments, and host management tools.
 
 ## Overview
 

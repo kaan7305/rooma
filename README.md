@@ -612,24 +612,13 @@ API_VERSION=v1
 SERVER_TIMEOUT=30000
 
 # ============================================
-# DATABASE CONFIGURATION
+# SUPABASE CONFIGURATION
 # ============================================
 
-# PostgreSQL connection string
-# Format: postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=SCHEMA
-
-# Local development example:
-DATABASE_URL="postgresql://ROOMA_user:your_password@localhost:5432/ROOMA?schema=public"
-
-# Railway example:
-# DATABASE_URL="postgresql://postgres:password@containers-us-west-123.railway.app:5432/railway"
-
-# Supabase example:
-# DATABASE_URL="postgresql://postgres:password@db.projectref.supabase.co:5432/postgres"
-
-# Connection pool settings
-DATABASE_POOL_MIN=2
-DATABASE_POOL_MAX=10
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+# Optional: override JWT secret for email verification tokens
+EMAIL_VERIFICATION_SECRET=your_email_verification_secret
 
 # ============================================
 # REDIS CONFIGURATION
@@ -928,13 +917,7 @@ kill -9 <PID>
 **Database connection failed:**
 ```bash
 # Verify PostgreSQL is running
-brew services list | grep postgresql  # macOS
-sudo systemctl status postgresql  # Linux
-
-# Test database connection
-psql -U ROOMA_user -d ROOMA -h localhost
-
-# Check DATABASE_URL format in .env
+# Check Supabase credentials in .env
 ```
 
 **Redis connection failed:**

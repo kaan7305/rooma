@@ -393,7 +393,9 @@ Each store needs to:
 
 ### Current (.env)
 ```bash
-DATABASE_URL=postgresql://kaaneroltu@localhost:5432/nestquarter
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+EMAIL_VERIFICATION_SECRET=your_email_verification_secret
 JWT_SECRET=dev-jwt-secret-key-change-in-production-12345
 JWT_REFRESH_SECRET=dev-refresh-secret-key-change-in-production-67890
 ```

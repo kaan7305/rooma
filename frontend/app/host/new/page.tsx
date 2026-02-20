@@ -95,7 +95,7 @@ export default function NewListingPage() {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`,
         {
           headers: {
-            'User-Agent': 'NestQuarter-App'
+            'User-Agent': 'ROOMA-App'
           }
         }
       );

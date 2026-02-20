@@ -1,7 +1,7 @@
 {
-  "name": "nestquarter-backend",
+  "name": "rooma-backend",
   "version": "1.0.0",
-  "description": "NestQuarter API - Global student housing platform backend",
+  "description": "ROOMA API - Global student housing platform backend",
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
@@ -19,9 +19,9 @@
   "keywords": [
     "student-housing",
     "rental-platform",
-    "nestquarter"
+    "rooma"
   ],
-  "author": "NestQuarter Team",
+  "author": "ROOMA Team",
   "license": "MIT",
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",

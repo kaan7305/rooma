@@ -1,6 +1,6 @@
-# NestQuarter Backend API
+# ROOMA Backend API
 
-Backend API for NestQuarter - Global student housing platform
+Backend API for ROOMA - Global student housing platform
 
 ## Tech Stack
 
@@ -37,7 +37,7 @@ cp .env.example .env
 3. Set up the database:
 ```bash
 # Create PostgreSQL database
-createdb nestquarter_dev
+createdb rooma_dev
 
 # Run migrations (after Prisma schema is created)
 npm run prisma:migrate
@@ -114,7 +114,7 @@ Base URL: `/api`
 
 ## Database Schema
 
-The database schema is defined in `src/prisma/schema.prisma` following the exact specifications from the NestQuarter platform design proposal.
+The database schema is defined in `src/prisma/schema.prisma` following the exact specifications from the ROOMA platform design proposal.
 
 ## Contributing
 

@@ -44,7 +44,7 @@ CLOUDINARY_API_SECRET=your_api_secret_here    # ← Replace this
 2. **Generate App Password:**
    - Go to: https://myaccount.google.com/apppasswords
    - Select "Mail" and "Other (Custom name)"
-   - Name it "NestQuarter Backend"
+   - Name it "ROOMA Backend"
    - Google will give you a 16-character password
 
 3. **Update in `.env`:**

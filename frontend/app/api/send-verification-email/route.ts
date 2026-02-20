@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
 <body>
     <div class="email-wrapper">
         <div class="header">
-            <h1>🏠 NestQuarter</h1>
+            <h1>🏠 ROOMA</h1>
             <p>Student Housing Platform</p>
         </div>
 
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
             </div>
 
             <div class="message">
-                Thank you for signing up with NestQuarter! We're excited to help you find your perfect student housing.
+                Thank you for signing up with ROOMA! We're excited to help you find your perfect student housing.
                 <br><br>
                 To complete your registration and verify your email address, please use the verification code below:
             </div>
@@ -219,15 +219,15 @@ export async function POST(request: NextRequest) {
 
             <div class="signature">
                 Best regards,<br>
-                <strong>The NestQuarter Team</strong>
+                <strong>The ROOMA Team</strong>
             </div>
         </div>
 
         <div class="footer">
-            <p><strong>© 2025 NestQuarter. All rights reserved.</strong></p>
+            <p><strong>© 2025 ROOMA. All rights reserved.</strong></p>
             <p>This is an automated email. Please do not reply to this message.</p>
             <p style="margin-top: 15px; color: #d1d5db;">
-                If you have any questions, contact us at support@nestquarter.com
+                If you have any questions, contact us at support@rooma.com
             </p>
         </div>
     </div>
@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
     const textVersion = `
 Hi ${name},
 
-Thank you for signing up with NestQuarter!
+Thank you for signing up with ROOMA!
 
 Your verification code is: ${code}
 
@@ -247,17 +247,17 @@ This code will expire in ${expiryMinutes} minutes.
 If you didn't request this code, please ignore this email.
 
 Best regards,
-The NestQuarter Team
+The ROOMA Team
 
 ---
-© 2025 NestQuarter. All rights reserved.
+© 2025 ROOMA. All rights reserved.
 This is an automated email. Please do not reply.
     `.trim();
 
     const data = await resend.emails.send({
-      from: 'NestQuarter <onboarding@resend.dev>', // Using Resend test domain
+      from: 'ROOMA <onboarding@resend.dev>', // Using Resend test domain
       to: [to],
-      subject: '🔐 Your NestQuarter Verification Code',
+      subject: '🔐 Your ROOMA Verification Code',
       text: textVersion,
       html: htmlTemplate,
     });

@@ -26,7 +26,7 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     if (!favorites.includes(propertyId)) {
       const newFavorites = [...favorites, propertyId];
       set({ favorites: newFavorites });
-      localStorage.setItem('nestquarter_favorites', JSON.stringify(newFavorites));
+      localStorage.setItem('rooma_favorites', JSON.stringify(newFavorites));
     }
   },
 
@@ -34,7 +34,7 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     const { favorites } = get();
     const newFavorites = favorites.filter(id => id !== propertyId);
     set({ favorites: newFavorites });
-    localStorage.setItem('nestquarter_favorites', JSON.stringify(newFavorites));
+    localStorage.setItem('rooma_favorites', JSON.stringify(newFavorites));
   },
 
   isFavorite: (propertyId: number) => {
@@ -47,7 +47,7 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     if (!guestRequestFavorites.includes(requestId)) {
       const newFavorites = [...guestRequestFavorites, requestId];
       set({ guestRequestFavorites: newFavorites });
-      localStorage.setItem('nestquarter_guest_request_favorites', JSON.stringify(newFavorites));
+      localStorage.setItem('rooma_guest_request_favorites', JSON.stringify(newFavorites));
     }
   },
 
@@ -55,7 +55,7 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     const { guestRequestFavorites } = get();
     const newFavorites = guestRequestFavorites.filter(id => id !== requestId);
     set({ guestRequestFavorites: newFavorites });
-    localStorage.setItem('nestquarter_guest_request_favorites', JSON.stringify(newFavorites));
+    localStorage.setItem('rooma_guest_request_favorites', JSON.stringify(newFavorites));
   },
 
   isGuestRequestFavorite: (requestId: string) => {
@@ -68,7 +68,7 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     if (!roommateFavorites.includes(listingId)) {
       const newFavorites = [...roommateFavorites, listingId];
       set({ roommateFavorites: newFavorites });
-      localStorage.setItem('nestquarter_roommate_favorites', JSON.stringify(newFavorites));
+      localStorage.setItem('rooma_roommate_favorites', JSON.stringify(newFavorites));
     }
   },
 
@@ -76,7 +76,7 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     const { roommateFavorites } = get();
     const newFavorites = roommateFavorites.filter(id => id !== listingId);
     set({ roommateFavorites: newFavorites });
-    localStorage.setItem('nestquarter_roommate_favorites', JSON.stringify(newFavorites));
+    localStorage.setItem('rooma_roommate_favorites', JSON.stringify(newFavorites));
   },
 
   isRoommateFavorite: (listingId: string) => {
@@ -86,17 +86,17 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
 
   loadFavorites: () => {
     try {
-      const stored = localStorage.getItem('nestquarter_favorites');
+      const stored = localStorage.getItem('rooma_favorites');
       if (stored) {
         set({ favorites: JSON.parse(stored) });
       }
 
-      const storedGuestRequests = localStorage.getItem('nestquarter_guest_request_favorites');
+      const storedGuestRequests = localStorage.getItem('rooma_guest_request_favorites');
       if (storedGuestRequests) {
         set({ guestRequestFavorites: JSON.parse(storedGuestRequests) });
       }
 
-      const storedRoommates = localStorage.getItem('nestquarter_roommate_favorites');
+      const storedRoommates = localStorage.getItem('rooma_roommate_favorites');
       if (storedRoommates) {
         set({ roommateFavorites: JSON.parse(storedRoommates) });
       }

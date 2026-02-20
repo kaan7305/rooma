@@ -1,6 +1,6 @@
-# 🚀 NestQuarter Additional Features Setup Guide
+# 🚀 ROOMA Additional Features Setup Guide
 
-This guide will help you set up **File Upload**, **Email Service**, and **Payment Integration** for your NestQuarter backend.
+This guide will help you set up **File Upload**, **Email Service**, and **Payment Integration** for your ROOMA backend.
 
 ---
 
@@ -64,7 +64,7 @@ CLOUDINARY_API_SECRET=your_api_secret_here
 
 **Example:**
 ```bash
-CLOUDINARY_CLOUD_NAME=nestquarter
+CLOUDINARY_CLOUD_NAME=rooma
 CLOUDINARY_API_KEY=123456789012345
 CLOUDINARY_API_SECRET=abcdefghijklmnopqrstuvwxyz123456
 ```
@@ -94,7 +94,7 @@ You have **two options**: Gmail (easiest) or SendGrid (production-ready)
 
 #### Step 2: Generate App Password
 1. Go to https://myaccount.google.com/apppasswords
-2. Select **Mail** and **Other** (custom name: "NestQuarter")
+2. Select **Mail** and **Other** (custom name: "ROOMA")
 3. Click **Generate**
 4. Copy the 16-character password
 
@@ -108,8 +108,8 @@ SMTP_SECURE=false
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-16-char-app-password
 
-EMAIL_FROM=noreply@nestquarter.com
-EMAIL_REPLY_TO=support@nestquarter.com
+EMAIL_FROM=noreply@rooma.com
+EMAIL_REPLY_TO=support@rooma.com
 FRONTEND_URL=http://localhost:3000
 ```
 
@@ -121,8 +121,8 @@ SMTP_SECURE=false
 SMTP_USER=john@gmail.com
 SMTP_PASS=abcd efgh ijkl mnop
 
-EMAIL_FROM=noreply@nestquarter.com
-EMAIL_REPLY_TO=support@nestquarter.com
+EMAIL_FROM=noreply@rooma.com
+EMAIL_REPLY_TO=support@rooma.com
 FRONTEND_URL=http://localhost:3000
 ```
 
@@ -136,7 +136,7 @@ FRONTEND_URL=http://localhost:3000
 #### Step 2: Create API Key
 1. Go to https://app.sendgrid.com/settings/api_keys
 2. Click **Create API Key**
-3. Name: "NestQuarter API"
+3. Name: "ROOMA API"
 4. Select **Full Access**
 5. Copy the API key
 
@@ -152,8 +152,8 @@ FRONTEND_URL=http://localhost:3000
 # Email Configuration - SendGrid
 SENDGRID_API_KEY=SG.your_api_key_here
 
-EMAIL_FROM=noreply@nestquarter.com
-EMAIL_REPLY_TO=support@nestquarter.com
+EMAIL_FROM=noreply@rooma.com
+EMAIL_REPLY_TO=support@rooma.com
 FRONTEND_URL=http://localhost:3000
 ```
 
@@ -250,7 +250,7 @@ curl -X POST http://localhost:3001/api/payments/create-intent \
 # Get auth token
 TOKEN=$(curl -s -X POST http://localhost:3001/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@nestquarter.com","password":"Password123!"}' \
+  -d '{"email":"test@rooma.com","password":"Password123!"}' \
   | jq -r '.data.accessToken')
 
 # Upload profile photo
@@ -455,7 +455,7 @@ Before deploying to production:
 
 ## ✅ You're All Set!
 
-Your NestQuarter backend now has:
+Your ROOMA backend now has:
 - ✅ File upload with Cloudinary
 - ✅ Email service with beautiful templates
 - ✅ Stripe payment integration

@@ -147,15 +147,15 @@ export default function ReferralProgram() {
   };
 
   const shareViaEmail = () => {
-    const subject = encodeURIComponent('Join NestQuarter - Get $50 Off!');
+    const subject = encodeURIComponent('Join ROOMA - Get $50 Off!');
     const body = encodeURIComponent(
-      `Hey! I've been using NestQuarter to find student housing and it's amazing. Join using my referral link and get $50 off your first booking:\n\n${referralUrl}\n\nUse code: ${referralCode}`
+      `Hey! I've been using ROOMA to find student housing and it's amazing. Join using my referral link and get $50 off your first booking:\n\n${referralUrl}\n\nUse code: ${referralCode}`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };
 
   const shareViaSocial = (platform: 'facebook' | 'twitter' | 'linkedin') => {
-    const text = `Join NestQuarter and get $50 off your first booking!`;
+    const text = `Join ROOMA and get $50 off your first booking!`;
     let url = '';
 
     switch (platform) {
@@ -196,7 +196,7 @@ export default function ReferralProgram() {
         </div>
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
           <p className="text-white/90 mb-4">
-            Refer a friend to NestQuarter and you'll both get <span className="font-bold text-yellow-300">$50</span> off your next booking!
+            Refer a friend to ROOMA and you'll both get <span className="font-bold text-yellow-300">$50</span> off your next booking!
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

@@ -43,8 +43,8 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
   conversations: [],
 
   loadMessages: () => {
-    const messagesJson = localStorage.getItem('nestquarter_messages');
-    const conversationsJson = localStorage.getItem('nestquarter_conversations');
+    const messagesJson = localStorage.getItem('rooma_messages');
+    const conversationsJson = localStorage.getItem('rooma_conversations');
 
     if (messagesJson) {
       try {
@@ -77,7 +77,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
 
     const updatedMessages = [...messages, newMessage];
     set({ messages: updatedMessages });
-    localStorage.setItem('nestquarter_messages', JSON.stringify(updatedMessages));
+    localStorage.setItem('rooma_messages', JSON.stringify(updatedMessages));
 
     // Update conversation
     const conversationIndex = conversations.findIndex(c => c.id === messageData.conversationId);
@@ -90,7 +90,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         unreadCount: updatedConversations[conversationIndex].unreadCount + 1,
       };
       set({ conversations: updatedConversations });
-      localStorage.setItem('nestquarter_conversations', JSON.stringify(updatedConversations));
+      localStorage.setItem('rooma_conversations', JSON.stringify(updatedConversations));
     }
   },
 
@@ -104,7 +104,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         : msg
     );
     set({ messages: updatedMessages });
-    localStorage.setItem('nestquarter_messages', JSON.stringify(updatedMessages));
+    localStorage.setItem('rooma_messages', JSON.stringify(updatedMessages));
 
     // Update conversation unread count
     const updatedConversations = conversations.map(conv =>
@@ -113,7 +113,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         : conv
     );
     set({ conversations: updatedConversations });
-    localStorage.setItem('nestquarter_conversations', JSON.stringify(updatedConversations));
+    localStorage.setItem('rooma_conversations', JSON.stringify(updatedConversations));
   },
 
   getUserConversations: (userId) => {
@@ -154,7 +154,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
 
     const updatedConversations = [...conversations, newConversation];
     set({ conversations: updatedConversations });
-    localStorage.setItem('nestquarter_conversations', JSON.stringify(updatedConversations));
+    localStorage.setItem('rooma_conversations', JSON.stringify(updatedConversations));
 
     return newConversation.id;
   },

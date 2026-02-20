@@ -11,8 +11,8 @@ const s3Client = new S3Client({
   },
 });
 
-const BUCKET_NAME = process.env.CLOUDFLARE_BUCKET_NAME || 'nestquarter-images';
-const PUBLIC_URL = process.env.CLOUDFLARE_PUBLIC_URL || 'https://images.nestquarter.com';
+const BUCKET_NAME = process.env.CLOUDFLARE_BUCKET_NAME || 'rooma-images';
+const PUBLIC_URL = process.env.CLOUDFLARE_PUBLIC_URL || 'https://images.rooma.com';
 
 export interface UploadOptions {
   folder?: string;

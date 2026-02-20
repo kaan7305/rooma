@@ -34,7 +34,7 @@ export const useSavedSearchesStore = create<SavedSearchesState>((set, get) => ({
   searches: [],
 
   loadSearches: () => {
-    const searchesJson = localStorage.getItem('nestquarter_saved_searches');
+    const searchesJson = localStorage.getItem('rooma_saved_searches');
     if (searchesJson) {
       try {
         const searches = JSON.parse(searchesJson);
@@ -55,14 +55,14 @@ export const useSavedSearchesStore = create<SavedSearchesState>((set, get) => ({
     };
     const updatedSearches = [...searches, newSearch];
     set({ searches: updatedSearches });
-    localStorage.setItem('nestquarter_saved_searches', JSON.stringify(updatedSearches));
+    localStorage.setItem('rooma_saved_searches', JSON.stringify(updatedSearches));
   },
 
   deleteSearch: (id) => {
     const { searches } = get();
     const updatedSearches = searches.filter(search => search.id !== id);
     set({ searches: updatedSearches });
-    localStorage.setItem('nestquarter_saved_searches', JSON.stringify(updatedSearches));
+    localStorage.setItem('rooma_saved_searches', JSON.stringify(updatedSearches));
   },
 
   updateSearch: (id, data) => {
@@ -71,7 +71,7 @@ export const useSavedSearchesStore = create<SavedSearchesState>((set, get) => ({
       search.id === id ? { ...search, ...data } : search
     );
     set({ searches: updatedSearches });
-    localStorage.setItem('nestquarter_saved_searches', JSON.stringify(updatedSearches));
+    localStorage.setItem('rooma_saved_searches', JSON.stringify(updatedSearches));
   },
 
   getUserSearches: (userId) => {
@@ -87,6 +87,6 @@ export const useSavedSearchesStore = create<SavedSearchesState>((set, get) => ({
       search.id === id ? { ...search, lastUsed: new Date().toISOString() } : search
     );
     set({ searches: updatedSearches });
-    localStorage.setItem('nestquarter_saved_searches', JSON.stringify(updatedSearches));
+    localStorage.setItem('rooma_saved_searches', JSON.stringify(updatedSearches));
   },
 }));

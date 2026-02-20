@@ -9,8 +9,8 @@ This guide will help you verify your domain with Resend so you can send emails t
 1. Go to: **https://resend.com/domains**
 2. Click the **"Add Domain"** button
 3. Enter your domain name:
-   - If you own `nestquarter.com`, enter: `nestquarter.com`
-   - If using a subdomain, enter: `mail.nestquarter.com` (recommended)
+   - If you own `rooma.com`, enter: `rooma.com`
+   - If using a subdomain, enter: `mail.rooma.com` (recommended)
 4. Click **"Add"**
 
 ---
@@ -37,7 +37,7 @@ Value: [long string provided by Resend]
 ```
 Type: TXT
 Name: _dmarc
-Value: v=DMARC1; p=none; pct=100; rua=mailto:dmarc@nestquarter.com
+Value: v=DMARC1; p=none; pct=100; rua=mailto:dmarc@rooma.com
 ```
 
 ---
@@ -105,17 +105,17 @@ Once the domain is verified, update the email sending code:
 Find line 258 and change:
 ```typescript
 // FROM THIS:
-from: 'NestQuarter <onboarding@resend.dev>',
+from: 'ROOMA <onboarding@resend.dev>',
 
 // TO THIS (use your actual domain):
-from: 'NestQuarter <noreply@nestquarter.com>',
+from: 'ROOMA <noreply@rooma.com>',
 ```
 
 Or use these common email addresses:
-- `noreply@nestquarter.com` (most common)
-- `hello@nestquarter.com`
-- `support@nestquarter.com`
-- `verify@nestquarter.com`
+- `noreply@rooma.com` (most common)
+- `hello@rooma.com`
+- `support@rooma.com`
+- `verify@rooma.com`
 
 ---
 
@@ -144,7 +144,7 @@ Now you can send verification emails to ANY student email address!
 
 ### Emails Still Not Sending
 - Make sure you updated the `from` address in the code
-- Check that it uses your verified domain (e.g., `@nestquarter.com`)
+- Check that it uses your verified domain (e.g., `@rooma.com`)
 - Restart the dev server
 - Check Resend dashboard for errors
 

@@ -27,7 +27,7 @@ class EmailService {
   async sendBookingConfirmation(userEmail: string, bookingDetails: any) {
     return this.sendEmail({
       to: userEmail,
-      subject: 'Booking Confirmation - NestQuarter',
+      subject: 'Booking Confirmation - ROOMA',
       template: 'booking-confirmation',
       data: {
         propertyName: bookingDetails.propertyName,
@@ -65,7 +65,7 @@ class EmailService {
   async sendWelcomeEmail(userEmail: string, userName: string) {
     return this.sendEmail({
       to: userEmail,
-      subject: 'Welcome to NestQuarter!',
+      subject: 'Welcome to ROOMA!',
       template: 'welcome',
       data: {
         userName,
@@ -76,7 +76,7 @@ class EmailService {
   async sendPasswordReset(userEmail: string, resetLink: string) {
     return this.sendEmail({
       to: userEmail,
-      subject: 'Reset Your Password - NestQuarter',
+      subject: 'Reset Your Password - ROOMA',
       template: 'password-reset',
       data: {
         resetLink,

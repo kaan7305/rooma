@@ -25,7 +25,7 @@ Go to: **https://resend.com/signup**
 ### Step 2: Get API Key (10 seconds)
 1. Go to: **https://resend.com/api-keys**
 2. Click **"Create API Key"**
-3. Name it: `NestQuarter`
+3. Name it: `ROOMA`
 4. **Copy the key** (starts with `re_`)
 
 ### Step 3: Add to .env.local (10 seconds)
@@ -68,7 +68,7 @@ Perfect for:
 ## 🎨 What Users Receive
 
 A professional email with:
-- NestQuarter branding
+- ROOMA branding
 - Large verification code
 - 10-minute expiry timer
 - Security warnings
@@ -126,12 +126,12 @@ To send emails to ANY address (not just your own):
 ### Option 1: Use a Custom Domain (Recommended)
 1. Go to: https://resend.com/domains
 2. Click "Add Domain"
-3. Enter your domain (e.g., `nestquarter.com`)
+3. Enter your domain (e.g., `rooma.com`)
 4. Add the DNS records shown (SPF, DKIM, DMARC)
 5. Wait for verification (usually 5-10 minutes)
 6. Update `/app/api/send-verification-email/route.ts`:
    ```typescript
-   from: 'NestQuarter <noreply@nestquarter.com>'
+   from: 'ROOMA <noreply@rooma.com>'
    ```
 
 ### Option 2: Keep Testing Mode

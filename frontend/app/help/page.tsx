@@ -78,7 +78,7 @@ export default function HelpPage() {
     {
       id: '7',
       category: 'safety',
-      question: 'How does NestQuarter ensure safety?',
+      question: 'How does ROOMA ensure safety?',
       answer: 'We verify all users, secure all payments, provide 24/7 customer support, and have a review system. Never communicate or pay outside the platform. Report any suspicious activity immediately.',
     },
     {
@@ -161,8 +161,8 @@ export default function HelpPage() {
             <p className="text-sm text-gray-600 mb-4">
               Get help via email within 24 hours
             </p>
-            <a href="mailto:support@nestquarter.com" className="text-rose-600 font-medium hover:text-rose-700 transition">
-              support@nestquarter.com →
+            <a href="mailto:support@rooma.com" className="text-rose-600 font-medium hover:text-rose-700 transition">
+              support@rooma.com →
             </a>
           </div>
 

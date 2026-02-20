@@ -17,7 +17,7 @@ interface VerificationCode {
   attempts: number;
 }
 
-const VERIFICATION_CODES_KEY = 'nestquarter_verification_codes';
+const VERIFICATION_CODES_KEY = 'rooma_verification_codes';
 const CODE_EXPIRY_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
 

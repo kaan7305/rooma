@@ -1,5 +1,5 @@
 "use strict";
-// Constants based on the NestQuarter proposal
+// Constants based on the ROOMA proposal
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PAGINATION = exports.FILE_UPLOAD = exports.RATE_LIMIT = exports.JWT_REFRESH_TOKEN_EXPIRES = exports.JWT_ACCESS_TOKEN_EXPIRES = exports.MAX_STAY_MONTHS = exports.MIN_STAY_WEEKS = exports.PRICING = exports.CLAIM_STATUS = exports.PAYOUT_STATUS = exports.CALENDAR_STATUS = exports.REVIEW_TYPES = exports.REVIEW_STATUS = exports.VERIFICATION_STATUS = exports.CANCELLATION_POLICIES = exports.PAYMENT_STATUS = exports.BOOKING_STATUS = exports.PROPERTY_STATUS = exports.PROPERTY_TYPES = exports.USER_TYPES = void 0;
 // User Types

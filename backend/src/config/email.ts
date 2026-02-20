@@ -42,8 +42,8 @@ export const transporter = createEmailTransporter();
 // Email configuration
 export const emailConfig = {
   from: {
-    name: 'NestQuarter',
-    email: process.env.EMAIL_FROM || 'noreply@nestquarter.com',
+    name: 'ROOMA',
+    email: process.env.EMAIL_FROM || 'noreply@rooma.com',
   },
-  replyTo: process.env.EMAIL_REPLY_TO || 'support@nestquarter.com',
+  replyTo: process.env.EMAIL_REPLY_TO || 'support@rooma.com',
 };

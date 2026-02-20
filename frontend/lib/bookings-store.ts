@@ -34,7 +34,7 @@ export const useBookingsStore = create<BookingsState>((set, get) => ({
     };
     const updatedBookings = [...bookings, newBooking];
     set({ bookings: updatedBookings });
-    localStorage.setItem('nestquarter_bookings', JSON.stringify(updatedBookings));
+    localStorage.setItem('rooma_bookings', JSON.stringify(updatedBookings));
   },
 
   cancelBooking: (bookingId: string) => {
@@ -45,7 +45,7 @@ export const useBookingsStore = create<BookingsState>((set, get) => ({
         : booking
     );
     set({ bookings: updatedBookings });
-    localStorage.setItem('nestquarter_bookings', JSON.stringify(updatedBookings));
+    localStorage.setItem('rooma_bookings', JSON.stringify(updatedBookings));
   },
 
   getBooking: (bookingId: string) => {
@@ -55,7 +55,7 @@ export const useBookingsStore = create<BookingsState>((set, get) => ({
 
   loadBookings: () => {
     try {
-      const stored = localStorage.getItem('nestquarter_bookings');
+      const stored = localStorage.getItem('rooma_bookings');
       if (stored) {
         set({ bookings: JSON.parse(stored) });
       }

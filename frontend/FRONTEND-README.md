@@ -1,4 +1,4 @@
-# 🎨 NestQuarter Frontend - Next.js 14
+# 🎨 ROOMA Frontend - Next.js 14
 
 Your frontend is **complete and running**!
 
@@ -166,7 +166,7 @@ File: `.env.local`
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
-NEXT_PUBLIC_APP_NAME=NestQuarter
+NEXT_PUBLIC_APP_NAME=ROOMA
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 

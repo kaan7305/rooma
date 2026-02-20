@@ -25,7 +25,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   notifications: [],
 
   loadNotifications: () => {
-    const notificationsJson = localStorage.getItem('nestquarter_notifications');
+    const notificationsJson = localStorage.getItem('rooma_notifications');
     if (notificationsJson) {
       try {
         const notifications = JSON.parse(notificationsJson);
@@ -47,7 +47,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
     };
     const updatedNotifications = [newNotification, ...notifications];
     set({ notifications: updatedNotifications });
-    localStorage.setItem('nestquarter_notifications', JSON.stringify(updatedNotifications));
+    localStorage.setItem('rooma_notifications', JSON.stringify(updatedNotifications));
   },
 
   markAsRead: (id) => {
@@ -56,7 +56,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       notif.id === id ? { ...notif, read: true } : notif
     );
     set({ notifications: updatedNotifications });
-    localStorage.setItem('nestquarter_notifications', JSON.stringify(updatedNotifications));
+    localStorage.setItem('rooma_notifications', JSON.stringify(updatedNotifications));
   },
 
   markAllAsRead: (userId) => {
@@ -65,7 +65,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       notif.userId === userId ? { ...notif, read: true } : notif
     );
     set({ notifications: updatedNotifications });
-    localStorage.setItem('nestquarter_notifications', JSON.stringify(updatedNotifications));
+    localStorage.setItem('rooma_notifications', JSON.stringify(updatedNotifications));
   },
 
   getUserNotifications: (userId) => {

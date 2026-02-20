@@ -33,7 +33,7 @@ export const useReviewsStore = create<ReviewsState>((set, get) => ({
   reviews: [],
 
   loadReviews: () => {
-    const reviewsJson = localStorage.getItem('nestquarter_reviews');
+    const reviewsJson = localStorage.getItem('rooma_reviews');
     if (reviewsJson) {
       try {
         const reviews = JSON.parse(reviewsJson);
@@ -56,7 +56,7 @@ export const useReviewsStore = create<ReviewsState>((set, get) => ({
     };
     const updatedReviews = [...reviews, newReview];
     set({ reviews: updatedReviews });
-    localStorage.setItem('nestquarter_reviews', JSON.stringify(updatedReviews));
+    localStorage.setItem('rooma_reviews', JSON.stringify(updatedReviews));
   },
 
   addHostResponse: (reviewId, comment) => {
@@ -73,7 +73,7 @@ export const useReviewsStore = create<ReviewsState>((set, get) => ({
         : review
     );
     set({ reviews: updatedReviews });
-    localStorage.setItem('nestquarter_reviews', JSON.stringify(updatedReviews));
+    localStorage.setItem('rooma_reviews', JSON.stringify(updatedReviews));
   },
 
   toggleHelpful: (reviewId, userId) => {
@@ -96,7 +96,7 @@ export const useReviewsStore = create<ReviewsState>((set, get) => ({
       return review;
     });
     set({ reviews: updatedReviews });
-    localStorage.setItem('nestquarter_reviews', JSON.stringify(updatedReviews));
+    localStorage.setItem('rooma_reviews', JSON.stringify(updatedReviews));
   },
 
   getPropertyReviews: (propertyId) => {

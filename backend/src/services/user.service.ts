@@ -52,7 +52,6 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
 
   const { data: user, error: updateError } = await supabase
     .from('users')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any)
     .eq('id', userId)
     .select('id, email, first_name, last_name, user_type, phone, phone_verified, email_verified, date_of_birth, profile_photo_url, bio, student_verified, id_verified, created_at, updated_at')
@@ -221,7 +220,6 @@ export const verifyEmail = async (requestedUserId: string | null, token: string,
   const updateData: UserUpdate = { email_verified: true };
   const { data: user, error: updateError } = await supabase
     .from('users')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any)
     .eq('id', payload.userId)
     .select('id, email, email_verified')
@@ -243,7 +241,6 @@ export const verifyPhone = async (userId: string, _code: string) => {
   const updateData: UserUpdate = { phone_verified: true };
   const { data: user, error: updateError } = await supabase
     .from('users')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any)
     .eq('id', userId)
     .select('id, phone, phone_verified')
@@ -322,7 +319,6 @@ export const updateUserSettings = async (
     };
     const { data: settings, error: updateError } = await supabase
       .from('user_settings')
-      // @ts-expect-error - Supabase type inference issue with update()
       .update(updateData as any)
       .eq('user_id', userId)
       .select()

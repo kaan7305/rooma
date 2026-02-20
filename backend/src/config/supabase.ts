@@ -1,11 +1,13 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import config from './env';
 
-const supabaseUrl = config.supabase.url;
-const supabaseServiceKey = config.supabase.serviceRoleKey;
+const supabaseUrl = config.supabase.url || 'http://127.0.0.1:54321';
+const supabaseServiceKey = config.supabase.serviceRoleKey || 'local-dev-placeholder-key';
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Supabase URL and Service Role Key must be set in environment variables');
+if (!config.supabase.url || !config.supabase.serviceRoleKey) {
+  // Allow local development without hard-blocking app startup.
+  // Endpoints that rely on Supabase will still require valid credentials.
+  console.warn('[Supabase] SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set; using local placeholders.');
 }
 
 // NOTE:

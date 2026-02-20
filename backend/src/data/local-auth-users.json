@@ -1,0 +1,21 @@
+[
+  {
+    "id": "2baa9d80-cf41-42b7-b15c-a013efa161cb",
+    "email": "kaaneroltu73@gmail.com",
+    "password_hash": "$2b$12$Ep0q1YCb2H5ZGnBxxmozFej/nMS0ZjxP4ozq4BClar74taA0v/UT.",
+    "first_name": "Kaan",
+    "last_name": "Eroltu",
+    "user_type": "guest",
+    "phone": "14435294633",
+    "date_of_birth": null,
+    "email_verified": false,
+    "phone_verified": false,
+    "student_verified": false,
+    "id_verified": false,
+    "profile_photo_url": null,
+    "bio": null,
+    "created_at": "2026-02-20T03:54:01.109Z",
+    "updated_at": "2026-02-20T04:19:35.352Z",
+    "last_login": "2026-02-20T04:19:35.352Z"
+  }
+]

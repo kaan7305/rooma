@@ -1,7 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import * as authService from '../services/auth.service';
 import * as userService from '../services/user.service';
-import type { RegisterInput, LoginInput, RefreshTokenInput, VerifyEmailInput } from '../validators/auth.validator';
+import type {
+  RegisterInput,
+  LoginInput,
+  RefreshTokenInput,
+  VerifyEmailInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
+} from '../validators/auth.validator';
 
 /**
  * POST /api/auth/register
@@ -110,6 +117,34 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
       message: 'Email verified successfully',
       data: user,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/forgot-password
+ */
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data: ForgotPasswordInput = req.body;
+    const result = await authService.forgotPassword(data);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/reset-password
+ */
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data: ResetPasswordInput = req.body;
+    const result = await authService.resetPassword(data);
+
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }

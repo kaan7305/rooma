@@ -186,7 +186,6 @@ export const updateWishlist = async (wishlistId: string, userId: string, data: U
   const updateData: WishlistUpdate = { name: data.name };
   const { data: updatedWishlist, error: updateError } = await supabase
     .from('wishlists')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any)
     .eq('id', wishlistId)
     .select()

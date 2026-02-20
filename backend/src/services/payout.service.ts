@@ -305,7 +305,6 @@ export const requestPayout = async (userId: string, data: RequestPayoutInput) =>
     // Update payouts with transfer ID
     await Promise.all(
       payouts.map(payout =>
-        // @ts-expect-error - Supabase type inference issue with update()
         supabase
           .from('payouts')
           .update({

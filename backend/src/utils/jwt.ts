@@ -14,6 +14,11 @@ interface EmailVerificationPayload {
   code: string;
 }
 
+interface PasswordResetPayload {
+  userId: string;
+  email: string;
+}
+
 /**
  * Generate access token (short-lived, 15 minutes)
  */
@@ -98,5 +103,28 @@ export const verifyEmailVerificationToken = (token: string): EmailVerificationPa
       throw new Error('Verification link has expired');
     }
     throw new Error('Invalid verification token');
+  }
+};
+
+/**
+ * Generate password reset token (1h)
+ */
+export const generatePasswordResetToken = (payload: PasswordResetPayload) => {
+  const secret = process.env.PASSWORD_RESET_SECRET || config.jwt.secret;
+  return jwt.sign(payload, secret, { expiresIn: '1h' });
+};
+
+/**
+ * Verify password reset token
+ */
+export const verifyPasswordResetToken = (token: string): PasswordResetPayload => {
+  const secret = process.env.PASSWORD_RESET_SECRET || config.jwt.secret;
+  try {
+    return jwt.verify(token, secret) as PasswordResetPayload;
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new Error('Password reset link has expired');
+    }
+    throw new Error('Invalid password reset token');
   }
 };

@@ -1,5 +1,4 @@
 import { transporter, emailConfig } from '../config/email';
-import handlebars from 'handlebars';
 
 /**
  * Send generic email
@@ -17,10 +16,6 @@ const sendEmail = async (to: string, subject: string, html: string): Promise<voi
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent:', info.messageId);
 
-    // In development, log preview URL
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    }
   } catch (error) {
     console.error('Email sending failed:', error);
     // Don't throw error - email failure shouldn't break the flow
@@ -132,7 +127,7 @@ export const sendPasswordResetEmail = async (
   firstName: string,
   resetToken: string
 ): Promise<void> => {
-  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}`;
 
   const html = `
     <!DOCTYPE html>
@@ -240,6 +235,3 @@ export const sendBookingConfirmationEmail = async (
 
   await sendEmail(email, 'Booking Confirmed - ROOMA', html);
 };
-
-// Import nodemailer for test message URL
-import nodemailer from 'nodemailer';

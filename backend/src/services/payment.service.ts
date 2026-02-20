@@ -93,7 +93,6 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
   };
   await (supabase
     .from('bookings')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any) as any)
     .eq('id', booking_id);
 
@@ -148,7 +147,6 @@ export const confirmPayment = async (bookingId: string, userId: string, data: Co
   };
   await (supabase
     .from('bookings')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any) as any)
     .eq('id', bookingId);
 
@@ -324,7 +322,6 @@ export const refundPayment = async (
   };
   await (supabase
     .from('bookings')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any) as any)
     .eq('id', bookingId);
 
@@ -365,7 +362,6 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
         };
         await (supabase
           .from('bookings')
-          // @ts-expect-error - Supabase type inference issue with update()
           .update(updateData as any) as any)
           .eq('id', bookingId);
       }
@@ -383,7 +379,6 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
         };
         await (supabase
           .from('bookings')
-          // @ts-expect-error - Supabase type inference issue with update()
           .update(updateData as any) as any)
           .eq('id', bookingId);
       }
@@ -412,7 +407,6 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
           };
           await (supabase
             .from('bookings')
-            // @ts-expect-error - Supabase type inference issue with update()
             .update(updateData as any) as any)
             .eq('id', booking.id || '');
         }

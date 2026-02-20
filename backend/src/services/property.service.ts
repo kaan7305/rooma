@@ -482,7 +482,6 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
 
   const { data: property, error: updateError } = await supabase
     .from('properties')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any)
     .eq('id', propertyId)
     .select()
@@ -576,7 +575,6 @@ export const deleteProperty = async (propertyId: string, hostId: string) => {
   };
   await (supabase
     .from('properties')
-    // @ts-expect-error - Supabase type inference issue with update()
     .update(updateData as any) as any)
     .eq('id', propertyId);
 

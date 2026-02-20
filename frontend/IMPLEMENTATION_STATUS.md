@@ -1,12 +1,12 @@
-# NestQuarter - Backend Integration Implementation Status
+# ROOMA - Backend Integration Implementation Status
 
 ## ✅ Phase 1 (COMPLETED): Core Backend Integration
 
 ### 1.1 Database & Schema ✅
-- **Supabase Setup**: Supabase (PostgreSQL) integration with typed queries
-- **Database Connection**: Supabase project credentials via environment variables
-- **Models**: 13 comprehensive tables including User, Property, Booking, Message, Review, etc.
-- **Location**: `backend/src/config/supabase.ts`, `backend/src/types/database.types.ts`
+- **Prisma Setup**: Complete PostgreSQL integration with comprehensive schema
+- **Database Connection**: Connected to existing `rooma` database
+- **Models**: 13 comprehensive models including User, Property, Booking, Message, Review, etc.
+- **Location**: `prisma/schema.prisma`, `lib/prisma.ts`
 
 ### 1.2 Authentication System ✅
 - **JWT Implementation**: Access tokens (15min) + Refresh tokens (7 days)
@@ -303,8 +303,8 @@ Each store needs to:
 ## 📊 Overall Progress
 
 ### Completed ✅
-- [x] Database schema (Supabase)
-- [x] Supabase client setup
+- [x] Database schema and migrations
+- [x] Prisma client setup
 - [x] Authentication API (login, register, logout, refresh)
 - [x] Properties API (CRUD)
 - [x] Bookings API (create, list, cancel)
@@ -393,9 +393,7 @@ Each store needs to:
 
 ### Current (.env)
 ```bash
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-EMAIL_VERIFICATION_SECRET=your_email_verification_secret
+DATABASE_URL=postgresql://kaaneroltu@localhost:5432/rooma
 JWT_SECRET=dev-jwt-secret-key-change-in-production-12345
 JWT_REFRESH_SECRET=dev-refresh-secret-key-change-in-production-67890
 ```
@@ -409,14 +407,14 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Email
 SENDGRID_API_KEY=SG...
-SENDGRID_FROM_EMAIL=noreply@nestquarter.com
+SENDGRID_FROM_EMAIL=noreply@rooma.com
 
 # Storage
 CLOUDFLARE_ACCOUNT_ID=...
 CLOUDFLARE_ACCESS_KEY_ID=...
 CLOUDFLARE_SECRET_ACCESS_KEY=...
-CLOUDFLARE_BUCKET_NAME=nestquarter-images
-CLOUDFLARE_PUBLIC_URL=https://images.nestquarter.com
+CLOUDFLARE_BUCKET_NAME=rooma-images
+CLOUDFLARE_PUBLIC_URL=https://images.rooma.com
 ```
 
 ---

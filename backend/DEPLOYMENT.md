@@ -1,6 +1,6 @@
-# 🚀 NestQuarter API Deployment Guide
+# 🚀 ROOMA API Deployment Guide
 
-This guide will help you deploy your NestQuarter API to production using Railway (recommended) or other platforms.
+This guide will help you deploy your ROOMA API to production using Railway (recommended) or other platforms.
 
 ## 📋 Pre-Deployment Checklist
 
@@ -25,7 +25,7 @@ Railway is the easiest option since you already have your PostgreSQL database th
 
 1. **Create a new repository on GitHub:**
    - Go to https://github.com/new
-   - Name it: `nestquarter-backend`
+   - Name it: `rooma-backend`
    - Make it private
    - Don't initialize with README (we already have one)
 
@@ -34,7 +34,7 @@ Railway is the easiest option since you already have your PostgreSQL database th
    cd "/Users/kaaneroltu/Desktop/Sublet Project/backend"
 
    # Add GitHub remote (replace YOUR_USERNAME with your GitHub username)
-   git remote add origin https://github.com/YOUR_USERNAME/nestquarter-backend.git
+   git remote add origin https://github.com/YOUR_USERNAME/rooma-backend.git
 
    # Push code
    git branch -M main
@@ -50,7 +50,7 @@ Railway is the easiest option since you already have your PostgreSQL database th
 2. **Create New Project:**
    - Click "New Project"
    - Select "Deploy from GitHub repo"
-   - Choose your `nestquarter-backend` repository
+   - Choose your `rooma-backend` repository
 
 3. **Railway will automatically:**
    - Detect Node.js project
@@ -111,7 +111,7 @@ This backend uses Supabase directly. Set these environment variables in your hos
 
 1. **Railway will auto-deploy** when you push to GitHub
 2. **Check deployment logs** in Railway dashboard
-3. **Get your URL**: Railway provides a URL like `nestquarter-api.railway.app`
+3. **Get your URL**: Railway provides a URL like `rooma-api.railway.app`
 
 ### Step 6: Verify Supabase Credentials
 
@@ -130,7 +130,7 @@ curl https://your-app.railway.app/
 # Test login
 curl -X POST https://your-app.railway.app/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@nestquarter.com","password":"Password123!"}'
+  -d '{"email":"test@rooma.com","password":"Password123!"}'
 ```
 
 ---
@@ -147,7 +147,7 @@ curl -X POST https://your-app.railway.app/api/auth/login \
 1. Click "New +" → "Web Service"
 2. Connect your GitHub repository
 3. Configure:
-   - **Name**: `nestquarter-api`
+   - **Name**: `rooma-api`
    - **Environment**: `Node`
    - **Build Command**: `npm run build`
    - **Start Command**: `npm run deploy`
@@ -175,7 +175,7 @@ heroku login
 ```bash
 cd "/Users/kaaneroltu/Desktop/Sublet Project/backend"
 
-heroku create nestquarter-api
+heroku create rooma-api
 heroku addons:create heroku-postgresql:essential-0
 ```
 
@@ -326,7 +326,7 @@ After successful deployment:
 
 ## 🎉 Success!
 
-Your NestQuarter API is now live! 🚀
+Your ROOMA API is now live! 🚀
 
 **Production URL**: `https://your-app.railway.app`
 

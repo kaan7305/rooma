@@ -66,7 +66,7 @@ export default function AdminVerificationsPage() {
 
   const loadUsers = () => {
     try {
-      const usersJson = localStorage.getItem('nestquarter_users');
+      const usersJson = localStorage.getItem('rooma_users');
       if (usersJson) {
         const users: UserWithVerification[] = JSON.parse(usersJson);
         setAllUsers(users);
@@ -78,7 +78,7 @@ export default function AdminVerificationsPage() {
 
   const handleApprove = (userId: number) => {
     try {
-      const usersJson = localStorage.getItem('nestquarter_users');
+      const usersJson = localStorage.getItem('rooma_users');
       if (!usersJson) return;
 
       const users: UserWithVerification[] = JSON.parse(usersJson);
@@ -94,7 +94,7 @@ export default function AdminVerificationsPage() {
         manual_review_notes: reviewNotes || 'Approved by admin',
       };
 
-      localStorage.setItem('nestquarter_users', JSON.stringify(users));
+      localStorage.setItem('rooma_users', JSON.stringify(users));
 
       // Reload users
       loadUsers();
@@ -115,7 +115,7 @@ export default function AdminVerificationsPage() {
     }
 
     try {
-      const usersJson = localStorage.getItem('nestquarter_users');
+      const usersJson = localStorage.getItem('rooma_users');
       if (!usersJson) return;
 
       const users: UserWithVerification[] = JSON.parse(usersJson);
@@ -131,7 +131,7 @@ export default function AdminVerificationsPage() {
         manual_review_notes: reviewNotes,
       };
 
-      localStorage.setItem('nestquarter_users', JSON.stringify(users));
+      localStorage.setItem('rooma_users', JSON.stringify(users));
 
       // Reload users
       loadUsers();

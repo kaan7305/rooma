@@ -1,4 +1,4 @@
-# NestQuarter - Complete Project Roadmap
+# ROOMA - Complete Project Roadmap
 
 ## Project Status Overview
 
@@ -283,7 +283,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ### 5.2 Domain & SSL
 **Priority: CRITICAL**
 
-- [ ] Purchase domain name (e.g., nestquarter.com)
+- [ ] Purchase domain name (e.g., rooma.com)
 - [ ] Configure DNS records
 - [ ] Set up SSL certificates (auto with Vercel/Railway)
 - [ ] Configure email sending domain (SPF, DKIM, DMARC)
@@ -556,4 +556,4 @@ npm start
 ---
 
 *Last Updated: January 2026*
-*Project: NestQuarter - Global Student Housing Platform*
+*Project: ROOMA - Global Student Housing Platform*

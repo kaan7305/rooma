@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'NestQuarter - Global Student Housing Platform',
+  title: 'ROOMA - Global Student Housing Platform',
   description:
     'Find your perfect student home. Sublet, rent, and connect with verified housing worldwide.',
 };

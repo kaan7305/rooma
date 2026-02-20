@@ -252,8 +252,8 @@ CLOUDFLARE_ENDPOINT=https://{account_id}.r2.cloudflarestorage.com
 CLOUDFLARE_ACCOUNT_ID=your_account_id
 CLOUDFLARE_ACCESS_KEY_ID=your_access_key
 CLOUDFLARE_SECRET_ACCESS_KEY=your_secret_key
-CLOUDFLARE_BUCKET_NAME=nestquarter-images
-CLOUDFLARE_PUBLIC_URL=https://images.nestquarter.com
+CLOUDFLARE_BUCKET_NAME=rooma-images
+CLOUDFLARE_PUBLIC_URL=https://images.rooma.com
 ```
 
 ### Image Processing Pipeline
@@ -285,7 +285,7 @@ CLOUDFLARE_PUBLIC_URL=https://images.nestquarter.com
 ### Storage Structure
 
 ```
-nestquarter-images/
+rooma-images/
 ├── uploads/
 │   ├── {timestamp}-{random}.jpg
 │   ├── {timestamp}-{random}.png

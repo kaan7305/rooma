@@ -27,7 +27,7 @@ export default function CareersPage() {
       department: 'Support',
       location: 'Remote',
       type: 'Full-time',
-      description: 'Help our community members have the best experience on NestQuarter.',
+      description: 'Help our community members have the best experience on ROOMA.',
     },
     {
       id: 4,
@@ -94,7 +94,7 @@ export default function CareersPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-8 shadow-md mb-12">
-          <h2 className="text-2xl font-bold text-black mb-6">Why NestQuarter?</h2>
+          <h2 className="text-2xl font-bold text-black mb-6">Why ROOMA?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {benefits.map((benefit) => {
               const Icon = benefit.icon;
@@ -152,7 +152,7 @@ export default function CareersPage() {
         <div className="mt-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-4">Do not See a Perfect Fit?</h2>
           <p className="mb-6 text-white max-w-2xl mx-auto">
-            We are always interested in hearing from talented individuals. Send us your resume and tell us why you would like to join NestQuarter.
+            We are always interested in hearing from talented individuals. Send us your resume and tell us why you would like to join ROOMA.
           </p>
           <button className="bg-white text-rose-600 px-8 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors">
             Send General Application

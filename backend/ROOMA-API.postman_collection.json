@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "nestquarter-api-v1",
-		"name": "NestQuarter API - Complete Collection",
-		"description": "Complete API collection for NestQuarter student housing platform with all 50 endpoints",
+		"_postman_id": "rooma-api-v1",
+		"name": "ROOMA API - Complete Collection",
+		"description": "Complete API collection for ROOMA student housing platform with all 50 endpoints",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"auth": {
@@ -115,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"test@nestquarter.com\",\n  \"password\": \"Password123!\"\n}",
+							"raw": "{\n  \"email\": \"test@rooma.com\",\n  \"password\": \"Password123!\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

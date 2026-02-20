@@ -7,7 +7,7 @@ export default function HostResourcesPage() {
   const resources = [
     {
       title: 'Getting Started Guide',
-      description: 'Everything you need to know about listing your property on NestQuarter.',
+      description: 'Everything you need to know about listing your property on ROOMA.',
       icon: BookOpen,
       link: '/host-resources/getting-started',
     },
@@ -49,7 +49,7 @@ export default function HostResourcesPage() {
             Host Resources
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
-            Tools, guides, and support to help you succeed as a host on NestQuarter.
+            Tools, guides, and support to help you succeed as a host on ROOMA.
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function HostResourcesPage() {
           <div className="bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-8 text-white">
             <Home className="w-12 h-12 mb-4" />
             <h3 className="text-2xl font-bold mb-4">Ready to List?</h3>
-            <p className="mb-6 text-white">Start earning by listing your property on NestQuarter today.</p>
+            <p className="mb-6 text-white">Start earning by listing your property on ROOMA today.</p>
             <Link
               href="/host/new"
               className="inline-block bg-white text-rose-600 px-6 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors"

@@ -14,7 +14,7 @@ This document outlines the complete design, architecture, and go-to-market strat
 
 1. **StayScholar** - Clean, memorable, emphasizes student focus
 2. **LeaseLink** - Direct, professional, hints at connection
-3. **NestQuarter** - Warm, seasonal (quarterly stays), nest = home
+3. **ROOMA** - Warm, seasonal (quarterly stays), nest = home
 4. **StudyStay** - Simple, clear value proposition
 5. **PadPass** - Modern, passport to global housing
 6. **RoomRover** - Adventurous, exploration-focused
@@ -23,7 +23,7 @@ This document outlines the complete design, architecture, and go-to-market strat
 9. **StayMate** - Friendly, companion on journey
 10. **LeaseLodge** - Alliterative, trustworthy
 
-**Recommended Choice: NestQuarter**
+**Recommended Choice: ROOMA**
 - Evocative and warm
 - Suggests temporary but comfortable home
 - "Quarter" references academic terms and minimum stay duration
@@ -45,7 +45,7 @@ This document outlines the complete design, architecture, and go-to-market strat
 
 **Core Differentiators vs. Competitors:**
 
-| Platform | Limitation | NestQuarter Advantage |
+| Platform | Limitation | ROOMA Advantage |
 |----------|-----------|----------------------|
 | **Airbnb** | Expensive for students, nightly pricing, no academic focus | 2+ week pricing, student-verified discounts, academic calendar integration |
 | **Booking.com** | Hotel-focused, short stays only, no community | Residential housing, flexible medium-term, student community |
@@ -319,7 +319,7 @@ This document outlines the complete design, architecture, and go-to-market strat
    - Local services marketplace (cleaning, maintenance)
 
 8. **Subscription Tiers**
-   - NestQuarter Plus (for frequent travelers)
+   - ROOMA Plus (for frequent travelers)
      - 5% discount on all bookings
      - Priority customer support
      - Flexible cancellation
@@ -333,7 +333,7 @@ This document outlines the complete design, architecture, and go-to-market strat
 
 ```
 +--------------------------------------------------+
-|  [Logo] NestQuarter    [Explore] [Become a Host] |
+|  [Logo] ROOMA    [Explore] [Become a Host] |
 |                         [Login] [Sign Up]         |
 +--------------------------------------------------+
 |                                                   |
@@ -363,7 +363,7 @@ This document outlines the complete design, architecture, and go-to-market strat
 |                                                   |
 +--------------------------------------------------+
 |                                                   |
-|  How NestQuarter Works                            |
+|  How ROOMA Works                            |
 |  [Icon] Search → [Icon] Book → [Icon] Stay        |
 |                                                   |
 +--------------------------------------------------+
@@ -626,7 +626,7 @@ This document outlines the complete design, architecture, and go-to-market strat
 **Step 1: Welcome**
 ```
 +------------------------------------------+
-| Become a Host on NestQuarter              |
+| Become a Host on ROOMA              |
 +------------------------------------------+
 | Earn money hosting students & travelers   |
 |                                           |
@@ -1481,7 +1481,7 @@ const requireHost = (req, res, next) => {
    - **Featured Listing:** €20/month (appear first in search)
    - **Professional Photography:** €100 one-time (partner with local photographers)
 
-2. **Subscription: NestQuarter Plus (Guest)**
+2. **Subscription: ROOMA Plus (Guest)**
    - **Price:** €9.99/month or €99/year
    - **Benefits:**
      - 5% discount on all bookings
@@ -1490,7 +1490,7 @@ const requireHost = (req, res, next) => {
      - Early access to new listings (24hrs before public)
      - Exclusive city guides & community access
 
-3. **Subscription: NestQuarter Pro (Host)**
+3. **Subscription: ROOMA Pro (Host)**
    - **Price:** €19.99/month or €199/year
    - **Benefits:**
      - Reduced host fee (3% instead of 4%)
@@ -1503,7 +1503,7 @@ const requireHost = (req, res, next) => {
 4. **University Partnerships:**
    - Charge universities €5000-15000/year to be listed as "Official Partner"
    - Benefits for universities:
-     - Dedicated landing page (nestquarter.com/universities/harvard)
+     - Dedicated landing page (rooma.com/universities/harvard)
      - Priority placement for nearby properties
      - Co-branded marketing materials
      - Student discount codes
@@ -1596,7 +1596,7 @@ Platform Revenue: £377 (£247 + £130) + £50 subscription
 | **Booking.com** | 0% | 15-18% | 15-18% | Guests pay less, hosts pay more |
 | **HousingAnywhere** | 0% | 20-22% | 20-22% | Very high host fees |
 | **SpareRoom** | £20-90 | Free | Flat fee | UK only, low-tech |
-| **NestQuarter** | **8%** | **4%** | **12%** | **Balanced, competitive** |
+| **ROOMA** | **8%** | **4%** | **12%** | **Balanced, competitive** |
 
 **Why Our Pricing Works:**
 - Transparent: both sides know the cost
@@ -1770,7 +1770,7 @@ Platform Revenue: £377 (£247 + £130) + £50 subscription
 
 1. **Universities:**
    - Official housing partner status
-   - Co-branded portals (harvard.nestquarter.com)
+   - Co-branded portals (harvard.rooma.com)
    - Student discount codes
    - Target: 100 partnerships by Year 2
 
@@ -1791,7 +1791,7 @@ Platform Revenue: £377 (£247 + £130) + £50 subscription
 
 5. **Banking/Fintech:**
    - Partner with student-focused banks (N26, Revolut)
-   - Offer co-branded debit cards with cashback on NestQuarter bookings
+   - Offer co-branded debit cards with cashback on ROOMA bookings
 
 6. **SIM Card Providers:**
    - Welcome package includes local SIM (Airalo, Holafly)
@@ -1809,7 +1809,7 @@ Platform Revenue: £377 (£247 + £130) + £50 subscription
 
 ## 8. Competitive Advantages
 
-**What Sets NestQuarter Apart:**
+**What Sets ROOMA Apart:**
 
 1. **Student-First Design:**
    - Every feature optimized for student needs (budget filters, university proximity, academic calendar sync)
@@ -1906,14 +1906,14 @@ Platform Revenue: £377 (£247 + £130) + £50 subscription
 
 ## Conclusion
 
-NestQuarter is positioned to become the leading global housing platform for students, interns, and short-term travelers by combining:
+ROOMA is positioned to become the leading global housing platform for students, interns, and short-term travelers by combining:
 - **Affordability** (competitive pricing, student discounts)
 - **Safety** (verified hosts, secure payments, legal contracts)
 - **Flexibility** (2 weeks to 12 months, aligned with academic needs)
 - **Community** (students helping students, local guides)
 - **Global reach** (starting in Europe/US, expanding worldwide)
 
-With a clear go-to-market strategy, sustainable revenue model, and strong product-market fit, NestQuarter can capture significant market share in the $20B+ student housing market.
+With a clear go-to-market strategy, sustainable revenue model, and strong product-market fit, ROOMA can capture significant market share in the $20B+ student housing market.
 
 **The opportunity is massive. The time is now. Let's build the future of student housing.**
 
@@ -1921,4 +1921,4 @@ With a clear go-to-market strategy, sustainable revenue model, and strong produc
 
 **Document Version:** 1.0
 **Last Updated:** November 15, 2025
-**Prepared For:** NestQuarter Founding Team
+**Prepared For:** ROOMA Founding Team

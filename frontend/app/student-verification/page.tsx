@@ -235,7 +235,7 @@ export default function StudentVerificationPage() {
             Student Verification
           </h1>
           <p className="text-gray-600 mt-2">
-            Verify your student status to access NestQuarter
+            Verify your student status to access ROOMA
           </p>
         </div>
 

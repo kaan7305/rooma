@@ -1,4 +1,4 @@
-// Constants based on the NestQuarter proposal
+// Constants based on the ROOMA proposal
 
 // User Types
 export const USER_TYPES = {

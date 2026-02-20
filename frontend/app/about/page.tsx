@@ -15,7 +15,7 @@ export default function AboutPage() {
     {
       name: 'Sarah Johnson',
       role: 'CEO & Founder',
-      bio: 'Former student who experienced housing challenges firsthand and created NestQuarter to help others.',
+      bio: 'Former student who experienced housing challenges firsthand and created ROOMA to help others.',
       image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80',
     },
     {
@@ -37,7 +37,7 @@ export default function AboutPage() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
-            About NestQuarter
+            About ROOMA
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
             We are building the worlds largest student housing platform, connecting students with safe, affordable, and flexible accommodation.
@@ -63,13 +63,13 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-black mb-6 text-center">Our Story</h2>
           <div className="max-w-3xl mx-auto space-y-4 text-black">
             <p>
-              NestQuarter was founded in 2023 by a group of students who experienced the challenges of finding safe, affordable housing while studying abroad. We understand the stress and uncertainty that comes with searching for accommodation in a new city.
+              ROOMA was founded in 2023 by a group of students who experienced the challenges of finding safe, affordable housing while studying abroad. We understand the stress and uncertainty that comes with searching for accommodation in a new city.
             </p>
             <p>
               Our mission is to make student housing accessible, transparent, and trustworthy. We verify every property and user, ensure secure payments, and provide 24/7 support to create a safe community for students worldwide.
             </p>
             <p>
-              Today, NestQuarter serves over 50,000 students across 200+ cities globally, offering short-term sublets, semester housing, summer internships, and study abroad accommodations.
+              Today, ROOMA serves over 50,000 students across 200+ cities globally, offering short-term sublets, semester housing, summer internships, and study abroad accommodations.
             </p>
           </div>
         </div>

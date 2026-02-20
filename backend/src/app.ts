@@ -54,7 +54,7 @@ if (process.env.NODE_ENV === 'development') {
 // Welcome endpoint
 app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
-    message: 'Welcome to NestQuarter API',
+    message: 'Welcome to ROOMA API',
     version: '1.0.0',
     documentation: 'See API-TESTING-GUIDE.md for endpoint details',
     endpoints: {

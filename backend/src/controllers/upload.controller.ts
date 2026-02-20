@@ -222,7 +222,7 @@ export const deletePropertyPhoto = async (
     }
 
     // Extract public ID from Cloudinary URL
-    // URL format: https://res.cloudinary.com/.../nestquarter/property-photos/xyz.jpg
+    // URL format: https://res.cloudinary.com/.../rooma/property-photos/xyz.jpg
     const urlParts = photo.photo_url.split('/');
     const publicIdWithExt = urlParts.slice(-2).join('/'); // folder/filename.ext
     const publicId = publicIdWithExt.replace(/\.[^/.]+$/, ''); // Remove extension

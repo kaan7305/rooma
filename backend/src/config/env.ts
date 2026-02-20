@@ -81,8 +81,8 @@ const config: Config = {
   },
   sendgrid: {
     apiKey: process.env.SENDGRID_API_KEY || '',
-    fromEmail: process.env.FROM_EMAIL || 'noreply@nestquarter.com',
-    fromName: process.env.FROM_NAME || 'NestQuarter',
+    fromEmail: process.env.FROM_EMAIL || 'noreply@rooma.com',
+    fromName: process.env.FROM_NAME || 'ROOMA',
   },
   twilio: {
     accountSid: process.env.TWILIO_ACCOUNT_SID || '',

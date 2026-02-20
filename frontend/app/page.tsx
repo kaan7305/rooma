@@ -289,10 +289,10 @@ export default function HomePage() {
           <FeaturedSections />
         </div>
 
-        {/* Why Choose NestQuarter */}
+        {/* Why Choose ROOMA */}
         <section className="mt-24 bg-gradient-to-br from-white via-rose-50/30 to-purple-50/30 rounded-3xl p-12 shadow-xl border border-gray-100">
           <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 animate-fade-in">
-            Why sublet with NestQuarter?
+            Why sublet with ROOMA?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center group animate-slide-up-fade" style={{ animationDelay: '0.1s' }}>
@@ -356,7 +356,7 @@ export default function HomePage() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-rose-600 dark:text-rose-400 mb-4">
-                NestQuarter
+                ROOMA
               </h3>
               <ul className="space-y-3 text-sm text-gray-600">
                 <li><Link href="/about" className="hover:text-rose-600 transition-colors">About Us</Link></li>
@@ -366,7 +366,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-12 pt-2 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-600">© 2024 NestQuarter, Inc. All rights reserved.</p>
+            <p className="text-sm text-gray-600">© 2024 ROOMA, Inc. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <Link href="/privacy" className="hover:text-rose-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-rose-600 transition-colors">Terms</Link>

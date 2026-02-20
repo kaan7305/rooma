@@ -1,4 +1,4 @@
-# 🚀 Deploy NestQuarter API - Step by Step
+# 🚀 Deploy ROOMA API - Step by Step
 
 Follow these steps **exactly** to deploy your backend to production.
 
@@ -9,8 +9,8 @@ Follow these steps **exactly** to deploy your backend to production.
 1. **Open your browser** and go to: https://github.com/new
 
 2. **Fill in the form:**
-   - Repository name: `nestquarter-backend`
-   - Description: `NestQuarter API - Student housing platform backend`
+   - Repository name: `rooma-backend`
+   - Description: `ROOMA API - Student housing platform backend`
    - **Make it PRIVATE** ✓
    - **DO NOT** check "Add README" (we already have one)
 
@@ -36,7 +36,7 @@ Open Terminal and run:
 cd "/Users/kaaneroltu/Desktop/Sublet Project/backend"
 
 # Replace YOUR_USERNAME with your actual GitHub username
-git remote add origin https://github.com/YOUR_USERNAME/nestquarter-backend.git
+git remote add origin https://github.com/YOUR_USERNAME/rooma-backend.git
 
 # Push your code
 git push -u origin main
@@ -65,7 +65,7 @@ git push -u origin main
 
 ### 3.3 Select Your Repository
 
-1. Find and click: **nestquarter-backend**
+1. Find and click: **rooma-backend**
 2. Railway will start deploying automatically! 🎉
 
 ### 3.4 Monitor Deployment
@@ -176,7 +176,7 @@ After adding all variables:
 3. Scroll to **"Domains"**
 4. You'll see a URL like:
    ```
-   https://nestquarter-backend-production.up.railway.app
+   https://rooma-backend-production.up.railway.app
    ```
 5. **Copy this URL** - this is your production API!
 
@@ -217,7 +217,7 @@ curl https://YOUR_APP_URL/
 **Expected Response:**
 ```json
 {
-  "message": "Welcome to NestQuarter API",
+  "message": "Welcome to ROOMA API",
   "version": "1.0.0",
   ...
 }
@@ -228,7 +228,7 @@ curl https://YOUR_APP_URL/
 ```bash
 curl -X POST https://YOUR_APP_URL/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@nestquarter.com","password":"Password123!"}'
+  -d '{"email":"test@rooma.com","password":"Password123!"}'
 ```
 
 **Expected Response:**
@@ -266,7 +266,7 @@ against the Supabase project. No Prisma seed is required.
 
 ### 2. Update Postman Collection
 
-1. Open `NestQuarter-API.postman_collection.json` in Postman
+1. Open `ROOMA-API.postman_collection.json` in Postman
 2. Update `baseUrl` variable to your production URL
 3. Test all endpoints!
 
@@ -274,7 +274,7 @@ against the Supabase project. No Prisma seed is required.
 
 In Railway:
 1. Settings → Custom Domain
-2. Add your domain (e.g., `api.nestquarter.com`)
+2. Add your domain (e.g., `api.rooma.com`)
 3. Update DNS records as instructed
 
 ### 4. Monitor Your API
@@ -288,7 +288,7 @@ In Railway:
 When you deploy your frontend:
 1. Go to Railway Variables
 2. Update `CORS_ORIGIN` to your frontend URL
-3. Example: `https://nestquarter.com`
+3. Example: `https://rooma.com`
 
 ---
 
@@ -351,4 +351,4 @@ When you deploy your frontend:
 
 **You're all set!** 🚀
 
-Your NestQuarter API is now running in production!
+Your ROOMA API is now running in production!

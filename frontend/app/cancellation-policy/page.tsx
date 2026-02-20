@@ -112,7 +112,7 @@ export default function CancellationPolicyPage() {
               </div>
               <div>
                 <h3 className="font-bold text-black mb-2">Service Fees Are Non-Refundable</h3>
-                <p className="text-black">While the accommodation cost may be refundable according to the policy, NestQuarter service fees are generally non-refundable except in certain circumstances.</p>
+                <p className="text-black">While the accommodation cost may be refundable according to the policy, ROOMA service fees are generally non-refundable except in certain circumstances.</p>
               </div>
             </div>
             <div className="flex gap-4">

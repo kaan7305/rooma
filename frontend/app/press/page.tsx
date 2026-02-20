@@ -7,25 +7,25 @@ export default function PressPage() {
   const pressReleases = [
     {
       id: 1,
-      title: 'NestQuarter Raises $10M Series A to Expand Student Housing Platform',
+      title: 'ROOMA Raises $10M Series A to Expand Student Housing Platform',
       date: 'December 15, 2024',
-      excerpt: 'NestQuarter announces Series A funding to scale operations and expand to 50 new cities globally.',
+      excerpt: 'ROOMA announces Series A funding to scale operations and expand to 50 new cities globally.',
     },
     {
       id: 2,
-      title: 'NestQuarter Reaches 50,000 Active Users Milestone',
+      title: 'ROOMA Reaches 50,000 Active Users Milestone',
       date: 'November 28, 2024',
       excerpt: 'Platform celebrates major growth milestone as student housing demand continues to surge.',
     },
     {
       id: 3,
-      title: 'NestQuarter Launches AI-Powered Roommate Matching',
+      title: 'ROOMA Launches AI-Powered Roommate Matching',
       date: 'October 12, 2024',
       excerpt: 'New feature uses machine learning to help students find compatible roommates based on lifestyle preferences.',
     },
     {
       id: 4,
-      title: 'NestQuarter Partners with 100+ Universities Worldwide',
+      title: 'ROOMA Partners with 100+ Universities Worldwide',
       date: 'September 5, 2024',
       excerpt: 'Strategic partnerships aim to provide verified housing options for international and domestic students.',
     },
@@ -34,13 +34,13 @@ export default function PressPage() {
   const coverage = [
     {
       outlet: 'TechCrunch',
-      title: 'How NestQuarter is Solving the Student Housing Crisis',
+      title: 'How ROOMA is Solving the Student Housing Crisis',
       date: 'Dec 2024',
       url: '#',
     },
     {
       outlet: 'Forbes',
-      title: 'Student Housing Startup NestQuarter Sees 300% Growth',
+      title: 'Student Housing Startup ROOMA Sees 300% Growth',
       date: 'Nov 2024',
       url: '#',
     },
@@ -69,7 +69,7 @@ export default function PressPage() {
             Press & Media
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
-            Latest news, press releases, and media coverage about NestQuarter.
+            Latest news, press releases, and media coverage about ROOMA.
           </p>
         </div>
 
@@ -134,11 +134,11 @@ export default function PressPage() {
               <p className="mb-6 text-white">For press inquiries, interviews, or more information, please contact our media team.</p>
               <div className="space-y-3">
                 <a
-                  href="mailto:press@nestquarter.com"
+                  href="mailto:press@rooma.com"
                   className="block w-full text-center bg-white text-rose-600 px-6 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors"
                 >
                   <Mail className="w-5 h-5 inline mr-2" />
-                  press@nestquarter.com
+                  press@rooma.com
                 </a>
               </div>
             </div>

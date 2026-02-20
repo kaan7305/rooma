@@ -1,4 +1,4 @@
-// NestQuarter Database Schema
+// ROOMA Database Schema
 // Based on the platform design proposal
 
 generator client {

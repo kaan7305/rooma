@@ -1,4 +1,4 @@
-# 🧪 NestQuarter API Testing Guide
+# 🧪 ROOMA API Testing Guide
 
 ## 🚀 Quick Start
 
@@ -14,11 +14,11 @@
 1. Open **Postman**
 2. Click **Import** (top left)
 3. Select **File** tab
-4. Choose: `NestQuarter-API.postman_collection.json`
+4. Choose: `ROOMA-API.postman_collection.json`
 5. Click **Import**
 
 ### Option 2: Drag & Drop
-- Drag `NestQuarter-API.postman_collection.json` into Postman window
+- Drag `ROOMA-API.postman_collection.json` into Postman window
 
 ---
 
@@ -31,7 +31,7 @@
 **Body (JSON):**
 ```json
 {
-  "email": "test@nestquarter.com",
+  "email": "test@rooma.com",
   "password": "Password123!"
 }
 ```
@@ -45,7 +45,7 @@
     "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
     "user": {
       "id": "uuid-here",
-      "email": "test@nestquarter.com",
+      "email": "test@rooma.com",
       "first_name": "Test",
       "last_name": "User"
     }
@@ -110,7 +110,7 @@
 ## 📝 Test Data Available
 
 ### Test User Account
-- **Email:** `test@nestquarter.com`
+- **Email:** `test@rooma.com`
 - **Password:** `Password123!`
 - **Type:** Both guest and host
 
@@ -144,7 +144,7 @@ To test against **Railway cloud database**:
 curl -X POST http://localhost:3001/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "test@nestquarter.com",
+    "email": "test@rooma.com",
     "password": "Password123!"
   }'
 ```
@@ -184,7 +184,7 @@ PORT=3001 npm run dev
 
 ### 500 Server Error?
 - Check server logs in terminal
-- Verify database is running: `psql -d nestquarter`
+- Verify database is running: `psql -d rooma`
 
 ---
 
@@ -272,7 +272,7 @@ PORT=3001 npm run dev
 
 ## 🎉 Happy Testing!
 
-Your NestQuarter API is fully functional and ready to test!
+Your ROOMA API is fully functional and ready to test!
 
 ### Need Help?
 - Check server logs for errors

@@ -30,7 +30,7 @@ export const uploadImage = async (
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: `nestquarter/${folder}`,
+          folder: `rooma/${folder}`,
           resource_type: 'image',
           format: 'jpg',
         },
@@ -75,7 +75,7 @@ export const uploadDocument = async (
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: `nestquarter/${folder}`,
+        folder: `rooma/${folder}`,
         resource_type: 'raw',
         format: file.mimetype.split('/')[1],
       },

@@ -35,7 +35,7 @@ export const useListingsStore = create<ListingsState>((set, get) => ({
   listings: [],
 
   loadListings: () => {
-    const listingsJson = localStorage.getItem('nestquarter_listings');
+    const listingsJson = localStorage.getItem('rooma_listings');
     if (listingsJson) {
       try {
         const listings = JSON.parse(listingsJson);
@@ -57,7 +57,7 @@ export const useListingsStore = create<ListingsState>((set, get) => ({
     };
     const updatedListings = [...listings, newListing];
     set({ listings: updatedListings });
-    localStorage.setItem('nestquarter_listings', JSON.stringify(updatedListings));
+    localStorage.setItem('rooma_listings', JSON.stringify(updatedListings));
   },
 
   updateListing: (id, data) => {
@@ -66,14 +66,14 @@ export const useListingsStore = create<ListingsState>((set, get) => ({
       listing.id === id ? { ...listing, ...data } : listing
     );
     set({ listings: updatedListings });
-    localStorage.setItem('nestquarter_listings', JSON.stringify(updatedListings));
+    localStorage.setItem('rooma_listings', JSON.stringify(updatedListings));
   },
 
   deleteListing: (id) => {
     const { listings } = get();
     const updatedListings = listings.filter(listing => listing.id !== id);
     set({ listings: updatedListings });
-    localStorage.setItem('nestquarter_listings', JSON.stringify(updatedListings));
+    localStorage.setItem('rooma_listings', JSON.stringify(updatedListings));
   },
 
   getUserListings: (userId) => {

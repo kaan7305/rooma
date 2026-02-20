@@ -8,7 +8,7 @@ export default function BlogPage() {
     {
       id: 1,
       title: 'Finding My Perfect Student Apartment in New York',
-      excerpt: 'How I navigated the NYC housing market as an international student and found an amazing sublet through NestQuarter.',
+      excerpt: 'How I navigated the NYC housing market as an international student and found an amazing sublet through ROOMA.',
       author: 'Sarah Chen',
       date: 'Dec 15, 2024',
       category: 'Student Life',
@@ -38,7 +38,7 @@ export default function BlogPage() {
     {
       id: 4,
       title: 'Making Friends Through Roommate Finder',
-      excerpt: 'How I found not just a place to live, but lifelong friends through NestQuarter roommate matching.',
+      excerpt: 'How I found not just a place to live, but lifelong friends through ROOMA roommate matching.',
       author: 'David Park',
       date: 'Dec 8, 2024',
       category: 'Community',
@@ -58,7 +58,7 @@ export default function BlogPage() {
     {
       id: 6,
       title: 'Study Abroad Housing Made Easy',
-      excerpt: 'My semester in London and how NestQuarter made finding housing stress-free.',
+      excerpt: 'My semester in London and how ROOMA made finding housing stress-free.',
       author: 'Tom Anderson',
       date: 'Dec 1, 2024',
       category: 'Study Abroad',

@@ -12,7 +12,7 @@ export default function SafetyCenterPage() {
     },
     {
       title: 'Keep Payments on Platform',
-      description: 'Never pay or communicate outside NestQuarter. Our secure payment system protects both parties.',
+      description: 'Never pay or communicate outside ROOMA. Our secure payment system protects both parties.',
       icon: CreditCard,
     },
     {
@@ -55,7 +55,7 @@ export default function SafetyCenterPage() {
 
         {/* How We Protect You */}
         <div className="bg-white rounded-2xl p-8 shadow-md mb-12">
-          <h2 className="text-2xl font-bold text-black mb-6">How NestQuarter Protects You</h2>
+          <h2 className="text-2xl font-bold text-black mb-6">How ROOMA Protects You</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex gap-4">
               <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center shrink-0">

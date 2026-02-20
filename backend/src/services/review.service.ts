@@ -7,10 +7,6 @@ import type {
   HostResponseInput,
   GetReviewsInput,
 } from '../validators/review.validator';
-import type { 
-  ReviewRow, ReviewInsert, ReviewUpdate,
-  BookingRow, PropertyRow, UserRow, ReviewPhotoRow, ReviewPhotoInsert
-} from '../types/supabase-helpers';
 
 /**
  * Create review for a completed booking
@@ -23,7 +19,7 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
     .from('bookings')
     .select('id, booking_status, guest_id, host_id, property_id, check_out_date')
     .eq('id', booking_id)
-    .single() as { data: Pick<BookingRow, 'id' | 'booking_status' | 'guest_id' | 'host_id' | 'property_id' | 'check_out_date'> | null; error: any };
+    .single();
 
   if (bookingError || !booking) {
     throw new NotFoundError('Booking not found');
@@ -56,14 +52,16 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
     .select('id')
     .eq('booking_id', booking_id)
     .eq('reviewer_id', userId)
-    .maybeSingle() as { data: Pick<ReviewRow, 'id'> | null; error: any };
+    .maybeSingle();
 
   if (existingReview) {
     throw new BadRequestError('You have already reviewed this booking');
   }
 
   // Create review
-  const reviewInsertData: ReviewInsert = {
+  const { data: review, error: createError } = await supabase
+    .from('reviews')
+    .insert({
       booking_id,
       property_id: booking.property_id,
       reviewer_id: userId,
@@ -71,13 +69,9 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
       review_type: reviewType,
       ...reviewData,
       status: 'published',
-  };
-
-  const { data: review, error: createError } = await supabase
-    .from('reviews')
-    .insert(reviewInsertData as any)
+    })
     .select()
-    .single() as { data: ReviewRow | null; error: any };
+    .single();
 
   if (createError || !review) {
     throw new Error(createError?.message || 'Failed to create review');
@@ -85,12 +79,12 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
 
   // Create review photos if provided
   if (photo_urls && photo_urls.length > 0) {
-    const photoData: ReviewPhotoInsert[] = photo_urls.map((url) => ({
+    const photoData = photo_urls.map((url) => ({
       review_id: review.id,
-              photo_url: url,
+      photo_url: url,
     }));
 
-    await supabase.from('review_photos').insert(photoData as any);
+    await supabase.from('review_photos').insert(photoData);
   }
 
   // Get reviewer
@@ -98,20 +92,20 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
     .from('users')
     .select('id, first_name, last_name, profile_photo_url')
     .eq('id', userId)
-    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
+    .single();
 
   // Get property
   const { data: property } = await supabase
     .from('properties')
     .select('id, title')
-    .eq('id', booking.property_id || '')
-    .single() as { data: Pick<PropertyRow, 'id' | 'title'> | null; error: any };
+    .eq('id', booking.property_id)
+    .single();
 
   // Get photos
   const { data: photos } = await supabase
     .from('review_photos')
     .select('*')
-    .eq('review_id', review.id || '') as { data: ReviewPhotoRow[] | null; error: any };
+    .eq('review_id', review.id);
 
   // TODO: Send notification to reviewee about new review
   // TODO: Update property/user average ratings
@@ -132,7 +126,7 @@ export const getReviewById = async (reviewId: string) => {
     .from('reviews')
     .select('*')
     .eq('id', reviewId)
-    .single() as { data: ReviewRow | null; error: any };
+    .single();
 
   if (reviewError || !review) {
     throw new NotFoundError('Review not found');
@@ -142,35 +136,35 @@ export const getReviewById = async (reviewId: string) => {
   const { data: reviewer } = await supabase
     .from('users')
     .select('id, first_name, last_name, profile_photo_url, student_verified, id_verified')
-    .eq('id', review.reviewer_id || '')
-    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url' | 'student_verified' | 'id_verified'> | null; error: any };
+    .eq('id', review.reviewer_id)
+    .single();
 
   // Get reviewee
   const { data: reviewee } = await supabase
     .from('users')
     .select('id, first_name, last_name')
-    .eq('id', review.reviewee_id || '')
-    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name'> | null; error: any };
+    .eq('id', review.reviewee_id)
+    .single();
 
   // Get property
   const { data: property } = await supabase
     .from('properties')
     .select('id, title, city, country')
-    .eq('id', review.property_id || '')
-    .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'city' | 'country'> | null; error: any };
+    .eq('id', review.property_id)
+    .single();
 
   // Get booking
   const { data: booking } = await supabase
     .from('bookings')
     .select('id, check_in_date, check_out_date')
-    .eq('id', review.booking_id || '')
-    .single() as { data: Pick<BookingRow, 'id' | 'check_in_date' | 'check_out_date'> | null; error: any };
+    .eq('id', review.booking_id)
+    .single();
 
   // Get photos
   const { data: photos } = await supabase
     .from('review_photos')
     .select('*')
-    .eq('review_id', reviewId) as { data: ReviewPhotoRow[] | null; error: any };
+    .eq('review_id', reviewId);
 
   return {
     ...review,
@@ -231,7 +225,7 @@ export const getReviews = async (filters: GetReviewsInput) => {
   const to = skip + limit - 1;
   query = query.order('created_at', { ascending: false }).range(skip, to);
 
-  const { data: reviewsData, error, count } = await query as { data: ReviewRow[] | null; error: any; count: number | null };
+  const { data: reviewsData, error, count } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -240,21 +234,17 @@ export const getReviews = async (filters: GetReviewsInput) => {
   // Get related data for each review
   const reviews = await Promise.all(
     (reviewsData || []).map(async (review) => {
-      const [reviewerResult, propertyResult, photosResult] = await Promise.all([
-        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', review.reviewer_id || '').single(),
-        supabase.from('properties').select('id, title, city, country').eq('id', review.property_id || '').single(),
-        supabase.from('review_photos').select('id, photo_url').eq('review_id', review.id || ''),
+      const [reviewer, property, photos] = await Promise.all([
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', review.reviewer_id).single(),
+        supabase.from('properties').select('id, title, city, country').eq('id', review.property_id).single(),
+        supabase.from('review_photos').select('id, photo_url').eq('review_id', review.id),
       ]);
-
-      const reviewer = reviewerResult.data as Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url' | 'student_verified' | 'id_verified'> | null;
-      const property = propertyResult.data as Pick<PropertyRow, 'id' | 'title' | 'city' | 'country'> | null;
-      const photos = photosResult.data as Array<Pick<ReviewPhotoRow, 'id' | 'photo_url'>> | null;
 
       return {
         ...review,
-        reviewer: reviewer || null,
-        property: property || null,
-        photos: photos || [],
+        reviewer: reviewer.data || null,
+        property: property.data || null,
+        photos: photos.data || [],
       };
     })
   );
@@ -280,7 +270,7 @@ export const updateReview = async (reviewId: string, userId: string, data: Updat
     .from('reviews')
     .select('id, reviewer_id, host_response')
     .eq('id', reviewId)
-    .single() as { data: Pick<ReviewRow, 'id' | 'reviewer_id' | 'host_response'> | null; error: any };
+    .single();
 
   if (reviewError || !review) {
     throw new NotFoundError('Review not found');
@@ -296,18 +286,15 @@ export const updateReview = async (reviewId: string, userId: string, data: Updat
     throw new BadRequestError('Cannot update review after host has responded');
   }
 
-  const updateData: ReviewUpdate = {
-      ...data,
-      updated_at: new Date().toISOString(),
-    };
-
   const { data: updatedReview, error: updateError } = await supabase
     .from('reviews')
-    // @ts-expect-error - Supabase type inference issue with update()
-    .update(updateData as any)
+    .update({
+      ...data,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', reviewId)
     .select()
-    .single() as { data: ReviewRow | null; error: any };
+    .single();
 
   if (updateError || !updatedReview) {
     throw new Error(updateError?.message || 'Failed to update review');
@@ -318,13 +305,13 @@ export const updateReview = async (reviewId: string, userId: string, data: Updat
     .from('users')
     .select('id, first_name, last_name, profile_photo_url')
     .eq('id', userId)
-    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
+    .single();
 
   // Get photos
   const { data: photos } = await supabase
     .from('review_photos')
     .select('*')
-    .eq('review_id', reviewId) as { data: ReviewPhotoRow[] | null; error: any };
+    .eq('review_id', reviewId);
 
   return {
     ...updatedReview,
@@ -341,7 +328,7 @@ export const deleteReview = async (reviewId: string, userId: string) => {
     .from('reviews')
     .select('id, reviewer_id, host_response, created_at')
     .eq('id', reviewId)
-    .single() as { data: Pick<ReviewRow, 'id' | 'reviewer_id' | 'host_response' | 'created_at'> | null; error: any };
+    .single();
 
   if (reviewError || !review) {
     throw new NotFoundError('Review not found');
@@ -379,7 +366,7 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
     .from('reviews')
     .select('id, reviewee_id, review_type, host_response, property_id')
     .eq('id', reviewId)
-    .single() as { data: Pick<ReviewRow, 'id' | 'reviewee_id' | 'review_type' | 'host_response' | 'property_id'> | null; error: any };
+    .single();
 
   if (reviewError || !review) {
     throw new NotFoundError('Review not found');
@@ -389,8 +376,8 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
   const { data: property } = await supabase
     .from('properties')
     .select('host_id')
-    .eq('id', review.property_id || '')
-    .single() as { data: Pick<PropertyRow, 'host_id'> | null; error: any };
+    .eq('id', review.property_id)
+    .single();
 
   if (!property) {
     throw new NotFoundError('Property not found');
@@ -410,19 +397,16 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
     throw new BadRequestError('You have already responded to this review');
   }
 
-  const updateData: ReviewUpdate = {
-      host_response: data.host_response,
-    host_responded_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-
   const { data: updatedReview, error: updateError } = await supabase
     .from('reviews')
-    // @ts-expect-error - Supabase type inference issue with update()
-    .update(updateData as any)
+    .update({
+      host_response: data.host_response,
+      host_responded_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', reviewId)
     .select()
-    .single() as { data: ReviewRow | null; error: any };
+    .single();
 
   if (updateError || !updatedReview) {
     throw new Error(updateError?.message || 'Failed to update review');
@@ -432,21 +416,21 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
   const { data: reviewer } = await supabase
     .from('users')
     .select('id, first_name, last_name, profile_photo_url')
-    .eq('id', updatedReview.reviewer_id || '')
-    .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
+    .eq('id', updatedReview.reviewer_id)
+    .single();
 
   // Get property details
   const { data: propertyData } = await supabase
     .from('properties')
     .select('id, title')
-    .eq('id', review.property_id || '')
-    .single() as { data: Pick<PropertyRow, 'id' | 'title'> | null; error: any };
+    .eq('id', review.property_id)
+    .single();
 
   // Get photos
   const { data: photos } = await supabase
     .from('review_photos')
     .select('*')
-    .eq('review_id', reviewId) as { data: ReviewPhotoRow[] | null; error: any };
+    .eq('review_id', reviewId);
 
   // TODO: Send notification to reviewer about host response
 
@@ -467,7 +451,7 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
     .from('properties')
     .select('id')
     .eq('id', propertyId)
-    .single() as { data: Pick<PropertyRow, 'id'> | null; error: any };
+    .single();
 
   if (propertyError || !property) {
     throw new NotFoundError('Property not found');
@@ -484,7 +468,7 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
     .eq('status', 'published')
     .eq('review_type', REVIEW_TYPES.GUEST_TO_HOST)
     .order('created_at', { ascending: false })
-    .range(skip, to) as { data: ReviewRow[] | null; error: any; count: number | null };
+    .range(skip, to);
 
   if (reviewsError) {
     throw new Error(reviewsError.message);
@@ -493,21 +477,17 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
   // Get related data for each review
   const reviews = await Promise.all(
     (reviewsData || []).map(async (review) => {
-      const [reviewerResult, bookingResult, photosResult] = await Promise.all([
-        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', review.reviewer_id || '').single(),
-        supabase.from('bookings').select('check_in_date, check_out_date').eq('id', review.booking_id || '').single(),
-        supabase.from('review_photos').select('*').eq('review_id', review.id || ''),
+      const [reviewer, booking, photos] = await Promise.all([
+        supabase.from('users').select('id, first_name, last_name, profile_photo_url, student_verified, id_verified').eq('id', review.reviewer_id).single(),
+        supabase.from('bookings').select('check_in_date, check_out_date').eq('id', review.booking_id).single(),
+        supabase.from('review_photos').select('*').eq('review_id', review.id),
       ]);
-
-      const reviewer = reviewerResult.data as Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url' | 'student_verified' | 'id_verified'> | null;
-      const booking = bookingResult.data as Pick<BookingRow, 'check_in_date' | 'check_out_date'> | null;
-      const photos = photosResult.data as ReviewPhotoRow[] | null;
 
       return {
         ...review,
-        reviewer: reviewer || null,
-        booking: booking || null,
-        photos: photos || [],
+        reviewer: reviewer.data || null,
+        booking: booking.data || null,
+        photos: photos.data || [],
       };
     })
   );
@@ -520,27 +500,26 @@ export const getPropertyReviews = async (propertyId: string, page: number = 1, l
     .select('overall_rating, cleanliness_rating, accuracy_rating, location_rating, communication_rating, value_rating')
     .eq('property_id', propertyId)
     .eq('status', 'published')
-    .eq('review_type', REVIEW_TYPES.GUEST_TO_HOST) as { data: Array<Pick<ReviewRow, 'overall_rating' | 'cleanliness_rating' | 'accuracy_rating' | 'location_rating' | 'communication_rating' | 'value_rating'>> | null; error: any };
+    .eq('review_type', REVIEW_TYPES.GUEST_TO_HOST);
+
+  const reviewList = allReviews || [];
+  const averageFor = (values: Array<number | null>) => {
+    const present = values.filter((v): v is number => v !== null);
+    if (present.length === 0) return null;
+    return present.reduce((sum, v) => sum + v, 0) / present.length;
+  };
 
   const avgRatings =
-    allReviews && allReviews.length > 0
+    reviewList.length > 0
       ? {
-          overall: allReviews.reduce((sum, r) => sum + Number(r.overall_rating || 0), 0) / allReviews.length,
-          cleanliness:
-            allReviews.filter((r) => r.cleanliness_rating).reduce((sum, r) => sum + Number(r.cleanliness_rating || 0), 0) /
-            (allReviews.filter((r) => r.cleanliness_rating).length || 1),
-          accuracy:
-            allReviews.filter((r) => r.accuracy_rating).reduce((sum, r) => sum + Number(r.accuracy_rating || 0), 0) /
-            (allReviews.filter((r) => r.accuracy_rating).length || 1),
-          location:
-            allReviews.filter((r) => r.location_rating).reduce((sum, r) => sum + Number(r.location_rating || 0), 0) /
-            (allReviews.filter((r) => r.location_rating).length || 1),
-          communication:
-            allReviews.filter((r) => r.communication_rating).reduce((sum, r) => sum + Number(r.communication_rating || 0), 0) /
-            (allReviews.filter((r) => r.communication_rating).length || 1),
-          value:
-            allReviews.filter((r) => r.value_rating).reduce((sum, r) => sum + Number(r.value_rating || 0), 0) /
-            (allReviews.filter((r) => r.value_rating).length || 1),
+          overall: averageFor(reviewList.map((r) => Number(r.overall_rating))),
+          cleanliness: averageFor(reviewList.map((r) => (r.cleanliness_rating == null ? null : Number(r.cleanliness_rating)))),
+          accuracy: averageFor(reviewList.map((r) => (r.accuracy_rating == null ? null : Number(r.accuracy_rating)))),
+          location: averageFor(reviewList.map((r) => (r.location_rating == null ? null : Number(r.location_rating)))),
+          communication: averageFor(
+            reviewList.map((r) => (r.communication_rating == null ? null : Number(r.communication_rating)))
+          ),
+          value: averageFor(reviewList.map((r) => (r.value_rating == null ? null : Number(r.value_rating)))),
         }
       : null;
 

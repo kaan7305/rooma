@@ -23,7 +23,12 @@ const registerSchema = z
     first_name: z.string().min(2, 'First name must be at least 2 characters'),
     last_name: z.string().min(2, 'Last name must be at least 2 characters'),
     email: z.string().email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number'),
     confirm_password: z.string(),
     phone_number: z.string().optional(),
     is_student: z.boolean().optional(),
@@ -192,7 +197,7 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
         phone: data.phone_number,
-        userType: data.is_student ? 'student' : 'guest',
+        userType: 'guest',
       });
       router.push('/');
     } catch (err) {
@@ -280,7 +285,7 @@ export default function RegisterPage() {
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm text-blue-800">
-                    📧 We'll send a verification code to your email address to confirm it's yours.
+                    📧 We&apos;ll send a verification code to your email address to confirm it&apos;s yours.
                   </p>
                 </div>
 

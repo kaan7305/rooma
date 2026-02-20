@@ -55,7 +55,11 @@
       "Bash(done)",
       "Bash(npx prisma generate:*)",
       "Bash(timeout 90 npm run build:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(cd:*)",
+      "Bash(pg_isready:*)",
+      "Bash(npm start)",
+      "Bash(PORT=5001 npx ts-node:*)"
     ],
     "deny": [],
     "ask": []

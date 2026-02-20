@@ -1,10 +1,6 @@
 import supabase from '../config/supabase';
 import { NotFoundError } from '../utils/errors';
 import type { SearchUniversitiesInput } from '../validators/university.validator';
-import type { 
-  UniversityRow, PropertyUniversityRow, 
-  PropertyRow, PropertyPhotoRow, UserRow 
-} from '../types/supabase-helpers';
 
 /**
  * Calculate distance between two coordinates using Haversine formula
@@ -31,30 +27,10 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 export const searchUniversities = async (filters: SearchUniversitiesInput) => {
   const { q, city, country, latitude, longitude, radius_km, page, limit } = filters;
 
-  // Build where clause
-  const where: any = {};
-
-  // Text search across name, city, country
-  if (q) {
-    where.OR = [
-      { name: { contains: q, mode: 'insensitive' } },
-      { city: { contains: q, mode: 'insensitive' } },
-      { country: { contains: q, mode: 'insensitive' } },
-    ];
-  }
-
-  // Location filters
-  if (city) {
-    where.city = { equals: city, mode: 'insensitive' };
-  }
-  if (country) {
-    where.country = { equals: country, mode: 'insensitive' };
-  }
-
   // If proximity search is requested, we need to fetch all universities first
-  // and then filter by distance (Supabase/Postgres geospatial can be added later)
-  let universities;
-  let total;
+  // and then filter by distance (Prisma doesn't support geospatial queries natively)
+  let universities: any[] = [];
+  let total = 0;
 
   if (latitude !== undefined && longitude !== undefined && radius_km !== undefined) {
     // Build query for universities
@@ -71,7 +47,7 @@ export const searchUniversities = async (filters: SearchUniversitiesInput) => {
       query = query.ilike('country', country);
     }
 
-    const { data: allUniversitiesData } = await query as { data: UniversityRow[] | null; error: any };
+    const { data: allUniversitiesData } = await query;
 
     // Get property counts for each university
     const universitiesWithCounts = await Promise.all(
@@ -79,7 +55,7 @@ export const searchUniversities = async (filters: SearchUniversitiesInput) => {
         const { count } = await supabase
           .from('property_universities')
           .select('*', { count: 'exact', head: true })
-          .eq('university_id', uni.id || '') as { count: number | null; error: any };
+          .eq('university_id', uni.id);
         return { ...uni, _count: { properties: count || 0 } };
       })
     );
@@ -127,29 +103,28 @@ export const searchUniversities = async (filters: SearchUniversitiesInput) => {
 
     query = query.order('name', { ascending: true }).range(skip, to);
 
-    const { data: universitiesData, count, error } = await query as { data: UniversityRow[] | null; error: any; count: number | null };
+    const { data: universitiesData, count, error } = await query;
 
     if (error) {
       throw new Error(error.message);
     }
 
     // Get property counts
-    const universitiesWithCounts = await Promise.all(
+    universities = await Promise.all(
       (universitiesData || []).map(async (uni) => {
         const { count: propCount } = await supabase
           .from('property_universities')
           .select('*', { count: 'exact', head: true })
-          .eq('university_id', uni.id || '') as { count: number | null; error: any };
+          .eq('university_id', uni.id);
         return { ...uni, _count: { properties: propCount || 0 } };
       })
     );
 
     total = count || 0;
-    universities = universitiesWithCounts;
   }
 
   // Format response
-  const formattedUniversities = (universities || []).map((uni) => ({
+  const formattedUniversities = universities.map((uni) => ({
     id: uni.id,
     name: uni.name,
     city: uni.city,
@@ -180,7 +155,7 @@ export const getUniversityById = async (universityId: string) => {
     .from('universities')
     .select('*')
     .eq('id', universityId)
-    .single() as { data: UniversityRow | null; error: any };
+    .single();
 
   if (uniError || !university) {
     throw new NotFoundError('University not found');
@@ -190,7 +165,7 @@ export const getUniversityById = async (universityId: string) => {
   const { count: propertyCount } = await supabase
     .from('property_universities')
     .select('*', { count: 'exact', head: true })
-    .eq('university_id', universityId) as { count: number | null; error: any };
+    .eq('university_id', universityId);
 
   // Get nearby properties
   const { data: propertyUniversities } = await supabase
@@ -198,7 +173,7 @@ export const getUniversityById = async (universityId: string) => {
     .select('property_id, distance_km, transit_minutes')
     .eq('university_id', universityId)
     .order('distance_km', { ascending: true })
-    .limit(20) as { data: Array<Pick<PropertyUniversityRow, 'property_id' | 'distance_km' | 'transit_minutes'>> | null; error: any };
+    .limit(20);
 
   // Get property details for each
   const nearbyProperties = await Promise.all(
@@ -206,8 +181,8 @@ export const getUniversityById = async (universityId: string) => {
       const { data: property } = await supabase
         .from('properties')
         .select('id, title, description, property_type, city, country, latitude, longitude, bedrooms, bathrooms, max_guests, monthly_price_cents, status, host_id')
-        .eq('id', pu.property_id || '')
-        .single() as { data: Pick<PropertyRow, 'id' | 'title' | 'description' | 'property_type' | 'city' | 'country' | 'latitude' | 'longitude' | 'bedrooms' | 'bathrooms' | 'max_guests' | 'monthly_price_cents' | 'status' | 'host_id'> | null; error: any };
+        .eq('id', pu.property_id)
+        .single();
 
       if (!property) return null;
 
@@ -215,17 +190,17 @@ export const getUniversityById = async (universityId: string) => {
       const { data: photos } = await supabase
         .from('property_photos')
         .select('photo_url')
-        .eq('property_id', property.id || '')
+        .eq('property_id', property.id)
         .order('display_order', { ascending: true })
         .limit(1)
-        .maybeSingle() as { data: Pick<PropertyPhotoRow, 'photo_url'> | null; error: any };
+        .single();
 
       // Get host
       const { data: host } = await supabase
         .from('users')
         .select('id, first_name, last_name, profile_photo_url')
-        .eq('id', property.host_id || '')
-        .single() as { data: Pick<UserRow, 'id' | 'first_name' | 'last_name' | 'profile_photo_url'> | null; error: any };
+        .eq('id', property.host_id)
+        .single();
 
       return {
         ...property,

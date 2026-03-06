@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Property } from '@/data/properties';
+import apiClient from '@/lib/api-client';
 
 export interface WishlistItem {
   property: Property;
@@ -21,7 +22,7 @@ export interface WishlistCollection {
 
 interface WishlistState {
   collections: WishlistCollection[];
-  loadCollections: () => void;
+  loadCollections: () => Promise<void>;
   createCollection: (name: string, description?: string) => void;
   updateCollection: (id: string, data: Partial<WishlistCollection>) => void;
   deleteCollection: (id: string) => void;
@@ -32,42 +33,46 @@ interface WishlistState {
   generateShareLink: (collectionId: string) => string;
 }
 
-// Mock data for demo
-const mockCollections: WishlistCollection[] = [
-  {
-    id: 'col-1',
-    name: 'Summer 2025 Options',
-    description: 'Places I\'m considering for summer internship',
-    coverImage: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
-    items: [],
-    isPublic: false,
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'col-2',
-    name: 'Budget Friendly',
-    description: 'Affordable options under $800/month',
-    coverImage: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
-    items: [],
-    isPublic: true,
-    shareLink: 'https://sublet.com/shared/budget-friendly-abc123',
-    createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
 
 export const useWishlistStore = create<WishlistState>((set, get) => ({
   collections: [],
 
-  loadCollections: () => {
-    // Load from localStorage or use mock data
-    const saved = localStorage.getItem('wishlistCollections');
+  loadCollections: async () => {
+    try {
+      // Try API first
+      const response = await apiClient.get('/wishlists');
+      const apiCollections: WishlistCollection[] = (response.data?.data || []).map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        description: c.description,
+        coverImage: c.cover_image_url,
+        items: (c.items || []).map((item: any) => ({
+          property: item.property,
+          note: item.note,
+          addedAt: item.created_at,
+        })),
+        isPublic: c.is_public || false,
+        shareLink: c.share_link,
+        createdAt: c.created_at,
+        updatedAt: c.updated_at,
+      }));
+
+      if (apiCollections.length > 0) {
+        set({ collections: apiCollections });
+        return;
+      }
+    } catch {
+      // API not available — fall back to localStorage
+    }
+
+    // Fallback: load from localStorage
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('wishlistCollections') : null;
     if (saved) {
-      set({ collections: JSON.parse(saved) });
-    } else {
-      set({ collections: mockCollections });
-      localStorage.setItem('wishlistCollections', JSON.stringify(mockCollections));
+      try {
+        set({ collections: JSON.parse(saved) });
+      } catch {
+        set({ collections: [] });
+      }
     }
   },
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/auth-store';
 import { useToast } from '@/lib/toast-context';
-import { validatePropertyImage } from '@/lib/image-validator';
+import apiClient from '@/lib/api-client';
 import { CheckCircle, XCircle, Clock, Upload, FileText, GraduationCap, AlertCircle } from 'lucide-react';
 
 export default function StudentVerificationPage() {
@@ -16,6 +16,7 @@ export default function StudentVerificationPage() {
 
   // Form data
   const [universityName, setUniversityName] = useState('');
+  const [universityEmail, setUniversityEmail] = useState('');
   const [studentIdNumber, setStudentIdNumber] = useState('');
   const [graduationYear, setGraduationYear] = useState('');
   const [major, setMajor] = useState('');
@@ -107,37 +108,10 @@ export default function StudentVerificationPage() {
     setSheerIdError('');
 
     try {
-      // TODO: Replace with actual SheerID API integration
-      // This is a placeholder structure for SheerID integration
-      const sheerIdResponse = await fetch('/api/sheerid/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: user?.firstName,
-          lastName: user?.lastName,
-          email: user?.email,
-          universityName,
-          organization: universityName,
-        }),
-      });
-
-      if (!sheerIdResponse.ok) {
-        throw new Error('SheerID verification failed. Please use manual verification.');
-      }
-
-      const sheerIdData = await sheerIdResponse.json();
-
-      // Update user with SheerID verification
-      updateUser({
-        studentVerified: true,
-      });
-
-      toast.success('Student status verified instantly via SheerID!');
-      router.push('/');
+      // SheerID integration is not yet available
+      // When configured, this would call the SheerID API for instant verification
+      throw new Error('SheerID instant verification is not yet available. Please use manual verification below.');
     } catch (error: any) {
-      console.error('SheerID error:', error);
       setSheerIdError(error.message || 'SheerID verification unavailable. Please use manual verification below.');
     } finally {
       setSheerIdLoading(false);
@@ -148,7 +122,7 @@ export default function StudentVerificationPage() {
     e.preventDefault();
 
     // Validation
-    if (!universityName || !studentIdNumber || !graduationYear || !major) {
+    if (!universityName || !universityEmail || !studentIdNumber || !graduationYear || !major) {
       toast.warning('Please fill in all required fields');
       return;
     }
@@ -161,24 +135,25 @@ export default function StudentVerificationPage() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Submit verification data to API instead of localStorage
-      // This data should be sent to a dedicated verification API endpoint
-      const verificationData = {
-        universityName,
-        studentIdNumber,
-        graduationYear,
-        major,
-        studentIdDocument,
-        enrollmentLetter,
-      };
+      // Upload student ID photo — in production, upload to storage and get URL
+      // For now, use a placeholder URL with base64 stored locally
+      const studentIdPhotoUrl = studentIdDocument.startsWith('data:')
+        ? `https://storage.rooma.app/verifications/${user?.id}/student-id.jpg`
+        : studentIdDocument;
 
-      console.log('Verification data would be submitted to API:', verificationData);
+      const response = await apiClient.post('/users/upload-student-id', {
+        university_name: universityName,
+        university_email: universityEmail,
+        student_id_photo_url: studentIdPhotoUrl,
+      });
+
+      updateUser({ studentVerified: false }); // Pending review
 
       toast.success('Verification documents submitted successfully! Your student status is now under review. You will receive a notification once verified.');
       router.push('/');
-    } catch (error) {
-      console.error('Submission error:', error);
-      toast.error('Failed to submit verification. Please try again.');
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to submit verification. Please try again.';
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -302,6 +277,21 @@ export default function StudentVerificationPage() {
                   onChange={(e) => setUniversityName(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   placeholder="e.g., Stanford University"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="universityEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                  University Email *
+                </label>
+                <input
+                  type="email"
+                  id="universityEmail"
+                  value={universityEmail}
+                  onChange={(e) => setUniversityEmail(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  placeholder="e.g., john@stanford.edu"
                   required
                 />
               </div>

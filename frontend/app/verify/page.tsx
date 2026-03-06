@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/auth-store';
 import { useNotificationsStore } from '@/lib/notifications-store';
 import { useToast } from '@/lib/toast-context';
+import apiClient from '@/lib/api-client';
 import { ShieldCheck, Upload, Camera, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 export default function VerifyPage() {
@@ -13,6 +14,7 @@ export default function VerifyPage() {
   const { user, isAuthenticated, updateUser } = useAuthStore();
   const { addNotification } = useNotificationsStore();
 
+  const [idType, setIdType] = useState<'passport' | 'drivers_license' | 'national_id'>('passport');
   const [idDocument, setIdDocument] = useState<File | null>(null);
   const [selfiePhoto, setSelfiePhoto] = useState<File | null>(null);
   const [idPreview, setIdPreview] = useState('');
@@ -72,17 +74,16 @@ export default function VerifyPage() {
     setIsSubmitting(true);
 
     try {
-      // Simulate verification process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // In production, upload files to storage first and get URLs
+      // For now, use placeholder URLs
+      const idFrontPhotoUrl = `https://storage.rooma.app/verifications/${user.id}/id-front.jpg`;
 
-      // TODO: Submit verification data to API
-      // Currently just logging the verification data
-      console.log('Verification data:', {
-        idDocument: idPreview,
-        selfiePhoto: selfiePreview,
+      const response = await apiClient.post('/users/upload-government-id', {
+        id_type: idType,
+        id_front_photo_url: idFrontPhotoUrl,
       });
 
-      // Send notification
+      // Send local notification
       addNotification({
         userId: user.id,
         type: 'verification',
@@ -93,8 +94,9 @@ export default function VerifyPage() {
 
       toast.success('Verification submitted successfully! We\'ll review your documents and notify you within 24-48 hours.');
       router.push('/profile');
-    } catch (error) {
-      toast.error('Failed to submit verification. Please try again.');
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to submit verification. Please try again.';
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -170,6 +172,31 @@ export default function VerifyPage() {
           {getVerificationStatusBadge()}
 
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* ID Type Selector */}
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Select ID Type</h2>
+              <div className="grid grid-cols-3 gap-3">
+                {([
+                  { value: 'passport', label: 'Passport' },
+                  { value: 'drivers_license', label: "Driver's License" },
+                  { value: 'national_id', label: 'National ID' },
+                ] as const).map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setIdType(option.value)}
+                    className={`py-3 px-4 rounded-lg border-2 text-sm font-medium transition ${
+                      idType === option.value
+                        ? 'border-rose-500 bg-rose-50 text-rose-700'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* ID Document Upload */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">

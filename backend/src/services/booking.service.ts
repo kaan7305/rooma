@@ -1,6 +1,8 @@
 import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
-import { BOOKING_STATUS, PRICING, MIN_STAY_WEEKS } from '../utils/constants';
+import { BOOKING_STATUS, PRICING, MIN_STAY_WEEKS, CANCELLATION_POLICIES, CALENDAR_STATUS } from '../utils/constants';
+import { sendBookingConfirmationEmail } from './email.service';
+import { createNotification } from './notification.service';
 import type {
   CreateBookingInput,
   GetBookingsInput,
@@ -176,8 +178,33 @@ export const createBooking = async (guestId: string, data: CreateBookingInput) =
     .eq('id', property.host_id)
     .single();
 
-  // TODO: Send notification to host about new booking request
-  // TODO: Create conversation between guest and host
+  // Send notification to host about new booking request
+  await createNotification({
+    user_id: property.host_id,
+    type: 'booking_request',
+    title: 'New Booking Request',
+    message: `You have a new booking request for "${propertyData?.title || 'your property'}" from ${host ? '' : 'a guest'}`,
+    data: { booking_id: booking.id, property_id: property_id },
+  });
+
+  // Create conversation between guest and host
+  const [part1, part2] = [guestId, property.host_id].sort();
+  const { data: existingConv } = await supabase
+    .from('conversations')
+    .select('id')
+    .eq('participant_1_id', part1)
+    .eq('participant_2_id', part2)
+    .eq('property_id', property_id)
+    .maybeSingle();
+
+  if (!existingConv) {
+    await supabase.from('conversations').insert({
+      participant_1_id: part1,
+      participant_2_id: part2,
+      property_id,
+      booking_id: booking.id,
+    });
+  }
 
   return {
     ...booking,
@@ -417,9 +444,43 @@ export const acceptBooking = async (bookingId: string, hostId: string) => {
     .eq('id', updatedBooking.guest_id)
     .single();
 
-  // TODO: Send notification to guest about accepted booking
-  // TODO: Create calendar entries for the booking
-  // TODO: Trigger payment processing
+  // Send notification to guest about accepted booking
+  if (guest) {
+    await createNotification({
+      user_id: updatedBooking.guest_id,
+      type: 'booking_confirmed',
+      title: 'Booking Confirmed!',
+      message: `Your booking for "${property?.title || 'a property'}" has been confirmed.`,
+      data: { booking_id: bookingId, property_id: updatedBooking.property_id },
+    });
+
+    // Send confirmation email
+    await sendBookingConfirmationEmail(guest.email, guest.first_name, {
+      propertyTitle: property?.title || 'Property',
+      checkIn: updatedBooking.check_in_date,
+      checkOut: updatedBooking.check_out_date,
+      totalPrice: updatedBooking.total_cents,
+      bookingId: bookingId,
+    });
+  }
+
+  // Create calendar entries (block dates for the booking)
+  const checkIn = new Date(updatedBooking.check_in_date);
+  const checkOut = new Date(updatedBooking.check_out_date);
+  const calendarEntries: Array<{ property_id: string; date: string; status: string; booking_id: string }> = [];
+  for (let d = new Date(checkIn); d < checkOut; d.setDate(d.getDate() + 1)) {
+    calendarEntries.push({
+      property_id: updatedBooking.property_id,
+      date: d.toISOString().split('T')[0]!,
+      status: CALENDAR_STATUS.BOOKED,
+      booking_id: bookingId,
+    });
+  }
+  if (calendarEntries.length > 0) {
+    await supabase.from('booking_calendar').upsert(calendarEntries, {
+      onConflict: 'property_id,date',
+    });
+  }
 
   return {
     ...updatedBooking,
@@ -474,8 +535,30 @@ export const declineBooking = async (bookingId: string, hostId: string, data: De
     .eq('id', updatedBooking.guest_id)
     .single();
 
-  // TODO: Send notification to guest about declined booking
-  // TODO: Process refund if any payment was made
+  // Send notification to guest about declined booking
+  if (guest) {
+    await createNotification({
+      user_id: updatedBooking.guest_id,
+      type: 'booking_declined',
+      title: 'Booking Declined',
+      message: `Your booking request has been declined.${data.decline_reason ? ` Reason: ${data.decline_reason}` : ''}`,
+      data: { booking_id: bookingId },
+    });
+  }
+
+  // Process refund if any payment was made
+  if (updatedBooking.stripe_payment_intent_id && updatedBooking.payment_status === 'completed') {
+    try {
+      const stripe = (await import('../config/stripe')).default;
+      await stripe.refunds.create({
+        payment_intent: updatedBooking.stripe_payment_intent_id,
+        metadata: { booking_id: bookingId, reason: 'host_declined' },
+      });
+      await supabase.from('bookings').update({ payment_status: 'refunded' }).eq('id', bookingId);
+    } catch (refundErr) {
+      console.error('Failed to process refund for declined booking:', refundErr);
+    }
+  }
 
   return {
     ...updatedBooking,
@@ -509,14 +592,31 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
     throw new BadRequestError('Cannot cancel a completed booking');
   }
 
-  // TODO: Implement cancellation policy logic for refunds
-  // Calculate refund based on cancellation policy and days until check-in
-  // const daysUntilCheckIn = Math.ceil(
-  //   (new Date(booking.check_in_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-  // );
-  // - Flexible: Full refund up to 24 hours before check-in
-  // - Moderate: Full refund up to 5 days before check-in
-  // - Strict: 50% refund up to 7 days before check-in
+  // Get property cancellation policy and details
+  const { data: propertyInfo } = await supabase
+    .from('properties')
+    .select('id, title, cancellation_policy')
+    .eq('id', booking.property_id)
+    .single();
+
+  const cancellationPolicy = propertyInfo?.cancellation_policy || CANCELLATION_POLICIES.MODERATE;
+  const daysUntilCheckIn = Math.ceil(
+    (new Date(booking.check_in_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  // Calculate refund percentage based on cancellation policy
+  let refundPercent = 0;
+  switch (cancellationPolicy) {
+    case CANCELLATION_POLICIES.FLEXIBLE:
+      refundPercent = daysUntilCheckIn >= 1 ? 100 : 0;
+      break;
+    case CANCELLATION_POLICIES.MODERATE:
+      refundPercent = daysUntilCheckIn >= 5 ? 100 : 0;
+      break;
+    case CANCELLATION_POLICIES.STRICT:
+      refundPercent = daysUntilCheckIn >= 7 ? 50 : 0;
+      break;
+  }
 
   const { data: updatedBooking, error: updateError } = await supabase
     .from('bookings')
@@ -535,13 +635,6 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
     throw new Error(updateError?.message || 'Failed to update booking');
   }
 
-  // Get property details
-  const { data: propertyData } = await supabase
-    .from('properties')
-    .select('id, title')
-    .eq('id', updatedBooking.property_id)
-    .single();
-
   // Get guest
   const { data: guest } = await supabase
     .from('users')
@@ -556,13 +649,56 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
     .eq('id', updatedBooking.host_id)
     .single();
 
-  // TODO: Process refund based on cancellation policy
-  // TODO: Send notifications to both parties
-  // TODO: Clear calendar entries
+  // Process refund based on cancellation policy
+  if (
+    refundPercent > 0 &&
+    booking.payment_status === 'completed' &&
+    updatedBooking.stripe_payment_intent_id
+  ) {
+    try {
+      const stripe = (await import('../config/stripe')).default;
+      const refundAmount = Math.round((updatedBooking.total_cents * refundPercent) / 100);
+      await stripe.refunds.create({
+        payment_intent: updatedBooking.stripe_payment_intent_id,
+        amount: refundAmount,
+        metadata: { booking_id: bookingId, refund_percent: String(refundPercent) },
+      });
+      const newPaymentStatus = refundPercent === 100 ? 'refunded' : 'partial';
+      await supabase.from('bookings').update({ payment_status: newPaymentStatus }).eq('id', bookingId);
+    } catch (refundErr) {
+      console.error('Failed to process cancellation refund:', refundErr);
+    }
+  }
+
+  // Send notifications to both parties
+  if (guest) {
+    await createNotification({
+      user_id: updatedBooking.guest_id,
+      type: 'booking_cancelled',
+      title: 'Booking Cancelled',
+      message: `Your booking for "${propertyInfo?.title || 'a property'}" has been cancelled.${refundPercent > 0 ? ` A ${refundPercent}% refund is being processed.` : ''}`,
+      data: { booking_id: bookingId, refund_percent: refundPercent },
+    });
+  }
+  if (host) {
+    await createNotification({
+      user_id: updatedBooking.host_id,
+      type: 'booking_cancelled',
+      title: 'Booking Cancelled',
+      message: `A booking for "${propertyInfo?.title || 'your property'}" has been cancelled by the ${booking.guest_id === userId ? 'guest' : 'host'}.`,
+      data: { booking_id: bookingId },
+    });
+  }
+
+  // Clear calendar entries for cancelled booking
+  await supabase
+    .from('booking_calendar')
+    .delete()
+    .eq('booking_id', bookingId);
 
   return {
     ...updatedBooking,
-    property: propertyData || null,
+    property: propertyInfo || null,
     guest: guest || null,
     host: host || null,
   };

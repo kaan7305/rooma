@@ -1,6 +1,11 @@
 import supabase from '../config/supabase';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 import { verifyEmailVerificationToken } from '../utils/jwt';
+
+// In-memory phone verification code store
+// In production, replace with Twilio SMS + Redis/DB storage
+const phoneVerificationCodes = new Map<string, { code: string; expiresAt: number; phone: string }>();
+const PHONE_CODE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 import type {
   UpdateProfileInput,
   UploadStudentIdInput,
@@ -233,11 +238,68 @@ export const verifyEmail = async (requestedUserId: string | null, token: string,
 };
 
 /**
- * Verify phone (placeholder - will implement with SMS service)
+ * Request phone verification code
+ * Generates a 6-digit code and stores it in memory.
+ * In production, this would send an SMS via Twilio.
  */
-export const verifyPhone = async (userId: string, _code: string) => {
-  // TODO: Implement code validation logic with Twilio
-  // For now, just mark as verified
+export const requestPhoneCode = async (userId: string) => {
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('id, phone, phone_verified')
+    .eq('id', userId)
+    .single() as { data: Pick<UserRow, 'id' | 'phone' | 'phone_verified'> | null; error: any };
+
+  if (error || !user) {
+    throw new NotFoundError('User not found');
+  }
+
+  if (!user.phone) {
+    throw new BadRequestError('No phone number on file. Update your profile first.');
+  }
+
+  if (user.phone_verified) {
+    throw new BadRequestError('Phone is already verified');
+  }
+
+  // Generate 6-digit code
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+
+  // Store code with expiry
+  phoneVerificationCodes.set(userId, {
+    code,
+    expiresAt: Date.now() + PHONE_CODE_EXPIRY_MS,
+    phone: user.phone,
+  });
+
+  // In production: send SMS via Twilio
+  // await twilioClient.messages.create({ body: `Your ROOMA code: ${code}`, to: user.phone, from: TWILIO_NUMBER });
+  console.log(`[DEV] Phone verification code for user ${userId}: ${code}`);
+
+  return { message: 'Verification code sent', phone: user.phone.replace(/.(?=.{4})/g, '*') };
+};
+
+/**
+ * Verify phone with 6-digit code
+ */
+export const verifyPhone = async (userId: string, code: string) => {
+  const stored = phoneVerificationCodes.get(userId);
+
+  if (!stored) {
+    throw new BadRequestError('No verification code found. Request a new one.');
+  }
+
+  if (Date.now() > stored.expiresAt) {
+    phoneVerificationCodes.delete(userId);
+    throw new BadRequestError('Verification code has expired. Request a new one.');
+  }
+
+  if (stored.code !== code) {
+    throw new BadRequestError('Invalid verification code');
+  }
+
+  // Code is valid — mark phone as verified
+  phoneVerificationCodes.delete(userId);
+
   const updateData: UserUpdate = { phone_verified: true };
   const { data: user, error: updateError } = await supabase
     .from('users')

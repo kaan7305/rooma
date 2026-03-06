@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, ReactNode } from 'react';
 import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -25,27 +25,52 @@ const ToastContext = createContext<ToastContextType | null>(null);
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = (type: ToastType, message: string, duration = 5000) => {
-    const id = Date.now().toString();
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
+
+  const showToast = useCallback((type: ToastType, message: string, duration = 5000) => {
+    const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random()}`;
     const newToast: Toast = { id, type, message, duration };
-    
-    setToasts((prev) => [...prev, newToast]);
+
+    setToasts((prev) => {
+      const lastToast = prev[prev.length - 1];
+      // Prevent rapid duplicate loops for the same message/type.
+      if (lastToast && lastToast.type === type && lastToast.message === message) {
+        return prev;
+      }
+      return [...prev, newToast];
+    });
 
     if (duration > 0) {
       setTimeout(() => {
         removeToast(id);
       }, duration);
     }
-  };
+  }, [removeToast]);
 
-  const removeToast = (id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  };
+  const success = useCallback((message: string, duration?: number) => {
+    showToast('success', message, duration);
+  }, [showToast]);
+  const error = useCallback((message: string, duration?: number) => {
+    showToast('error', message, duration);
+  }, [showToast]);
+  const warning = useCallback((message: string, duration?: number) => {
+    showToast('warning', message, duration);
+  }, [showToast]);
+  const info = useCallback((message: string, duration?: number) => {
+    showToast('info', message, duration);
+  }, [showToast]);
 
-  const success = (message: string, duration?: number) => showToast('success', message, duration);
-  const error = (message: string, duration?: number) => showToast('error', message, duration);
-  const warning = (message: string, duration?: number) => showToast('warning', message, duration);
-  const info = (message: string, duration?: number) => showToast('info', message, duration);
+  const contextValue = useMemo<ToastContextType>(() => ({
+    showToast,
+    success,
+    error,
+    warning,
+    info,
+  }), [showToast, success, error, warning, info]);
 
   const getIcon = (type: ToastType) => {
     switch (type) {
@@ -74,7 +99,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ToastContext.Provider value={{ showToast, success, error, warning, info }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       
       {/* Toast Container */}

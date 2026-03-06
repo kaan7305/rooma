@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { type Property } from '@/data/properties';
+import apiClient from '@/lib/api-client';
 
 export interface HostProperty extends Omit<Property, 'instantBook' | 'verified'> {
   status: 'active' | 'inactive' | 'pending';
@@ -43,7 +44,7 @@ interface HostState {
   totalRevenue: number;
   totalBookings: number;
   activeListings: number;
-  loadHostData: () => void;
+  loadHostData: () => Promise<void>;
   addProperty: (property: Omit<HostProperty, 'id'>) => void;
   updateProperty: (id: number, updates: Partial<HostProperty>) => void;
   deleteProperty: (id: number) => void;
@@ -58,121 +59,81 @@ export const useHostStore = create<HostState>((set, get) => ({
   totalBookings: 0,
   activeListings: 0,
 
-  loadHostData: () => {
-    // Simulate loading host data
-    const mockProperties: HostProperty[] = [
-      {
-        id: 101,
-        title: 'Modern Studio in Downtown',
-        location: 'Seattle, WA',
-        city: 'Seattle',
-        price: 1800,
-        rating: 4.8,
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
-        beds: 1,
-        baths: 1,
-        sqft: 650,
-        amenities: ['WiFi', 'Kitchen', 'Parking'],
-        type: 'Studio',
-        duration: '3 months min',
-        durationMonths: 3,
-        description: 'Modern studio apartment in downtown',
-        available: 'Available Now',
-        reviews: 15,
-        instantBook: true,
+  loadHostData: async () => {
+    try {
+      // Fetch host's properties from API
+      const [propertiesRes, bookingsRes] = await Promise.all([
+        apiClient.get('/properties/my-listings').catch(() => null),
+        apiClient.get('/bookings/host-requests').catch(() => null),
+      ]);
+
+      const apiProperties: HostProperty[] = (propertiesRes?.data?.data || []).map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        location: `${p.city}, ${p.country}`,
+        city: p.city,
+        price: (p.monthly_price_cents || 0) / 100,
+        rating: p.average_rating || 0,
+        image: p.photos?.[0]?.photo_url || '',
+        beds: p.bedrooms || 0,
+        baths: p.bathrooms || 0,
+        sqft: p.square_feet || 0,
+        amenities: (p.amenities || []).map((a: any) => a.name || a.amenity_id),
+        type: p.property_type || 'Apartment',
+        duration: `${p.minimum_stay_months || 1} months min`,
+        durationMonths: p.minimum_stay_months || 1,
+        description: p.description || '',
+        available: p.status === 'active' ? 'Available Now' : 'Unavailable',
+        reviews: p.total_reviews || 0,
+        instantBook: p.instant_book || false,
         verified: true,
-        status: 'active',
-        bookingsCount: 12,
-        revenue: 21600,
-        views: 342,
-        averageRating: 4.8,
-        reviewsCount: 15,
-      },
-      {
-        id: 102,
-        title: 'Cozy 2BR Near Campus',
-        location: 'Boston, MA',
-        city: 'Boston',
-        price: 2400,
-        rating: 4.6,
-        image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
-        beds: 2,
-        baths: 1,
-        sqft: 900,
-        amenities: ['WiFi', 'Laundry', 'Heating'],
-        type: 'Apartment',
-        duration: '6 months min',
-        durationMonths: 6,
-        description: 'Cozy apartment near campus',
-        available: 'Available Now',
-        reviews: 10,
-        instantBook: false,
-        verified: true,
-        status: 'active',
-        bookingsCount: 8,
-        revenue: 19200,
-        views: 256,
-        averageRating: 4.6,
-        reviewsCount: 10,
-      },
-    ];
+        status: p.status || 'active',
+        bookingsCount: p.bookings_count || 0,
+        revenue: (p.total_revenue_cents || 0) / 100,
+        views: p.view_count || 0,
+        averageRating: p.average_rating || 0,
+        reviewsCount: p.total_reviews || 0,
+      }));
 
-    const mockBookingRequests: BookingRequest[] = [
-      {
-        id: 'req-1',
-        propertyId: 101,
-        propertyTitle: 'Modern Studio in Downtown',
-        propertyImage: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
-        guestId: 'guest-1',
-        guestName: 'Emma Wilson',
-        guestEmail: 'emma@email.com',
-        checkIn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        checkOut: new Date(Date.now() + 97 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        guests: 1,
-        totalPrice: 5400,
-        status: 'pending',
-        requestDate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        message: 'Hi! I\'m a graduate student looking for housing near my university. Your place looks perfect!',
-      },
-      {
-        id: 'req-2',
-        propertyId: 102,
-        propertyTitle: 'Cozy 2BR Near Campus',
-        propertyImage: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
-        guestId: 'guest-2',
-        guestName: 'Alex Johnson',
-        guestEmail: 'alex@email.com',
-        checkIn: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        checkOut: new Date(Date.now() + 194 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        guests: 2,
-        totalPrice: 14400,
-        status: 'pending',
-        requestDate: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-        message: 'Looking for a place for me and my roommate. We\'re both international students.',
-      },
-    ];
+      const apiBookings: BookingRequest[] = (bookingsRes?.data?.data || []).map((b: any) => ({
+        id: b.id,
+        propertyId: b.property_id,
+        propertyTitle: b.property?.title || '',
+        propertyImage: b.property?.photos?.[0]?.photo_url || '',
+        guestId: b.guest_id,
+        guestName: `${b.guest?.first_name || ''} ${b.guest?.last_name || ''}`.trim(),
+        guestEmail: b.guest?.email || '',
+        guestAvatar: b.guest?.profile_photo_url,
+        checkIn: b.check_in_date,
+        checkOut: b.check_out_date,
+        guests: b.guest_count || 1,
+        totalPrice: (b.total_price_cents || 0) / 100,
+        status: b.booking_status || 'pending',
+        requestDate: b.created_at,
+        message: b.guest_message,
+      }));
 
-    const mockRevenueData: RevenueData[] = [
-      { month: 'Jul', revenue: 3200, bookings: 2 },
-      { month: 'Aug', revenue: 4800, bookings: 3 },
-      { month: 'Sep', revenue: 6400, bookings: 4 },
-      { month: 'Oct', revenue: 5600, bookings: 3 },
-      { month: 'Nov', revenue: 7200, bookings: 5 },
-      { month: 'Dec', revenue: 8800, bookings: 6 },
-    ];
+      const properties = apiProperties.length > 0 ? apiProperties : get().properties;
+      const bookingRequests = apiBookings.length > 0 ? apiBookings : get().bookingRequests;
 
-    const totalRevenue = mockProperties.reduce((sum, p) => sum + p.revenue, 0);
-    const totalBookings = mockProperties.reduce((sum, p) => sum + p.bookingsCount, 0);
-    const activeListings = mockProperties.filter(p => p.status === 'active').length;
+      // Revenue data — use API data if available, otherwise calculate from properties
+      const revenueData: RevenueData[] = get().revenueData;
 
-    set({
-      properties: mockProperties,
-      bookingRequests: mockBookingRequests,
-      revenueData: mockRevenueData,
-      totalRevenue,
-      totalBookings,
-      activeListings,
-    });
+      const totalRevenue = properties.reduce((sum, p) => sum + p.revenue, 0);
+      const totalBookings = properties.reduce((sum, p) => sum + p.bookingsCount, 0);
+      const activeListings = properties.filter(p => p.status === 'active').length;
+
+      set({
+        properties,
+        bookingRequests,
+        revenueData,
+        totalRevenue,
+        totalBookings,
+        activeListings,
+      });
+    } catch (error) {
+      console.error('Failed to load host data:', error);
+    }
   },
 
   addProperty: (property) => {

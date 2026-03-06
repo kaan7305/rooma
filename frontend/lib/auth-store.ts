@@ -40,6 +40,19 @@ const mapBackendUserToStoreUser = (backendUser: BackendUser): User => ({
   is_host: backendUser.is_host,
 });
 
+const getStoredUser = (): User | null => {
+  try {
+    const raw = localStorage.getItem('user');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    if (!('id' in parsed) || !('email' in parsed)) return null;
+    return parsed as User;
+  } catch {
+    return null;
+  }
+};
+
 const parseJsonResponse = async (response: Response) => {
   const contentType = response.headers.get('content-type') || '';
   if (contentType.includes('application/json')) {
@@ -217,10 +230,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   loadUser: async () => {
     const accessToken = localStorage.getItem('accessToken');
+    const storedUser = getStoredUser();
 
     if (!accessToken) {
       set({ isAuthenticated: false, user: null, accessToken: null });
       return;
+    }
+
+    // Hydrate quickly from local storage to avoid false redirects while /me is loading.
+    if (storedUser) {
+      set({
+        user: storedUser,
+        accessToken,
+        isAuthenticated: true,
+      });
     }
 
     try {
@@ -234,7 +257,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           await get().refreshToken();
           return;
         }
-        throw new Error('Failed to load user');
+        const responseData = await parseJsonResponse(response).catch(() => null);
+        const details = [responseData?.error, responseData?.message].filter(Boolean).join(' | ');
+        console.warn('Failed to load user profile:', details || `HTTP ${response.status}`);
+        // Keep existing session for transient backend/proxy errors.
+        if (!storedUser) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
+          set({ isAuthenticated: false, user: null, accessToken: null });
+        }
+        return;
       }
 
       const data = await parseJsonResponse(response);
@@ -250,9 +283,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
       console.error('Failed to load user:', error);
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
-      set({ isAuthenticated: false, user: null, accessToken: null });
+      if (!storedUser) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
+        set({ isAuthenticated: false, user: null, accessToken: null });
+      }
     }
   },
 

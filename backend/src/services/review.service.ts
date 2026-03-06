@@ -1,12 +1,38 @@
 import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import { BOOKING_STATUS, REVIEW_TYPES } from '../utils/constants';
+import { createNotification } from './notification.service';
 import type {
   CreateReviewInput,
   UpdateReviewInput,
   HostResponseInput,
   GetReviewsInput,
 } from '../validators/review.validator';
+
+/**
+ * Recalculate and update average ratings for a property
+ */
+const updatePropertyAverageRatings = async (propertyId: string) => {
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('overall_rating')
+    .eq('property_id', propertyId)
+    .eq('status', 'published')
+    .eq('review_type', REVIEW_TYPES.GUEST_TO_HOST);
+
+  if (!reviews || reviews.length === 0) return;
+
+  const total = reviews.reduce((sum, r) => sum + Number(r.overall_rating), 0);
+  const avgOverall = Math.round((total / reviews.length) * 100) / 100;
+
+  await supabase
+    .from('properties')
+    .update({
+      average_rating: avgOverall,
+      review_count: reviews.length,
+    })
+    .eq('id', propertyId);
+};
 
 /**
  * Create review for a completed booking
@@ -107,8 +133,19 @@ export const createReview = async (userId: string, data: CreateReviewInput) => {
     .select('*')
     .eq('review_id', review.id);
 
-  // TODO: Send notification to reviewee about new review
-  // TODO: Update property/user average ratings
+  // Send notification to reviewee about new review
+  await createNotification({
+    user_id: revieweeId,
+    type: 'new_review',
+    title: 'New Review Received',
+    message: `${reviewer?.first_name || 'Someone'} left a ${reviewData.overall_rating}-star review${property ? ` for "${property.title}"` : ''}.`,
+    data: { review_id: review.id, property_id: booking.property_id },
+  });
+
+  // Update property average ratings
+  if (booking.property_id) {
+    await updatePropertyAverageRatings(booking.property_id);
+  }
 
   return {
     ...review,
@@ -432,7 +469,14 @@ export const addHostResponse = async (reviewId: string, userId: string, data: Ho
     .select('*')
     .eq('review_id', reviewId);
 
-  // TODO: Send notification to reviewer about host response
+  // Send notification to reviewer about host response
+  await createNotification({
+    user_id: updatedReview.reviewer_id,
+    type: 'review_response',
+    title: 'Host Responded to Your Review',
+    message: `The host responded to your review${propertyData ? ` for "${propertyData.title}"` : ''}.`,
+    data: { review_id: reviewId, property_id: review.property_id },
+  });
 
   return {
     ...updatedReview,

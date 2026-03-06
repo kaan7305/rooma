@@ -4,22 +4,28 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/auth-store';
-import { useMessagesStore, type Message } from '@/lib/messages-store';
+import { useMessagesStore, type Message, type Conversation } from '@/lib/messages-store';
+import { useWebSocket } from '@/lib/websocket-context';
 import { useToast } from '@/lib/toast-context';
-import { ArrowLeft, Send, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Send, MessageCircle, Circle } from 'lucide-react';
 
 export default function ConversationPage() {
   const params = useParams();
   const router = useRouter();
   const toast = useToast();
-  const { user, isAuthenticated } = useAuthStore();
-  const { conversations, messages, loadMessages, sendMessage, markAsRead, getConversationMessages } = useMessagesStore();
+  const { user, isAuthenticated, loadUser } = useAuthStore();
+  const { conversations, messages, loadMessages, sendMessage: sendLocalMessage, markAsRead, getConversationMessages } = useMessagesStore();
+  const ws = useWebSocket();
 
   const [conversationMessages, setConversationMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [conversation, setConversation] = useState<any>(null);
+  const [conversation, setConversation] = useState<Conversation | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasRedirectedRef = useRef(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const messageTemplates = [
     "Hi! I'm interested in this property. Is it still available?",
@@ -33,18 +39,42 @@ export default function ConversationPage() {
   const conversationId = params.id as string;
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    let isMounted = true;
+    const checkAuth = async () => {
+      if (isAuthenticated && user) {
+        if (isMounted) setIsCheckingAuth(false);
+        return;
+      }
+      await loadUser();
+      if (isMounted) {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    void checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, user, loadUser]);
+
+  useEffect(() => {
+    if (!isCheckingAuth && !isAuthenticated && !hasRedirectedRef.current) {
+      hasRedirectedRef.current = true;
       toast.warning('Please log in to view messages');
-      router.push('/auth/login');
+      router.replace('/auth/login');
+      return;
+    }
+    if (isCheckingAuth || !isAuthenticated) {
       return;
     }
     loadMessages();
-  }, [isAuthenticated, router, loadMessages, toast]);
+  }, [isAuthenticated, isCheckingAuth, router, loadMessages, toast]);
 
   useEffect(() => {
     if (conversationId && user) {
       const conv = conversations.find(c => c.id === conversationId);
-      setConversation(conv);
+      setConversation(conv ?? null);
 
       const msgs = getConversationMessages(conversationId);
       setConversationMessages(msgs);
@@ -58,6 +88,39 @@ export default function ConversationPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId, user?.id]);
+
+  // Join/leave WebSocket room and listen for real-time messages
+  useEffect(() => {
+    if (!conversationId || !ws.isConnected) return;
+
+    ws.joinConversation(conversationId);
+
+    const unsubscribe = ws.onMessageReceived((convId, message) => {
+      if (convId === conversationId && message.senderId !== user?.id) {
+        const newMsg: Message = {
+          id: message.id || `ws_${Date.now()}`,
+          conversationId: convId,
+          senderId: message.senderId || message.sender_id,
+          receiverId: message.receiverId || message.receiver_id || user?.id || '',
+          propertyId: message.propertyId || message.property_id || conversation?.propertyId || '',
+          content: message.content || message.message,
+          timestamp: message.timestamp || message.created_at || new Date().toISOString(),
+          read: false,
+        };
+        setConversationMessages((prev) => [...prev, newMsg]);
+      }
+    });
+
+    return () => {
+      ws.leaveConversation(conversationId);
+      unsubscribe();
+    };
+  }, [conversationId, ws.isConnected]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Track typing status from other user
+  useEffect(() => {
+    setIsTyping(!!ws.typingUsers[conversationId]);
+  }, [ws.typingUsers, conversationId]);
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -73,15 +136,43 @@ export default function ConversationPage() {
       ? conversation.participant2Id
       : conversation.participant1Id;
 
-    sendMessage({
+    const content = newMessage.trim();
+
+    // Save locally
+    sendLocalMessage({
       conversationId,
       senderId: user.id,
       receiverId,
       propertyId: conversation.propertyId,
-      content: newMessage.trim(),
+      content,
     });
 
+    // Send via WebSocket for real-time delivery
+    if (ws.isConnected) {
+      ws.sendMessage(conversationId, content);
+      ws.setTyping(conversationId, false);
+    }
+
     setNewMessage('');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value);
+
+    // Send typing indicator
+    if (ws.isConnected && e.target.value.trim()) {
+      ws.setTyping(conversationId, true);
+
+      // Clear previous timeout
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+      // Stop typing after 2 seconds of no input
+      typingTimeoutRef.current = setTimeout(() => {
+        ws.setTyping(conversationId, false);
+      }, 2000);
+    } else if (ws.isConnected) {
+      ws.setTyping(conversationId, false);
+    }
   };
 
   const handleTemplateSelect = (template: string) => {
@@ -109,7 +200,7 @@ export default function ConversationPage() {
     return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
-  if (!isAuthenticated) {
+  if (isCheckingAuth || !isAuthenticated) {
     return null;
   }
 
@@ -130,6 +221,9 @@ export default function ConversationPage() {
   }
 
   const otherParticipant = getOtherParticipant();
+  const otherParticipantId = conversation.participant1Id === user?.id
+    ? conversation.participant2Id
+    : conversation.participant1Id;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
@@ -155,10 +249,18 @@ export default function ConversationPage() {
 
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold text-xs">
+                  <div className="relative w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold text-xs">
                     {otherParticipant.initials}
+                    {ws.onlineUsers.has(otherParticipantId) && (
+                      <Circle className="absolute -bottom-0.5 -right-0.5 w-3 h-3 text-emerald-500 fill-emerald-500" />
+                    )}
                   </div>
-                  <h2 className="text-lg font-bold text-gray-900">{otherParticipant.name}</h2>
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-900">{otherParticipant.name}</h2>
+                    <span className="text-xs text-gray-500">
+                      {ws.onlineUsers.has(otherParticipantId) ? 'Online' : 'Offline'}
+                    </span>
+                  </div>
                 </div>
                 <p className="text-sm text-gray-600">{conversation.propertyTitle}</p>
               </div>
@@ -211,6 +313,13 @@ export default function ConversationPage() {
             )}
           </div>
 
+          {/* Typing indicator */}
+          {isTyping && (
+            <div className="px-6 py-2 text-sm text-gray-500 italic">
+              {otherParticipant.name} is typing...
+            </div>
+          )}
+
           {/* Input Area */}
           <div className="p-6 border-t border-gray-200">
             {/* Quick Templates */}
@@ -244,7 +353,7 @@ export default function ConversationPage() {
               <input
                 type="text"
                 value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
+                onChange={handleInputChange}
                 placeholder="Type a message..."
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none text-black placeholder:text-gray-900"
               />

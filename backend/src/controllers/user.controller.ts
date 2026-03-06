@@ -133,8 +133,26 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
 };
 
 /**
+ * POST /api/users/request-phone-code
+ * Request a phone verification code
+ */
+export const requestPhoneCode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId: string = getAuthUserId(req);
+    const result = await userService.requestPhoneCode(userId);
+
+    res.status(200).json({
+      message: result.message,
+      data: { phone: result.phone },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * POST /api/users/verify-phone
- * Verify phone number
+ * Verify phone number with 6-digit code
  */
 export const verifyPhone = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

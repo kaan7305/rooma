@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { allProperties, type Property } from '@/data/properties';
+import { allProperties, fetchPropertyById, type Property } from '@/data/properties';
 import { MapPin, Star, Bed, Bath, Users, Ruler, Check, Heart, Share2, Calendar, MessageCircle, Eye } from 'lucide-react';
 import { useBookingsStore } from '@/lib/bookings-store';
 import { useAuthStore } from '@/lib/auth-store';
@@ -48,19 +48,21 @@ export default function PropertyDetailsPage() {
   }, [loadFavorites]);
 
   useEffect(() => {
-    // Simulate loading and find property from dummy data
-    const propertyId = Number(params.id);
-    const foundProperty = allProperties.find((p) => p.id === propertyId);
+    const loadProperty = async () => {
+      const propertyId = params.id as string;
 
-    setTimeout(() => {
-      setProperty(foundProperty || null);
+      // Try API first, then fall back to mock data
+      const foundProperty = await fetchPropertyById(propertyId);
+
+      setProperty(foundProperty);
       setLoading(false);
 
-      // Add to recently viewed if property exists
       if (foundProperty) {
         addRecentlyViewed(foundProperty);
       }
-    }, 500);
+    };
+
+    loadProperty();
   }, [params.id, addRecentlyViewed]);
 
   const handleBookingClick = () => {

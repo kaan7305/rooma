@@ -470,3 +470,74 @@ export const filterProperties = (
     return matchesLocation && matchesDuration;
   });
 };
+
+// Map API property response to frontend Property type
+const mapApiProperty = (p: any): Property => ({
+  id: p.id,
+  title: p.title || '',
+  location: `${p.city || ''}, ${p.country || ''}`,
+  city: p.city || '',
+  price: (p.monthly_price_cents || 0) / 100,
+  duration: `${p.minimum_stay_months || 1} months`,
+  durationMonths: p.minimum_stay_months || 1,
+  image: p.photos?.[0]?.photo_url || '',
+  images: (p.photos || []).map((photo: any) => photo.photo_url),
+  rating: p.average_rating || 0,
+  reviews: p.total_reviews || 0,
+  type: p.property_type || 'Apartment',
+  beds: p.bedrooms || 0,
+  baths: p.bathrooms || 0,
+  sqft: p.square_feet || 0,
+  amenities: (p.amenities || []).map((a: any) => a.name || a.amenity_id),
+  available: p.status === 'active' ? 'Available Now' : 'Unavailable',
+  description: p.description || '',
+  lat: p.latitude,
+  lng: p.longitude,
+});
+
+// Fetch properties from API with fallback to mock data
+export const fetchProperties = async (filters?: {
+  city?: string;
+  min_price?: number;
+  max_price?: number;
+  property_type?: string;
+  page?: number;
+  limit?: number;
+}): Promise<{ properties: Property[]; total: number }> => {
+  try {
+    const params = new URLSearchParams();
+    if (filters?.city) params.set('city', filters.city);
+    if (filters?.min_price) params.set('min_price', String(filters.min_price));
+    if (filters?.max_price) params.set('max_price', String(filters.max_price));
+    if (filters?.property_type) params.set('property_type', filters.property_type);
+    if (filters?.page) params.set('page', String(filters.page));
+    if (filters?.limit) params.set('limit', String(filters.limit));
+
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || '/backend';
+    const response = await fetch(`${API_BASE}/properties/search?${params.toString()}`);
+
+    if (!response.ok) throw new Error('API request failed');
+
+    const data = await response.json();
+    const properties = (data.data?.properties || []).map(mapApiProperty);
+    return { properties, total: data.data?.pagination?.total || properties.length };
+  } catch {
+    // Fallback to mock data
+    return { properties: allProperties, total: allProperties.length };
+  }
+};
+
+// Fetch single property by ID from API with fallback
+export const fetchPropertyById = async (id: string | number): Promise<Property | null> => {
+  try {
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || '/backend';
+    const response = await fetch(`${API_BASE}/properties/${id}`);
+    if (!response.ok) throw new Error('API request failed');
+
+    const data = await response.json();
+    return data.data ? mapApiProperty(data.data) : null;
+  } catch {
+    // Fallback to mock data
+    return allProperties.find(p => p.id === Number(id)) || null;
+  }
+};

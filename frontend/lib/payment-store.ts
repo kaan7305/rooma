@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import apiClient from '@/lib/api-client';
 
 export interface PaymentMethod {
   id: string;
@@ -48,7 +49,7 @@ interface PaymentState {
   paymentMethods: PaymentMethod[];
   transactions: Transaction[];
   splitPayments: SplitPayment[];
-  loadPaymentData: () => void;
+  loadPaymentData: () => Promise<void>;
   addPaymentMethod: (method: Omit<PaymentMethod, 'id'>) => void;
   updatePaymentMethod: (id: string, updates: Partial<PaymentMethod>) => void;
   deletePaymentMethod: (id: string) => void;
@@ -64,82 +65,48 @@ export const usePaymentStore = create<PaymentState>((set, get) => ({
   transactions: [],
   splitPayments: [],
 
-  loadPaymentData: () => {
-    // Simulate loading payment data
-    const mockPaymentMethods: PaymentMethod[] = [
-      {
-        id: 'pm-1',
-        type: 'card',
-        last4: '4242',
-        brand: 'Visa',
-        expiryMonth: 12,
-        expiryYear: 2025,
-        isDefault: true,
-        nickname: 'Personal Card',
-      },
-      {
-        id: 'pm-2',
-        type: 'card',
-        last4: '5555',
-        brand: 'Mastercard',
-        expiryMonth: 8,
-        expiryYear: 2026,
-        isDefault: false,
-      },
-      {
-        id: 'pm-3',
-        type: 'bank',
-        bankName: 'Chase Bank',
-        last4: '1234',
-        isDefault: false,
-      },
-    ];
+  loadPaymentData: async () => {
+    try {
+      const [methodsRes, transactionsRes] = await Promise.all([
+        apiClient.get('/payments/methods').catch(() => null),
+        apiClient.get('/payments/transactions').catch(() => null),
+      ]);
 
-    const mockTransactions: Transaction[] = [
-      {
-        id: 'tx-1',
-        bookingId: 'booking-1',
-        propertyTitle: 'Modern Studio in Downtown',
-        propertyImage: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
-        amount: 5400,
-        currency: 'USD',
-        status: 'completed',
-        paymentMethod: mockPaymentMethods[0],
-        date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        description: '3 month booking - Modern Studio',
-      },
-      {
-        id: 'tx-2',
-        bookingId: 'booking-2',
-        propertyTitle: 'Cozy 2BR Near Campus',
-        propertyImage: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
-        amount: 14400,
-        currency: 'USD',
-        status: 'completed',
-        paymentMethod: mockPaymentMethods[1],
-        date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-        description: '6 month booking - Cozy 2BR',
-      },
-      {
-        id: 'tx-3',
-        bookingId: 'booking-3',
-        propertyTitle: 'Luxury Apartment Downtown',
-        propertyImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800',
-        amount: 3200,
-        currency: 'USD',
-        status: 'refunded',
-        paymentMethod: mockPaymentMethods[0],
-        date: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-        description: '1 month booking - Cancelled',
-        refundAmount: 3200,
-        refundDate: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
+      const apiMethods: PaymentMethod[] = (methodsRes?.data?.data || []).map((m: any) => ({
+        id: m.id,
+        type: m.type || 'card',
+        last4: m.last4,
+        brand: m.brand,
+        expiryMonth: m.exp_month,
+        expiryYear: m.exp_year,
+        bankName: m.bank_name,
+        email: m.email,
+        isDefault: m.is_default || false,
+        nickname: m.nickname,
+      }));
 
-    set({
-      paymentMethods: mockPaymentMethods,
-      transactions: mockTransactions,
-    });
+      const apiTransactions: Transaction[] = (transactionsRes?.data?.data || []).map((t: any) => ({
+        id: t.id,
+        bookingId: t.booking_id,
+        propertyTitle: t.booking?.property?.title || '',
+        propertyImage: t.booking?.property?.photos?.[0]?.photo_url || '',
+        amount: (t.amount_cents || 0) / 100,
+        currency: t.currency || 'USD',
+        status: t.status || 'pending',
+        paymentMethod: apiMethods.find((m: PaymentMethod) => m.id === t.payment_method_id) || { id: '', type: 'card' as const, isDefault: false },
+        date: t.created_at,
+        description: t.description || '',
+        refundAmount: t.refund_amount_cents ? t.refund_amount_cents / 100 : undefined,
+        refundDate: t.refund_date,
+      }));
+
+      set({
+        paymentMethods: apiMethods.length > 0 ? apiMethods : get().paymentMethods,
+        transactions: apiTransactions.length > 0 ? apiTransactions : get().transactions,
+      });
+    } catch (error) {
+      console.error('Failed to load payment data:', error);
+    }
   },
 
   addPaymentMethod: (method) => {

@@ -1,7 +1,16 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import * as authController from '../controllers/auth.controller';
 import { validate } from '../middleware/validation';
 import { requireAuth } from '../middleware/auth';
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many password reset requests, please try again later.' },
+});
 import {
   registerSchema,
   loginSchema,
@@ -46,7 +55,7 @@ router.post('/verify-email', validate(verifyEmailSchema), authController.verifyE
  * @desc    Send password reset link
  * @access  Public
  */
-router.post('/forgot-password', validate(forgotPasswordSchema), authController.forgotPassword);
+router.post('/forgot-password', forgotPasswordLimiter, validate(forgotPasswordSchema), authController.forgotPassword);
 
 /**
  * @route   POST /api/auth/reset-password

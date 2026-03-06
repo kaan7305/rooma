@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
 import { MapPin, Star, SlidersHorizontal, X, Heart, Map, List, GitCompare } from 'lucide-react';
-import { allProperties, type Property } from '@/data/properties';
+import { allProperties, fetchProperties, type Property } from '@/data/properties';
 import { useFavoritesStore } from '@/lib/favorites-store';
 import { useListingsStore, type Listing } from '@/lib/listings-store';
 import { useToast } from '@/lib/toast-context';
@@ -97,7 +97,22 @@ function SearchResults() {
       description: listing.description,
     }));
 
-    let filtered = [...allProperties, ...userListingsAsProperties];
+    // Fetch from API or fall back to allProperties
+    const loadProperties = async () => {
+      try {
+        const { properties: apiProperties } = await fetchProperties({
+          city: location || undefined,
+          min_price: priceRange[0] ? priceRange[0] * 100 : undefined,
+          max_price: priceRange[1] ? priceRange[1] * 100 : undefined,
+        });
+        return apiProperties.length > 0 ? apiProperties : allProperties;
+      } catch {
+        return allProperties;
+      }
+    };
+
+    loadProperties().then(baseProperties => {
+    let filtered = [...baseProperties, ...userListingsAsProperties];
 
     // Filter by location
     if (location) {
@@ -182,7 +197,8 @@ function SearchResults() {
     }
 
     setProperties(filtered);
-  }, [location, duration, priceRange, beds, baths, selectedAmenities, propertyType, sortBy, instantBook, verifiedHost, petFriendly, studentVerified, listings]);
+    }); // end loadProperties().then
+  }, [location, duration, priceRange, beds, baths, selectedAmenities, propertyType, sortBy, instantBook, verifiedHost, petFriendly, studentVerified, listings, activeQuickFilters]);
 
   const toggleAmenity = (amenity: string) => {
     setSelectedAmenities(prev =>

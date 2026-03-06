@@ -34,8 +34,15 @@ router.patch('/me', requireAuth, validate(updateProfileSchema), userController.u
 router.post('/verify-email', requireAuth, validate(verifyEmailSchema), userController.verifyEmail);
 
 /**
+ * @route   POST /api/users/request-phone-code
+ * @desc    Request phone verification code
+ * @access  Private
+ */
+router.post('/request-phone-code', requireAuth, userController.requestPhoneCode);
+
+/**
  * @route   POST /api/users/verify-phone
- * @desc    Verify phone number
+ * @desc    Verify phone number with 6-digit code
  * @access  Private
  */
 router.post('/verify-phone', requireAuth, validate(verifyPhoneSchema), userController.verifyPhone);

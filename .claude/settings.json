@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/kaaneroltu/Desktop/Sublet Project/**)",
+      "Bash(grep \"\\\\.ts$\")",
+      "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/backend/**)",
+      "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/frontend/**)",
+      "Bash(grep -E \"\\\\.tsx$\")",
+      "Bash(npx vitest run)"
+    ]
+  }
+}

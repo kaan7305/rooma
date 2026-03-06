@@ -1,6 +1,7 @@
 import supabase from '../config/supabase';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
 import { PROPERTY_STATUS } from '../utils/constants';
+import { cache, CACHE_TTL } from '../config/redis';
 import type {
   CreatePropertyInput,
   UpdatePropertyInput,
@@ -104,6 +105,12 @@ export const createProperty = async (hostId: string, data: CreatePropertyInput) 
  * Get property by ID with full details
  */
 export const getPropertyById = async (propertyId: string, userId: string | undefined = undefined) => {
+  // Check cache first (only for non-authenticated views)
+  if (!userId) {
+    const cached = await cache.get<any>(`property:${propertyId}`);
+    if (cached) return cached;
+  }
+
   const { data: property, error: propertyError } = await supabase
     .from('properties')
     .select('*')
@@ -184,7 +191,7 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
       ? reviews.reduce((sum, r) => sum + Number(r.overall_rating), 0) / reviews.length
       : null;
 
-  return {
+  const result = {
     ...property,
     host: host || null,
     photos: photos || [],
@@ -198,12 +205,24 @@ export const getPropertyById = async (propertyId: string, userId: string | undef
       end_date: b.check_out_date,
     })),
   };
+
+  // Cache the result for non-authenticated views
+  if (!userId) {
+    cache.set(`property:${propertyId}`, result, CACHE_TTL.PROPERTY_DETAIL);
+  }
+
+  return result;
 };
 
 /**
  * Search properties with filters and pagination
  */
 export const searchProperties = async (filters: SearchPropertiesInput) => {
+  // Check cache first
+  const cacheKey = `search:${JSON.stringify(filters)}`;
+  const cached = await cache.get<any>(cacheKey);
+  if (cached) return cached;
+
   const {
     city,
     country,
@@ -427,7 +446,7 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
 
   const total = count || 0;
 
-  return {
+  const result = {
     properties,
     pagination: {
       page,
@@ -436,6 +455,11 @@ export const searchProperties = async (filters: SearchPropertiesInput) => {
       total_pages: Math.ceil(total / limit),
     },
   };
+
+  // Cache search results
+  cache.set(cacheKey, result, CACHE_TTL.PROPERTY_SEARCH);
+
+  return result;
 };
 
 /**
@@ -530,6 +554,10 @@ export const updateProperty = async (propertyId: string, hostId: string, data: U
     .eq('property_id', propertyId)
     .order('display_order', { ascending: true }) as { data: PropertyPhotoRow[] | null; error: any };
 
+  // Invalidate caches
+  cache.del(`property:${propertyId}`);
+  cache.delPattern('search:*');
+
   return {
     ...property,
     amenities: propertyAmenities || [],
@@ -577,6 +605,10 @@ export const deleteProperty = async (propertyId: string, hostId: string) => {
     .from('properties')
     .update(updateData as any) as any)
     .eq('id', propertyId);
+
+  // Invalidate caches
+  cache.del(`property:${propertyId}`);
+  cache.delPattern('search:*');
 
   return { message: 'Property deleted successfully' };
 };

@@ -19,12 +19,7 @@
 
 ### Where to put them:
 
-```env
-# backend/.env
-SUPABASE_URL=https://xxxxx.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIs...
-DATABASE_URL=postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
-```
+DONE — Already configured in `backend/.env`. Do not commit credentials to this file.
 
 ### Database migration:
 

@@ -5,7 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/auth-store';
 import { useFavoritesStore } from '@/lib/favorites-store';
 import { useNotificationsStore } from '@/lib/notifications-store';
-import { useEffect, useState } from 'react';
+import { useWebSocket } from '@/lib/websocket-context';
+import { useEffect, useState, useCallback } from 'react';
 import { Home, Heart, Calendar, Building2, MessageCircle, Bell, GraduationCap, Shield, ArrowLeftRight, ChevronDown, Briefcase, UserPlus, HomeIcon, ListChecks, Settings, User, LogOut, CreditCard, MapPin as MapPinIcon, HelpCircle } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -14,7 +15,8 @@ export default function Navbar() {
   const router = useRouter();
   const { user, isAuthenticated, loadUser, logout } = useAuthStore();
   const { favorites, guestRequestFavorites, roommateFavorites, loadFavorites } = useFavoritesStore();
-  const { loadNotifications, getUnreadCount } = useNotificationsStore();
+  const { loadNotifications, getUnreadCount, addNotification } = useNotificationsStore();
+  const ws = useWebSocket();
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [isHostMenuOpen, setIsHostMenuOpen] = useState(false);
@@ -34,6 +36,38 @@ export default function Navbar() {
       setUnreadNotifications(count);
     }
   }, [user, getUnreadCount]);
+
+  // Listen for real-time notifications via WebSocket
+  useEffect(() => {
+    if (!ws.isConnected || !user) return;
+
+    const handleNotification = (data: any) => {
+      addNotification({
+        userId: user.id,
+        type: data.type || 'general',
+        title: data.title || 'New Notification',
+        message: data.message || '',
+        actionUrl: data.actionUrl,
+      });
+      setUnreadNotifications(prev => prev + 1);
+    };
+
+    const socket = (ws as any)._socket;
+    // The WebSocket context exposes notification events — listen directly
+    // We increment the count when a notification arrives
+    const onMessage = (_convId: string, _msg: any) => {
+      // New message received in a conversation we're not viewing
+      if (pathname !== `/messages/${_convId}`) {
+        setUnreadNotifications(prev => prev + 1);
+      }
+    };
+
+    const unsubscribe = ws.onMessageReceived(onMessage);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [ws.isConnected, user, pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

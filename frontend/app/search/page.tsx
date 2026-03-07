@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
-import { MapPin, Star, SlidersHorizontal, X, Heart, Map, List, GitCompare } from 'lucide-react';
+import { MapPin, Star, SlidersHorizontal, X, Heart, Map, List, GitCompare, Sparkles } from 'lucide-react';
 import { allProperties, fetchProperties, type Property } from '@/data/properties';
 import { useFavoritesStore } from '@/lib/favorites-store';
 import { useListingsStore, type Listing } from '@/lib/listings-store';
@@ -15,17 +15,22 @@ import { type SavedSearch } from '@/lib/saved-searches-store';
 import PropertyComparison from '@/components/PropertyComparison';
 import { useComparisonStore } from '@/lib/comparison-store';
 import SearchQuickFilters from '@/components/SearchQuickFilters';
+import SmartSearchBar from '@/components/SmartSearchBar';
+import { parseNaturalLanguage, calculateMatchScore, type ParsedSearch } from '@/lib/smart-search';
 
 function SearchResults() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const location = searchParams.get('location') || '';
   const duration = searchParams.get('duration') || '';
+  const smartQuery = searchParams.get('q') || '';
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [matchScores, setMatchScores] = useState<Record<number, number>>({});
+  const [activeParsed, setActiveParsed] = useState<ParsedSearch | null>(null);
 
   // Filter states
   const [priceRange, setPriceRange] = useState<[number, number]>([500, 5000]);
@@ -51,6 +56,23 @@ function SearchResults() {
     loadFavorites();
     loadListings();
   }, [loadFavorites, loadListings]);
+
+  // Apply smart search URL params on load
+  useEffect(() => {
+    if (smartQuery) {
+      const parsed = parseNaturalLanguage(smartQuery);
+      setActiveParsed(parsed);
+      if (parsed.minPrice || parsed.maxPrice) {
+        setPriceRange([parsed.minPrice || 500, parsed.maxPrice || 5000]);
+      }
+      if (parsed.beds) setBeds(parsed.beds);
+      if (parsed.baths) setBaths(parsed.baths);
+      if (parsed.propertyType) setPropertyType(parsed.propertyType);
+      if (parsed.petFriendly) setPetFriendly(true);
+      if (parsed.amenities.length > 0) setSelectedAmenities(parsed.amenities);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const allAmenities = ['WiFi', 'Kitchen', 'Washer', 'Dryer', 'AC', 'Parking', 'Gym', 'Pool', 'Pets OK', 'Backyard'];
 
@@ -191,14 +213,32 @@ function SearchResults() {
       case 'newest':
         filtered.sort((a, b) => b.id - a.id);
         break;
+      case 'match-score':
+        // Sorted after match score calculation below
+        break;
       default:
         // Recommended - mix of rating and recency
         filtered.sort((a, b) => (b.rating * 0.7 + b.id * 0.3) - (a.rating * 0.7 + a.id * 0.3));
     }
 
+    // Calculate match scores if smart search is active
+    if (activeParsed) {
+      const scores: Record<number, number> = {};
+      for (const p of filtered) {
+        scores[p.id] = calculateMatchScore(p, activeParsed);
+      }
+      setMatchScores(scores);
+      // Sort by match score when using smart search
+      if (sortBy === 'recommended' || sortBy === 'match-score') {
+        filtered.sort((a, b) => (scores[b.id] || 0) - (scores[a.id] || 0));
+      }
+    } else {
+      setMatchScores({});
+    }
+
     setProperties(filtered);
     }); // end loadProperties().then
-  }, [location, duration, priceRange, beds, baths, selectedAmenities, propertyType, sortBy, instantBook, verifiedHost, petFriendly, studentVerified, listings, activeQuickFilters]);
+  }, [location, duration, priceRange, beds, baths, selectedAmenities, propertyType, sortBy, instantBook, verifiedHost, petFriendly, studentVerified, listings, activeQuickFilters, activeParsed]);
 
   const toggleAmenity = (amenity: string) => {
     setSelectedAmenities(prev =>
@@ -303,7 +343,22 @@ function SearchResults() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+      {/* Smart Search Bar */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-8 pb-4">
+        <SmartSearchBar
+          initialQuery={smartQuery}
+          compact
+          onSearch={(parsed, rawQuery) => {
+            setActiveParsed(parsed);
+            const params = new URLSearchParams();
+            params.set('q', rawQuery);
+            if (parsed.location) params.set('location', parsed.location);
+            router.push(`/search?${params.toString()}`);
+          }}
+        />
+      </div>
+
+      <main className="max-w-7xl mx-auto px-6 lg:px-8 pb-12">
         <div className="flex items-start gap-8">
           {/* Filters Sidebar - Desktop */}
           <div className="hidden lg:block w-80 flex-shrink-0">
@@ -589,6 +644,7 @@ function SearchResults() {
                   className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-black dark:text-gray-100 bg-white dark:bg-gray-800"
                 >
                   <option value="recommended">Recommended</option>
+                  {activeParsed && <option value="match-score">Best Match</option>}
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="rating">Highest Rated</option>
@@ -647,6 +703,21 @@ function SearchResults() {
                           {property.duration}
                         </span>
                       </div>
+                      {/* Match Score Badge */}
+                      {matchScores[property.id] != null && matchScores[property.id] > 0 && (
+                        <div className="absolute bottom-3 right-3 z-10">
+                          <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm ${
+                            matchScores[property.id] >= 80
+                              ? 'bg-emerald-500/90 text-white'
+                              : matchScores[property.id] >= 50
+                                ? 'bg-amber-500/90 text-white'
+                                : 'bg-gray-500/90 text-white'
+                          }`}>
+                            <Sparkles className="w-3 h-3" />
+                            {matchScores[property.id]}% match
+                          </div>
+                        </div>
+                      )}
                       {/* Action Buttons */}
                       <div className="absolute top-3 left-3 flex gap-2 z-10">
                         <button

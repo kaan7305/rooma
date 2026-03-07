@@ -74,11 +74,26 @@ export default function VerifyPage() {
     setIsSubmitting(true);
 
     try {
-      // In production, upload files to storage first and get URLs
-      // For now, use placeholder URLs
-      const idFrontPhotoUrl = `https://storage.rooma.app/verifications/${user.id}/id-front.jpg`;
+      // Upload ID document to Cloudinary via /api/upload
+      const token = localStorage.getItem('access_token');
+      const formData = new FormData();
+      formData.append('files', idDocument);
+      formData.append('folder', 'verifications');
 
-      const response = await apiClient.post('/users/upload-government-id', {
+      const uploadRes = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error('Failed to upload document');
+      }
+
+      const uploadData = await uploadRes.json();
+      const idFrontPhotoUrl = uploadData.urls[0];
+
+      await apiClient.post('/users/upload-government-id', {
         id_type: idType,
         id_front_photo_url: idFrontPhotoUrl,
       });

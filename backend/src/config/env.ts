@@ -64,8 +64,14 @@ const config: Config = {
     password: process.env.REDIS_PASSWORD || '',
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'dev-secret',
-    refreshSecret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret',
+    secret: process.env.JWT_SECRET || (() => {
+      if (process.env.NODE_ENV === 'production') throw new Error('JWT_SECRET is required in production');
+      return 'dev-secret-local-only';
+    })(),
+    refreshSecret: process.env.JWT_REFRESH_SECRET || (() => {
+      if (process.env.NODE_ENV === 'production') throw new Error('JWT_REFRESH_SECRET is required in production');
+      return 'dev-refresh-secret-local-only';
+    })(),
   },
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY || '',

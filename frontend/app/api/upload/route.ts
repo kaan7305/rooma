@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAccessToken } from '@/lib/auth';
-import { uploadImage, validateImageFile } from '@/lib/upload';
+import { uploadImage } from '@/lib/upload-server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

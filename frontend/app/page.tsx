@@ -1,25 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, MapPin, Calendar, ChevronDown, Zap, CalendarDays, CalendarRange, GraduationCap, CalendarClock, Home, Sparkles, Check, Shield, MessageCircle, Heart } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Zap, CalendarDays, CalendarRange, GraduationCap, CalendarClock, Home, Sparkles, Check, Shield, MessageCircle, Heart } from 'lucide-react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPopularSublets } from '@/data/properties';
 import { useFavoritesStore } from '@/lib/favorites-store';
 import RecentlyViewed from '@/components/RecentlyViewed';
 import FeaturedSections from '@/components/FeaturedSections';
-
-// Popular cities with dummy data
-const popularCities = [
-  'New York, NY',
-  'Los Angeles, CA',
-  'Boston, MA',
-  'San Francisco, CA',
-  'Chicago, IL',
-  'Seattle, WA',
-  'Austin, TX',
-  'Miami, FL',
-];
+import SmartSearchBar from '@/components/SmartSearchBar';
 
 // Get popular sublets from data
 const popularSublets = getPopularSublets();
@@ -55,26 +44,11 @@ export default function HomePage() {
         return <Sparkles className={className} />;
     }
   };
-  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedDuration, setSelectedDuration] = useState('Any length');
-
   const { loadFavorites, addFavorite, removeFavorite, isFavorite } = useFavoritesStore();
 
   useEffect(() => {
     loadFavorites();
   }, [loadFavorites]);
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (selectedLocation) {
-      params.set('location', selectedLocation);
-    }
-    if (selectedDuration && selectedDuration !== 'Any length') {
-      params.set('duration', selectedDuration);
-    }
-    router.push(`/search?${params.toString()}`);
-  };
 
   const toggleFavorite = (e: React.MouseEvent, propertyId: number) => {
     e.preventDefault();
@@ -106,90 +80,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Enhanced Search Bar */}
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 p-3 transition-colors duration-300">
-              <div className="flex flex-col md:flex-row gap-2">
-                {/* Location Input */}
-                <div className="flex-1 relative">
-                  <div className="flex items-center gap-3 px-6 py-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
-                    <MapPin className="w-5 h-5 text-rose-500" />
-                    <div className="flex-1">
-                      <label className="block text-xs font-semibold text-gray-900 dark:text-gray-100 mb-1">Where</label>
-                      <input
-                        type="text"
-                        placeholder="Search destinations"
-                        value={selectedLocation}
-                        onChange={(e) => setSelectedLocation(e.target.value)}
-                        onFocus={() => setShowLocationDropdown(true)}
-                        onBlur={() => setTimeout(() => setShowLocationDropdown(false), 200)}
-                        className="w-full outline-none text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Location Dropdown */}
-                  {showLocationDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
-                      <div className="p-2">
-                        {popularCities.map((city) => (
-                          <button
-                            key={city}
-                            onClick={() => {
-                              setSelectedLocation(city);
-                              setShowLocationDropdown(false);
-                            }}
-                            className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 flex items-center justify-center">
-                                <MapPin className="w-5 h-5 text-rose-600 dark:text-rose-400" />
-                              </div>
-                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{city}</span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="hidden md:block w-px bg-gray-200" />
-
-                {/* Duration Input */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 px-6 py-4 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
-                    <Calendar className="w-5 h-5 text-rose-500" />
-                    <div className="flex-1">
-                      <label className="block text-xs font-semibold text-gray-900 mb-1">Duration</label>
-                      <select
-                        className="w-full outline-none text-sm text-gray-700 bg-transparent cursor-pointer"
-                        value={selectedDuration}
-                        onChange={(e) => setSelectedDuration(e.target.value)}
-                      >
-                        <option>Any length</option>
-                        <option>1 week</option>
-                        <option>1 month</option>
-                        <option>3 months</option>
-                        <option>6 months</option>
-                        <option>1 year</option>
-                      </select>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
-
-                {/* Search Button */}
-                <button
-                  onClick={handleSearch}
-                  className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-8 py-4 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 font-semibold"
-                >
-                  <Search className="w-5 h-5" />
-                  <span className="hidden md:inline">Search</span>
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Smart Search Bar */}
+          <SmartSearchBar placeholder='Try "2 bed apartment in Boston under $2000" or "pet friendly near NYU"' />
 
           {/* Sublet Duration Categories */}
           <div className="mt-12 relative">

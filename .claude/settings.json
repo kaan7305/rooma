@@ -6,7 +6,11 @@
       "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/backend/**)",
       "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/frontend/**)",
       "Bash(grep -E \"\\\\.tsx$\")",
-      "Bash(npx vitest run)"
+      "Bash(npx vitest run)",
+      "Bash(npx prisma db push)",
+      "Bash(npx prisma db push --schema src/generated/prisma/schema.prisma)",
+      "Bash(node -e \":*)",
+      "Bash(npx next build)"
     ]
   }
 }

@@ -550,6 +550,7 @@ export const declineBooking = async (bookingId: string, hostId: string, data: De
   if (updatedBooking.stripe_payment_intent_id && updatedBooking.payment_status === 'completed') {
     try {
       const stripe = (await import('../config/stripe')).default;
+      if (!stripe) throw new Error('Stripe not configured');
       await stripe.refunds.create({
         payment_intent: updatedBooking.stripe_payment_intent_id,
         metadata: { booking_id: bookingId, reason: 'host_declined' },
@@ -657,6 +658,7 @@ export const cancelBooking = async (bookingId: string, userId: string, data: Can
   ) {
     try {
       const stripe = (await import('../config/stripe')).default;
+      if (!stripe) throw new Error('Stripe not configured');
       const refundAmount = Math.round((updatedBooking.total_cents * refundPercent) / 100);
       await stripe.refunds.create({
         payment_intent: updatedBooking.stripe_payment_intent_id,

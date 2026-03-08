@@ -159,7 +159,7 @@ export default function HomePage() {
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-semibold text-gray-900 line-clamp-1">{sublet.title}</h3>
                   <div className="flex items-center gap-1 shrink-0">
-                    <span className="text-sm">★</span>
+                    <span className="text-sm text-yellow-400">★</span>
                     <span className="text-sm font-semibold">{sublet.rating}</span>
                   </div>
                 </div>

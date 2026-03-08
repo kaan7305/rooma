@@ -15,17 +15,11 @@ export default function FeaturedSections() {
   const bestValue = [...allProperties].sort((a, b) => a.price - b.price).slice(0, 4);
   const topRated = [...allProperties].sort((a, b) => b.rating - a.rating).slice(0, 4);
 
-  // Stable city property counts (no Math.random to prevent hydration errors)
-  const cityPropertyCounts: Record<string, number> = {
-    'New York': 450,
-    'Boston': 320,
-    'Los Angeles': 380,
-    'San Francisco': 290,
-    'Chicago': 270,
-    'Seattle': 240,
-    'Austin': 210,
-    'Miami': 190,
-  };
+  // Compute city counts from actual property data
+  const cityPropertyCounts: Record<string, number> = {};
+  ['New York', 'Boston', 'Los Angeles', 'San Francisco', 'Chicago', 'Seattle', 'Austin', 'Miami'].forEach(city => {
+    cityPropertyCounts[city] = allProperties.filter(p => p.city.toLowerCase().includes(city.toLowerCase())).length;
+  });
 
   const toggleFavorite = (e: React.MouseEvent, propertyId: number) => {
     e.preventDefault();
@@ -186,7 +180,7 @@ export default function FeaturedSections() {
                 </div>
                 <div className="text-center">
                   <h3 className="font-bold text-gray-900 dark:text-gray-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">{city}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{cityPropertyCounts[city]}+ properties</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{cityPropertyCounts[city]} listing{cityPropertyCounts[city] !== 1 ? 's' : ''}</p>
                 </div>
               </div>
             </Link>

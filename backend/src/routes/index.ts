@@ -76,8 +76,8 @@ router.use('/payouts', writeLimiter, payoutRoutes);
 // Upload routes (write-limited)
 router.use('/upload', writeLimiter, uploadRoutes);
 
-// Test routes (development only)
-if (process.env.NODE_ENV === 'development') {
+// Test routes — only available when ENABLE_TEST_ROUTES=true AND not in production
+if (process.env.ENABLE_TEST_ROUTES === 'true' && process.env.NODE_ENV !== 'production') {
   router.use('/test', testRoutes);
 }
 

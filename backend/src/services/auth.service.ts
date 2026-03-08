@@ -145,13 +145,7 @@ const forgotPasswordWithLocalStore = async (data: ForgotPasswordInput) => {
   const user = await findLocalUserByEmail(email);
 
   if (!user) {
-    if (process.env.NODE_ENV !== 'production') {
-      return {
-        message: 'If an account exists for this email, a reset link has been sent.',
-        devHint: 'No user found with this email in backend database.',
-      };
-    }
-
+    // Always return the same response whether user exists or not (prevents user enumeration)
     return {
       message: 'If an account exists for this email, a reset link has been sent.',
     };
@@ -415,13 +409,7 @@ export const forgotPassword = async (data: ForgotPasswordInput) => {
   }
 
   if (!user) {
-    if (process.env.NODE_ENV !== 'production') {
-      return {
-        message: 'If an account exists for this email, a reset link has been sent.',
-        devHint: 'No user found with this email in backend database.',
-      };
-    }
-
+    // Always return the same response whether user exists or not (prevents user enumeration)
     return {
       message: 'If an account exists for this email, a reset link has been sent.',
     };

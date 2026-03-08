@@ -10,7 +10,11 @@
       "Bash(npx prisma db push)",
       "Bash(npx prisma db push --schema src/generated/prisma/schema.prisma)",
       "Bash(node -e \":*)",
-      "Bash(npx next build)"
+      "Bash(npx next build)",
+      "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/backend/src/**)",
+      "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/backend/src/routes/**)",
+      "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/backend/src/services/**)",
+      "Read(//Users/kaaneroltu/Desktop/Sublet\\\\ Project/backend/src/utils/**)"
     ]
   }
 }

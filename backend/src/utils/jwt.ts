@@ -84,10 +84,21 @@ export const generateTokens = (payload: TokenPayload) => {
 };
 
 /**
+ * Derive a purpose-specific secret from the main JWT secret.
+ * Ensures email verification and password reset tokens cannot be
+ * used as access tokens (or vice versa), even without dedicated env vars.
+ */
+function deriveSecret(envVar: string, purpose: string): string {
+  const explicit = process.env[envVar];
+  if (explicit) return explicit;
+  return `${config.jwt.secret}:${purpose}`;
+}
+
+/**
  * Generate email verification token (24h)
  */
 export const generateEmailVerificationToken = (payload: EmailVerificationPayload) => {
-  const secret = process.env.EMAIL_VERIFICATION_SECRET || config.jwt.secret;
+  const secret = deriveSecret('EMAIL_VERIFICATION_SECRET', 'email-verify');
   return jwt.sign(payload, secret, { expiresIn: '24h' });
 };
 
@@ -95,7 +106,7 @@ export const generateEmailVerificationToken = (payload: EmailVerificationPayload
  * Verify email verification token
  */
 export const verifyEmailVerificationToken = (token: string): EmailVerificationPayload => {
-  const secret = process.env.EMAIL_VERIFICATION_SECRET || config.jwt.secret;
+  const secret = deriveSecret('EMAIL_VERIFICATION_SECRET', 'email-verify');
   try {
     return jwt.verify(token, secret) as EmailVerificationPayload;
   } catch (error) {
@@ -110,7 +121,7 @@ export const verifyEmailVerificationToken = (token: string): EmailVerificationPa
  * Generate password reset token (1h)
  */
 export const generatePasswordResetToken = (payload: PasswordResetPayload) => {
-  const secret = process.env.PASSWORD_RESET_SECRET || config.jwt.secret;
+  const secret = deriveSecret('PASSWORD_RESET_SECRET', 'password-reset');
   return jwt.sign(payload, secret, { expiresIn: '1h' });
 };
 
@@ -118,7 +129,7 @@ export const generatePasswordResetToken = (payload: PasswordResetPayload) => {
  * Verify password reset token
  */
 export const verifyPasswordResetToken = (token: string): PasswordResetPayload => {
-  const secret = process.env.PASSWORD_RESET_SECRET || config.jwt.secret;
+  const secret = deriveSecret('PASSWORD_RESET_SECRET', 'password-reset');
   try {
     return jwt.verify(token, secret) as PasswordResetPayload;
   } catch (error) {

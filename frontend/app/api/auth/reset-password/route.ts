@@ -27,12 +27,9 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Reset-password proxy error:', error);
     return NextResponse.json(
-      {
-        error: 'Reset-password proxy failed',
-        message,
-        backendBase: process.env.BACKEND_API_URL || 'http://localhost:5001/api',
-      },
+      { error: 'Service temporarily unavailable. Please try again.' },
       { status: 502 }
     );
   }

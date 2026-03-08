@@ -33,12 +33,7 @@ export async function POST(request: NextRequest) {
         : '';
     console.error('Login proxy error:', error);
     return NextResponse.json(
-      {
-        error: 'Login proxy failed',
-        message,
-        cause: cause || undefined,
-        backendBase: process.env.BACKEND_API_URL || 'http://localhost:5001/api',
-      },
+      { error: 'Service temporarily unavailable. Please try again.' },
       { status: 502 }
     );
   }

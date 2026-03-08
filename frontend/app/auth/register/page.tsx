@@ -50,7 +50,6 @@ export default function RegisterPage() {
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [devCode, setDevCode] = useState(''); // For development mode
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
@@ -111,11 +110,6 @@ export default function RegisterPage() {
         setCodeSuccess(result.message);
         setCurrentStep(2);
 
-        // In development mode, show the code
-        if (result.code) {
-          setDevCode(result.code);
-          toast.info(`DEVELOPMENT MODE: Your verification code is: ${result.code} (In production, this will be sent to your email)`);
-        }
       } else {
         setCodeError(result.message);
       }
@@ -168,11 +162,6 @@ export default function RegisterPage() {
       if (result.success) {
         setCodeSuccess(result.message);
 
-        // In development mode, show the code
-        if (result.code) {
-          setDevCode(result.code);
-          toast.info(`DEVELOPMENT MODE: Your NEW verification code is: ${result.code} (In production, this will be sent to your email)`);
-        }
       } else {
         setCodeError(result.message);
       }

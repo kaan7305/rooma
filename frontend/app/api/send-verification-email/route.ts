@@ -40,11 +40,10 @@ export async function POST(request: NextRequest) {
       console.log(`Expires in: ${expiryMinutes} minutes`);
       console.log('='.repeat(60));
 
+      // Code is only visible in server console logs — never sent to client
       return NextResponse.json({
         success: true,
-        message: 'Development mode: Code logged to console',
-        code: code, // Return code in dev mode for easier testing
-        devMode: true,
+        message: 'Verification code sent. Check your email (or server console in dev mode).',
       });
     }
 
@@ -276,11 +275,7 @@ This is an automated email. Please do not reply.
     console.error('❌ Error sending email:', error);
 
     return NextResponse.json(
-      {
-        error: 'Failed to send email',
-        message: error.message || 'Unknown error',
-        details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-      },
+      { error: 'Failed to send verification email. Please try again.' },
       { status: 500 }
     );
   }

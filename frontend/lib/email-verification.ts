@@ -94,7 +94,7 @@ function removeVerificationCode(email: string): void {
 export async function sendVerificationCode(
   email: string,
   firstName?: string
-): Promise<{ success: boolean; message: string; code?: string }> {
+): Promise<{ success: boolean; message: string }> {
   try {
     // Generate code
     const code = generateVerificationCode();
@@ -122,11 +122,9 @@ export async function sendVerificationCode(
       throw new Error(result.message || 'Failed to send email');
     }
 
-    // Return success with code in dev mode
     return {
       success: true,
       message: result.message,
-      code: result.devMode ? code : undefined, // Only return code in dev mode
     };
 
   } catch (error: any) {
@@ -192,7 +190,7 @@ export function verifyCode(
 export async function resendVerificationCode(
   email: string,
   firstName?: string
-): Promise<{ success: boolean; message: string; code?: string }> {
+): Promise<{ success: boolean; message: string }> {
   // Remove existing code
   removeVerificationCode(email);
 

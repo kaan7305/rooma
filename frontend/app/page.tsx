@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Zap, CalendarDays, CalendarRange, GraduationCap, CalendarClock, Home, Sparkles, Check, Shield, MessageCircle, Bookmark, MapPin, Star, Users, ArrowRight } from 'lucide-react';
+import { Zap, CalendarDays, CalendarRange, GraduationCap, CalendarClock, Home, Sparkles, Check, Shield, MessageCircle, Bookmark, MapPin, Star, Users, ArrowRight, Search, Key, ThumbsUp } from 'lucide-react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPopularSublets, allProperties } from '@/data/properties';
@@ -253,10 +253,89 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Featured Sections (New Listings + Best Value) - White background */}
+        {/* How It Works */}
         <section className="bg-white dark:bg-gray-900 py-16">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-4">
+              How it works
+            </h2>
+            <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-xl mx-auto">
+              Find and book your next sublet in three simple steps
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+              {/* Connecting line */}
+              <div className="hidden md:block absolute top-12 left-[20%] right-[20%] h-0.5 bg-gradient-to-r from-teal-200 via-teal-300 to-teal-200 dark:from-teal-800 dark:via-teal-700 dark:to-teal-800" />
+
+              {[
+                { step: 1, icon: Search, title: 'Search & Discover', desc: 'Browse verified listings by location, duration, budget, and amenities. Use our smart search to find exactly what you need.' },
+                { step: 2, icon: MessageCircle, title: 'Connect & Tour', desc: 'Message hosts directly, ask questions, and schedule virtual or in-person tours before committing.' },
+                { step: 3, icon: Key, title: 'Book & Move In', desc: 'Reserve your sublet with secure payment. Sign your sublease digitally and get the keys on move-in day.' },
+              ].map((item) => (
+                <div key={item.step} className="text-center relative">
+                  <div className="w-24 h-24 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/50 dark:to-teal-800/50 rounded-full flex items-center justify-center mx-auto mb-5 relative z-10 border-4 border-white dark:border-gray-900 shadow-lg">
+                    <item.icon className="w-10 h-10 text-teal-700 dark:text-teal-400" />
+                  </div>
+                  <span className="inline-block bg-teal-700 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">Step {item.step}</span>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{item.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 max-w-xs mx-auto">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Sections (New Listings + Best Value) */}
+        <section className="bg-slate-50 dark:bg-gray-800 py-16">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <FeaturedSections />
+          </div>
+        </section>
+
+        {/* Stats / Social Proof Bar */}
+        <section className="bg-white dark:bg-gray-900 py-12 border-y border-gray-100 dark:border-gray-800">
+          <div className="max-w-5xl mx-auto px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {[
+                { value: '10,000+', label: 'Happy tenants' },
+                { value: '5,000+', label: 'Verified listings' },
+                { value: '25+', label: 'Cities covered' },
+                { value: '4.8/5', label: 'Average rating' },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <p className="text-3xl md:text-4xl font-bold text-teal-700 dark:text-teal-400">{stat.value}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="bg-slate-50 dark:bg-gray-800 py-16">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+              What our community says
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { name: 'Sarah M.', school: 'NYU Student', text: 'Found a perfect summer sublet near campus in less than a day. The verified listings gave me so much peace of mind.', rating: 5 },
+                { name: 'James L.', school: 'Software Engineer', text: 'I needed a 3-month sublet during my internship. ROOMA made the whole process seamless — from search to move-in.', rating: 5 },
+                { name: 'Priya K.', school: 'Graduate Student', text: 'As an international student, subletting felt scary. The secure payments and verified hosts made all the difference.', rating: 5 },
+              ].map((review) => (
+                <div key={review.name} className="bg-white dark:bg-gray-700 rounded-2xl p-6 shadow-md">
+                  <div className="flex gap-1 mb-4">
+                    {Array.from({ length: review.rating }).map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">&ldquo;{review.text}&rdquo;</p>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">{review.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{review.school}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

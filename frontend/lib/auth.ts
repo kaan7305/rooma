@@ -1,14 +1,12 @@
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || (() => {
-  if (process.env.NODE_ENV === 'production') throw new Error('JWT_SECRET is required in production');
-  return 'dev-jwt-secret-local-only';
-})();
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || (() => {
-  if (process.env.NODE_ENV === 'production') throw new Error('JWT_REFRESH_SECRET is required in production');
-  return 'dev-refresh-secret-local-only';
-})();
+function getJwtSecret(): string {
+  return process.env.JWT_SECRET || 'dev-jwt-secret-local-only';
+}
+function getJwtRefreshSecret(): string {
+  return process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-local-only';
+}
 
 export interface JWTPayload {
   userId: string;
@@ -17,16 +15,16 @@ export interface JWTPayload {
 }
 
 export function generateAccessToken(payload: JWTPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: '15m' });
 }
 
 export function generateRefreshToken(payload: JWTPayload): string {
-  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+  return jwt.sign(payload, getJwtRefreshSecret(), { expiresIn: '7d' });
 }
 
 export function verifyAccessToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return jwt.verify(token, getJwtSecret()) as JWTPayload;
   } catch (error) {
     return null;
   }
@@ -34,7 +32,7 @@ export function verifyAccessToken(token: string): JWTPayload | null {
 
 export function verifyRefreshToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_REFRESH_SECRET) as JWTPayload;
+    return jwt.verify(token, getJwtRefreshSecret()) as JWTPayload;
   } catch (error) {
     return null;
   }

@@ -20,7 +20,7 @@ export default function RecentlyViewed() {
   }
 
   return (
-    <section className="mb-16">
+    <section className="mt-8 mb-16">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
           <Clock className="w-6 h-6 text-white" />

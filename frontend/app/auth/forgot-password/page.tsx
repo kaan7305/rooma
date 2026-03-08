@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 px-4 py-12">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <h1 className="mb-2 text-2xl font-bold text-gray-900">Forgot Password</h1>
         <p className="mb-6 text-sm text-gray-600">
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-transparent focus:ring-2 focus:ring-teal-600"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-transparent focus:ring-2 focus:ring-rose-500"
               placeholder="you@example.com"
             />
           </div>
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-lg bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 px-4 py-3 font-semibold text-white transition hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 px-4 py-3 font-semibold text-white transition hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isLoading ? 'Sending...' : 'Send Reset Link'}
           </button>
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
 
         <p className="mt-6 text-center text-sm text-gray-600">
           Remembered your password?{' '}
-          <Link href="/auth/login" className="font-medium text-teal-700 hover:text-teal-800">
+          <Link href="/auth/login" className="font-medium text-rose-600 hover:text-rose-700">
             Back to Sign In
           </Link>
         </p>

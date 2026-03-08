@@ -72,7 +72,7 @@ export default function NotificationCenter() {
       case 'review':
         return 'text-yellow-600';
       case 'verification':
-        return 'text-teal-700';
+        return 'text-purple-600';
       default:
         return 'text-gray-600';
     }
@@ -136,7 +136,7 @@ export default function NotificationCenter() {
             <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center relative">
               <Bell className="w-6 h-6 text-white" />
               {unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-teal-600 rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center">
                   <span className="text-xs font-bold text-white">{unreadCount}</span>
                 </div>
               )}
@@ -173,13 +173,13 @@ export default function NotificationCenter() {
                 <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-10">
                   <button
                     onClick={() => { setFilter('all'); setShowDropdown(false); }}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm first:rounded-t-xl ${filter === 'all' ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}`}
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm first:rounded-t-xl ${filter === 'all' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}`}
                   >
                     All Notifications
                   </button>
                   <button
                     onClick={() => { setFilter('unread'); setShowDropdown(false); }}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm last:rounded-b-xl ${filter === 'unread' ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}`}
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm last:rounded-b-xl ${filter === 'unread' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}`}
                   >
                     Unread Only
                   </button>
@@ -238,7 +238,7 @@ export default function NotificationCenter() {
                         {notification.actionLabel && notification.actionUrl && (
                           <Link
                             href={notification.actionUrl}
-                            className="text-xs font-medium text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 transition-colors"
+                            className="text-xs font-medium text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 transition-colors"
                           >
                             {notification.actionLabel} →
                           </Link>

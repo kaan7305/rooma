@@ -65,7 +65,7 @@ export default function HostDashboard() {
       label: 'Total Bookings',
       value: totalBookings,
       icon: Calendar,
-      color: 'from-teal-600 to-teal-700',
+      color: 'from-purple-500 to-pink-500',
       change: '+8',
     },
     {
@@ -113,7 +113,7 @@ export default function HostDashboard() {
         <div className="flex items-center gap-3">
           <Link
             href="/host/properties/new"
-            className="px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+            className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
             Add Property
@@ -166,14 +166,14 @@ export default function HostDashboard() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2 px-6 py-4 font-semibold transition-colors relative ${
                     activeTab === tab.id
-                      ? 'text-teal-700 border-b-2 border-teal-700'
+                      ? 'text-rose-600 border-b-2 border-rose-600'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                   {tab.label}
                   {tab.badge !== undefined && tab.badge > 0 && (
-                    <span className="px-2 py-0.5 bg-teal-600 text-white text-xs font-bold rounded-full">
+                    <span className="px-2 py-0.5 bg-rose-500 text-white text-xs font-bold rounded-full">
                       {tab.badge}
                     </span>
                   )}
@@ -191,7 +191,7 @@ export default function HostDashboard() {
                 {/* Recent Booking Requests */}
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-teal-700" />
+                    <Clock className="w-5 h-5 text-rose-600" />
                     Recent Requests
                   </h3>
                   <div className="space-y-3">
@@ -229,7 +229,7 @@ export default function HostDashboard() {
                 {/* Top Performing Properties */}
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-teal-700" />
+                    <TrendingUp className="w-5 h-5 text-rose-600" />
                     Top Properties
                   </h3>
                   <div className="space-y-3">
@@ -272,7 +272,7 @@ export default function HostDashboard() {
                 <h3 className="text-xl font-bold text-gray-900">Your Properties</h3>
                 <Link
                   href="/host/properties/new"
-                  className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   Add New
@@ -320,7 +320,7 @@ export default function HostDashboard() {
                       <div className="flex gap-2 mt-4">
                         <Link
                           href={`/host/properties/${property.id}/edit`}
-                          className="flex-1 px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium transition-colors text-center"
+                          className="flex-1 px-3 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg text-sm font-medium transition-colors text-center"
                         >
                           Edit
                         </Link>

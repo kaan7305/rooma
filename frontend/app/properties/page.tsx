@@ -38,7 +38,7 @@ export default function PropertiesPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading properties...</p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function PropertiesPage() {
               placeholder="City"
               value={searchParams.city || ''}
               onChange={(e) => setSearchParams({ ...searchParams, city: e.target.value })}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 outline-none"
+              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
             <input
               type="number"
@@ -73,7 +73,7 @@ export default function PropertiesPage() {
               onChange={(e) =>
                 setSearchParams({ ...searchParams, min_price: Number(e.target.value) })
               }
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 outline-none"
+              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
             <input
               type="number"
@@ -82,11 +82,11 @@ export default function PropertiesPage() {
               onChange={(e) =>
                 setSearchParams({ ...searchParams, max_price: Number(e.target.value) })
               }
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 outline-none"
+              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
             <button
               type="submit"
-              className="px-6 py-3 bg-teal-700 text-white rounded-lg font-medium hover:bg-teal-800 transition"
+              className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
             >
               Search
             </button>
@@ -121,7 +121,7 @@ export default function PropertiesPage() {
                     </div>
                   )}
                   <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full shadow-md">
-                    <span className="font-semibold text-teal-700">
+                    <span className="font-semibold text-indigo-600">
                       ${property.price_per_month}/mo
                     </span>
                   </div>

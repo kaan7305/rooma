@@ -201,11 +201,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 px-4 py-12">
       <div className="w-full max-w-2xl">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">ROOMA</h1>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">ROOMA</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">Create your account and find your perfect home.</p>
         </div>
 
@@ -214,25 +214,25 @@ export default function RegisterPage() {
           <div className="flex items-center justify-between max-w-md mx-auto">
             <div className="flex flex-col items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 1 ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                currentStep >= 1 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
               }`}>
                 {currentStep > 1 ? <Check className="w-5 h-5" /> : '1'}
               </div>
               <span className="text-xs mt-1 text-gray-600 dark:text-gray-300">Email</span>
             </div>
-            <div className={`flex-1 h-1 mx-2 ${currentStep >= 2 ? 'bg-gradient-to-r from-teal-600 to-teal-700' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+            <div className={`flex-1 h-1 mx-2 ${currentStep >= 2 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
             <div className="flex flex-col items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 2 ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                currentStep >= 2 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
               }`}>
                 {currentStep > 2 ? <Check className="w-5 h-5" /> : '2'}
               </div>
               <span className="text-xs mt-1 text-gray-600 dark:text-gray-300">Verify</span>
             </div>
-            <div className={`flex-1 h-1 mx-2 ${currentStep >= 3 ? 'bg-gradient-to-r from-teal-600 to-teal-700' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+            <div className={`flex-1 h-1 mx-2 ${currentStep >= 3 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
             <div className="flex flex-col items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 3 ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                currentStep >= 3 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
               }`}>
                 3
               </div>
@@ -247,7 +247,7 @@ export default function RegisterPage() {
           {currentStep === 1 && (
             <>
               <div className="flex items-center gap-3 mb-6">
-                <Mail className="w-6 h-6 text-teal-700" />
+                <Mail className="w-6 h-6 text-rose-600" />
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Enter Your Student Email</h2>
               </div>
 
@@ -266,7 +266,7 @@ export default function RegisterPage() {
                     {...registerEmailField('email')}
                     type="email"
                     id="email"
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                     placeholder="you@email.com"
                   />
                   {emailErrors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{emailErrors.email.message}</p>}
@@ -281,7 +281,7 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={isSendingCode}
-                  className="w-full bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSendingCode ? (
                     <>Sending Code...</>
@@ -300,7 +300,7 @@ export default function RegisterPage() {
           {currentStep === 2 && (
             <>
               <div className="flex items-center gap-3 mb-6">
-                <Check className="w-6 h-6 text-teal-700" />
+                <Check className="w-6 h-6 text-rose-600" />
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Verify Your Email</h2>
               </div>
 
@@ -336,7 +336,7 @@ export default function RegisterPage() {
                       setVerificationCode(value);
                       setCodeError('');
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 text-center text-2xl font-bold tracking-widest"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 text-center text-2xl font-bold tracking-widest"
                     placeholder="000000"
                     maxLength={6}
                   />
@@ -352,7 +352,7 @@ export default function RegisterPage() {
                   type="button"
                   onClick={handleVerifyCode}
                   disabled={isVerifyingCode || verificationCode.length !== 6 || isEmailVerified}
-                  className="w-full bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isVerifyingCode ? 'Verifying...' : isEmailVerified ? 'Verified!' : 'Verify Code'}
                 </button>
@@ -362,7 +362,7 @@ export default function RegisterPage() {
                     type="button"
                     onClick={handleResendCode}
                     disabled={isSendingCode || !canResend}
-                    className="text-sm text-teal-700 hover:text-teal-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mx-auto"
+                    className="text-sm text-rose-600 hover:text-rose-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mx-auto"
                   >
                     <RefreshCw className="w-4 h-4" />
                     {isSendingCode ? 'Sending...' : 'Resend Code'}
@@ -410,7 +410,7 @@ export default function RegisterPage() {
                       {...register('first_name')}
                       type="text"
                       id="first_name"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                       placeholder="John"
                     />
                     {errors.first_name && (
@@ -426,7 +426,7 @@ export default function RegisterPage() {
                       {...register('last_name')}
                       type="text"
                       id="last_name"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                       placeholder="Doe"
                     />
                     {errors.last_name && (
@@ -461,7 +461,7 @@ export default function RegisterPage() {
                     {...register('phone_number')}
                     type="tel"
                     id="phone_number"
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -477,7 +477,7 @@ export default function RegisterPage() {
                         {...register('password')}
                         type={showPassword ? 'text' : 'password'}
                         id="password"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                         placeholder="Min. 6 characters"
                       />
                       <button
@@ -505,7 +505,7 @@ export default function RegisterPage() {
                         {...register('confirm_password')}
                         type={showConfirmPassword ? 'text' : 'password'}
                         id="confirm_password"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                         placeholder="Confirm password"
                       />
                       <button
@@ -529,7 +529,7 @@ export default function RegisterPage() {
                     type="checkbox"
                     id="is_student"
                     defaultChecked
-                    className="h-4 w-4 text-teal-700 focus:ring-teal-600 border-gray-300 dark:border-gray-700 rounded"
+                    className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300 dark:border-gray-700 rounded"
                   />
                   <label htmlFor="is_student" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                     I am a student
@@ -543,7 +543,7 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={isLoading || !isCaptchaVerified}
-                  className="w-full bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Creating account...' : 'Create Account'}
                 </button>
@@ -562,7 +562,7 @@ export default function RegisterPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-300">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-teal-700 dark:text-teal-400 font-medium hover:text-teal-800 dark:hover:text-teal-300">
+              <Link href="/auth/login" className="text-rose-600 dark:text-rose-400 font-medium hover:text-rose-700 dark:hover:text-rose-300">
                 Sign in
               </Link>
             </p>
@@ -572,11 +572,11 @@ export default function RegisterPage() {
         {/* Footer */}
         <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-300">
           By creating an account, you agree to our{' '}
-          <Link href="/terms" className="text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300">
+          <Link href="/terms" className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" className="text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300">
+          <Link href="/privacy" className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300">
             Privacy Policy
           </Link>
         </p>

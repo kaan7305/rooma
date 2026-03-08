@@ -79,13 +79,13 @@ export default function CareersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Briefcase className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
             Join Our Team
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
@@ -100,8 +100,8 @@ export default function CareersPage() {
               const Icon = benefit.icon;
               return (
                 <div key={benefit.title} className="flex gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center shrink-0">
-                    <Icon className="w-6 h-6 text-teal-600" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center shrink-0">
+                    <Icon className="w-6 h-6 text-rose-600" />
                   </div>
                   <div>
                     <h3 className="font-bold text-black mb-2">{benefit.title}</h3>
@@ -140,7 +140,7 @@ export default function CareersPage() {
                       </div>
                     </div>
                   </div>
-                  <button className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all whitespace-nowrap">
+                  <button className="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-rose-600 hover:to-pink-700 transition-all whitespace-nowrap">
                     Apply Now
                   </button>
                 </div>
@@ -149,12 +149,12 @@ export default function CareersPage() {
           </div>
         </div>
 
-        <div className="mt-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl p-8 text-center text-white">
+        <div className="mt-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-4">Do not See a Perfect Fit?</h2>
           <p className="mb-6 text-white max-w-2xl mx-auto">
             We are always interested in hearing from talented individuals. Send us your resume and tell us why you would like to join ROOMA.
           </p>
-          <button className="bg-white text-teal-600 px-8 py-3 rounded-xl font-semibold hover:bg-teal-50 transition-colors">
+          <button className="bg-white text-rose-600 px-8 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors">
             Send General Application
           </button>
         </div>

@@ -80,12 +80,12 @@ export default function Captcha({ onVerify, isVerified }: CaptchaProps) {
               onChange={(e) => setUserAnswer(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="?"
-              className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center font-semibold focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none"
+              className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center font-semibold focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none"
             />
             <button
               type="button"
               onClick={handleVerify}
-              className="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg font-semibold transition"
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold transition"
             >
               Verify
             </button>

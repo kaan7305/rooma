@@ -159,14 +159,14 @@ export default function AdminVerificationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Shield className="w-12 h-12 text-teal-700" />
+            <Shield className="w-12 h-12 text-rose-600" />
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
                 Student Verifications
               </h1>
               <p className="text-gray-600 mt-1">Admin Dashboard - Review and approve student verifications</p>
@@ -174,7 +174,7 @@ export default function AdminVerificationsPage() {
           </div>
           <button
             onClick={() => router.push('/')}
-            className="text-teal-700 hover:text-teal-800 font-medium"
+            className="text-rose-600 hover:text-rose-700 font-medium"
           >
             ← Back to Home
           </button>
@@ -229,7 +229,7 @@ export default function AdminVerificationsPage() {
             onClick={() => setFilterStatus('all')}
             className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
               filterStatus === 'all'
-                ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white'
+                ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -291,7 +291,7 @@ export default function AdminVerificationsPage() {
                 {/* User Info */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-teal-600 to-teal-700 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                       {user.firstName[0]}{user.lastName[0]}
                     </div>
                     <div>
@@ -412,7 +412,7 @@ export default function AdminVerificationsPage() {
                   <div className="pt-4 border-t border-gray-200">
                     <button
                       onClick={() => setSelectedUser(user)}
-                      className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white py-2 px-4 rounded-lg font-medium transition"
+                      className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white py-2 px-4 rounded-lg font-medium transition"
                     >
                       Review Verification
                     </button>
@@ -473,7 +473,7 @@ export default function AdminVerificationsPage() {
                     value={reviewNotes}
                     onChange={(e) => setReviewNotes(e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none text-gray-900"
                     placeholder="Add notes about this verification (required for rejection)"
                   />
                 </div>

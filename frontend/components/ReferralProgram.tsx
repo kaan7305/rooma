@@ -121,8 +121,8 @@ export default function ReferralProgram() {
       label: 'Total Earned',
       value: `$${totalEarned}`,
       icon: DollarSign,
-      color: 'text-teal-700',
-      bgColor: 'from-teal-600 to-teal-700',
+      color: 'text-purple-600',
+      bgColor: 'from-purple-500 to-pink-500',
     },
   ];
 
@@ -184,7 +184,7 @@ export default function ReferralProgram() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-teal-600 via-teal-600 to-teal-700 rounded-2xl shadow-xl p-8 text-white">
+      <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-2xl shadow-xl p-8 text-white">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
             <Gift className="w-8 h-8 text-white" />
@@ -253,7 +253,7 @@ export default function ReferralProgram() {
       {/* Share Options */}
       <div className="bg-white rounded-2xl shadow-xl p-8">
         <div className="flex items-center gap-3 mb-6">
-          <Share2 className="w-6 h-6 text-teal-700" />
+          <Share2 className="w-6 h-6 text-rose-600" />
           <h3 className="text-2xl font-bold text-gray-900">Share & Earn</h3>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -269,9 +269,9 @@ export default function ReferralProgram() {
 
           <button
             onClick={() => shareViaSocial('facebook')}
-            className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-teal-50 to-blue-50 hover:from-teal-100 hover:to-blue-100 rounded-xl transition-all group"
+            className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 rounded-xl transition-all group"
           >
-            <div className="w-14 h-14 bg-gradient-to-r from-teal-600 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+            <div className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
               <Facebook className="w-7 h-7 text-white" />
             </div>
             <span className="font-semibold text-gray-900">Facebook</span>
@@ -289,9 +289,9 @@ export default function ReferralProgram() {
 
           <button
             onClick={() => shareViaSocial('linkedin')}
-            className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-teal-50 hover:from-blue-100 hover:to-teal-100 rounded-xl transition-all group"
+            className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-xl transition-all group"
           >
-            <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-teal-800 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+            <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
               <Linkedin className="w-7 h-7 text-white" />
             </div>
             <span className="font-semibold text-gray-900">LinkedIn</span>
@@ -307,7 +307,7 @@ export default function ReferralProgram() {
         </div>
 
         {/* Current Tier */}
-        <div className="bg-gradient-to-r from-yellow-50 via-orange-50 to-teal-50 rounded-xl p-6 mb-6 border-2 border-yellow-300">
+        <div className="bg-gradient-to-r from-yellow-50 via-orange-50 to-rose-50 rounded-xl p-6 mb-6 border-2 border-yellow-300">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <Sparkles className="w-6 h-6 text-yellow-600" />
@@ -331,7 +331,7 @@ export default function ReferralProgram() {
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-gradient-to-r from-teal-600 to-teal-700 h-2 rounded-full transition-all"
+                  className="bg-gradient-to-r from-rose-500 to-pink-500 h-2 rounded-full transition-all"
                   style={{ width: `${(completedReferrals / nextTier.referrals) * 100}%` }}
                 />
               </div>
@@ -366,7 +366,7 @@ export default function ReferralProgram() {
                 {tier.bonus && (
                   <div className="mt-3 pt-3 border-t border-gray-300">
                     <p className="text-xs text-gray-600">Bonus Reward</p>
-                    <p className="text-lg font-bold text-teal-700">+${tier.bonus}</p>
+                    <p className="text-lg font-bold text-purple-600">+${tier.bonus}</p>
                   </div>
                 )}
               </div>
@@ -379,7 +379,7 @@ export default function ReferralProgram() {
       <div className="bg-white rounded-2xl shadow-xl p-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Users className="w-6 h-6 text-teal-700" />
+            <Users className="w-6 h-6 text-rose-600" />
             <h3 className="text-2xl font-bold text-gray-900">Referral History</h3>
           </div>
           <span className="text-sm text-gray-600">{referrals.length} total referrals</span>
@@ -399,8 +399,8 @@ export default function ReferralProgram() {
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center">
-                    <span className="text-lg font-bold text-teal-700">
+                  <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
+                    <span className="text-lg font-bold text-rose-600">
                       {referral.name.charAt(0)}
                     </span>
                   </div>
@@ -437,7 +437,7 @@ export default function ReferralProgram() {
       </div>
 
       {/* How It Works */}
-      <div className="bg-gradient-to-br from-blue-50 via-teal-50 to-teal-50 rounded-2xl shadow-xl p-8">
+      <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl shadow-xl p-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">How It Works</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
@@ -450,7 +450,7 @@ export default function ReferralProgram() {
             </p>
           </div>
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-teal-600 to-teal-700 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Users className="w-8 h-8 text-white" />
             </div>
             <h4 className="font-bold text-gray-900 mb-2">2. Friends Sign Up</h4>

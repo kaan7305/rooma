@@ -59,7 +59,7 @@ export default function ThemeToggle() {
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all ${
                       isActive
-                        ? 'bg-gradient-to-r from-teal-600 to-teal-800 text-white shadow-md'
+                        ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-md'
                         : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >

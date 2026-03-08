@@ -142,10 +142,10 @@ export default function PropertyCalendar({
           disabled={disabled}
           className={`
             aspect-square p-2 text-sm rounded-lg transition-all relative
-            ${disabled ? 'text-gray-300 cursor-not-allowed bg-gray-50' : 'hover:bg-teal-50 cursor-pointer'}
-            ${inRange ? 'bg-teal-100' : ''}
-            ${isHoveredInRange ? 'bg-teal-50' : ''}
-            ${isCheckIn || isCheckOut ? 'bg-teal-700 text-white font-bold hover:bg-teal-800' : ''}
+            ${disabled ? 'text-gray-300 cursor-not-allowed bg-gray-50' : 'hover:bg-rose-50 cursor-pointer'}
+            ${inRange ? 'bg-rose-100' : ''}
+            ${isHoveredInRange ? 'bg-rose-50' : ''}
+            ${isCheckIn || isCheckOut ? 'bg-rose-600 text-white font-bold hover:bg-rose-700' : ''}
             ${!disabled && !inRange && !isCheckIn && !isCheckOut ? 'text-gray-900' : ''}
           `}
         >
@@ -237,11 +237,11 @@ export default function PropertyCalendar({
       {/* Legend */}
       <div className="mt-6 pt-6 border-t border-gray-200 flex flex-wrap gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-teal-700 rounded" />
+          <div className="w-4 h-4 bg-rose-600 rounded" />
           <span className="text-gray-600">Selected</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-teal-100 rounded" />
+          <div className="w-4 h-4 bg-rose-100 rounded" />
           <span className="text-gray-600">In Range</span>
         </div>
         <div className="flex items-center gap-2">

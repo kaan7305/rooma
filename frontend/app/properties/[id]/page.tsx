@@ -11,7 +11,6 @@ import { useFavoritesStore } from '@/lib/favorites-store';
 import { useMessagesStore } from '@/lib/messages-store';
 import { useNotificationsStore } from '@/lib/notifications-store';
 import { useRecentlyViewedStore } from '@/lib/recently-viewed-store';
-import { useReviewsStore } from '@/lib/reviews-store';
 import { emailService } from '@/lib/email-service';
 import { useToast } from '@/lib/toast-context';
 import PropertyGallery from '@/components/PropertyGallery';
@@ -42,13 +41,11 @@ export default function PropertyDetailsPage() {
   const { createConversation, loadMessages: loadMessagesStore } = useMessagesStore();
   const { addNotification } = useNotificationsStore();
   const { addRecentlyViewed } = useRecentlyViewedStore();
-  const { loadReviews, getPropertyReviews, getAverageRating } = useReviewsStore();
   const toast = useToast();
 
   useEffect(() => {
     loadFavorites();
-    loadReviews();
-  }, [loadFavorites, loadReviews]);
+  }, [loadFavorites]);
 
   useEffect(() => {
     const loadProperty = async () => {
@@ -150,8 +147,8 @@ export default function PropertyDetailsPage() {
       participant1Name: `${user.firstName} ${user.lastName}`,
       participant1Initials: `${user.firstName[0]}${user.lastName[0]}`,
       participant2Id: '999', // Dummy host ID
-      participant2Name: property.hostName || 'Host',
-      participant2Initials: property.hostInitials || 'H',
+      participant2Name: 'John Doe',
+      participant2Initials: 'JD',
     });
 
     router.push(`/messages/${conversationId}`);
@@ -163,16 +160,16 @@ export default function PropertyDetailsPage() {
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-20 h-20 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <MapPin className="w-10 h-10 text-teal-700" />
+          <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <MapPin className="w-10 h-10 text-rose-600" />
           </div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">Property not found</h3>
           <p className="text-gray-600 mb-6">The property you're looking for doesn't exist</p>
           <Link
             href="/"
-            className="inline-block bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+            className="inline-block bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
           >
             Back to Home
           </Link>
@@ -181,12 +178,11 @@ export default function PropertyDetailsPage() {
     );
   }
 
-  const storeReviews = getPropertyReviews(property.id);
-  const avgRating = storeReviews.length > 0 ? getAverageRating(property.id) : property.rating;
-  const totalReviews = storeReviews.length > 0 ? storeReviews.length : property.reviews;
+  const avgRating = property.rating;
+  const totalReviews = property.reviews;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
         {/* Title and Actions */}
         <div className="mb-6">
@@ -199,7 +195,7 @@ export default function PropertyDetailsPage() {
                 onClick={toggleFavorite}
                 className="p-3 rounded-full hover:bg-white transition-colors shadow-md bg-white/80 backdrop-blur-sm"
               >
-                <Heart className={`w-5 h-5 ${property && isFavorite(property.id) ? 'fill-teal-600 text-teal-600' : 'text-black'}`} />
+                <Heart className={`w-5 h-5 ${property && isFavorite(property.id) ? 'fill-rose-500 text-rose-500' : 'text-black'}`} />
               </button>
               <button
                 onClick={() => setShowShareModal(true)}
@@ -209,7 +205,7 @@ export default function PropertyDetailsPage() {
               </button>
               <button
                 onClick={() => setShowVirtualTour(true)}
-                className="p-3 rounded-full hover:bg-white transition-colors shadow-md bg-gradient-to-r from-teal-600 to-teal-800"
+                className="p-3 rounded-full hover:bg-white transition-colors shadow-md bg-gradient-to-r from-rose-500 to-pink-600"
                 title="Virtual Tour"
               >
                 <Eye className="w-5 h-5 text-white" />
@@ -243,8 +239,8 @@ export default function PropertyDetailsPage() {
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Property details</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center">
-                    <Bed className="w-6 h-6 text-teal-700" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center">
+                    <Bed className="w-6 h-6 text-rose-600" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-gray-900">{property.beds}</p>
@@ -252,8 +248,8 @@ export default function PropertyDetailsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center">
-                    <Bath className="w-6 h-6 text-teal-700" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center">
+                    <Bath className="w-6 h-6 text-pink-600" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-gray-900">{property.baths}</p>
@@ -286,7 +282,7 @@ export default function PropertyDetailsPage() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">About this place</h2>
               <p className="text-gray-600 leading-relaxed">{property.description}</p>
               <div className="mt-6 flex items-center gap-2">
-                <span className="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">
                   {property.type}
                 </span>
                 <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
@@ -301,8 +297,8 @@ export default function PropertyDetailsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {property.amenities.map((amenity, idx) => (
                   <div key={idx} className="flex items-center gap-3 text-gray-700">
-                    <div className="w-8 h-8 bg-gradient-to-br from-teal-100 to-teal-100 rounded-lg flex items-center justify-center">
-                      <Check className="w-5 h-5 text-teal-700" />
+                    <div className="w-8 h-8 bg-gradient-to-br from-rose-100 to-pink-100 rounded-lg flex items-center justify-center">
+                      <Check className="w-5 h-5 text-rose-600" />
                     </div>
                     <span>{amenity}</span>
                   </div>
@@ -345,7 +341,7 @@ export default function PropertyDetailsPage() {
             <div className="bg-white p-6 rounded-2xl shadow-xl sticky top-24 border border-gray-100">
               <div className="mb-6">
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
+                  <span className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
                     ${property.price.toLocaleString()}
                   </span>
                   <span className="text-gray-600">/month</span>
@@ -364,7 +360,7 @@ export default function PropertyDetailsPage() {
                       type="date"
                       value={checkIn}
                       onChange={(e) => setCheckIn(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none text-black placeholder:text-black"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none text-black placeholder:text-black"
                     />
                   </div>
                 </div>
@@ -380,7 +376,7 @@ export default function PropertyDetailsPage() {
                       value={checkOut}
                       onChange={(e) => setCheckOut(e.target.value)}
                       min={checkIn}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none text-black placeholder:text-black"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none text-black placeholder:text-black"
                     />
                   </div>
                 </div>
@@ -397,7 +393,7 @@ export default function PropertyDetailsPage() {
                       max="6"
                       value={guests}
                       onChange={(e) => setGuests(Number(e.target.value))}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none text-black placeholder:text-black"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none text-black placeholder:text-black"
                     />
                   </div>
                 </div>
@@ -406,7 +402,7 @@ export default function PropertyDetailsPage() {
               <button
                 onClick={handleBookingClick}
                 disabled={!checkIn || !checkOut}
-                className="w-full bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white py-4 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-4 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Request to Book
               </button>
@@ -417,11 +413,11 @@ export default function PropertyDetailsPage() {
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <h3 className="font-semibold text-gray-900 mb-4">Hosted by</h3>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center text-white font-semibold text-lg">
-                    {property.hostInitials || 'H'}
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white font-semibold text-lg">
+                    JD
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{property.hostName || 'Host'}</p>
+                    <p className="font-semibold text-gray-900">John Doe</p>
                     <p className="text-sm text-gray-600 flex items-center gap-1">
                       <Check className="w-4 h-4 text-emerald-600" />
                       Verified Host
@@ -430,7 +426,7 @@ export default function PropertyDetailsPage() {
                 </div>
                 <button
                   onClick={handleContactHost}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-teal-600 text-teal-700 rounded-xl hover:bg-teal-50 transition font-semibold"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-rose-500 text-rose-600 rounded-xl hover:bg-rose-50 transition font-semibold"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Contact Host
@@ -444,7 +440,7 @@ export default function PropertyDetailsPage() {
         <div className="mt-12">
           <Link
             href="/search"
-            className="inline-flex items-center gap-2 text-teal-700 hover:text-teal-800 font-semibold"
+            className="inline-flex items-center gap-2 text-rose-600 hover:text-rose-700 font-semibold"
           >
             ← Back to search results
           </Link>

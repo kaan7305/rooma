@@ -146,7 +146,7 @@ export default function VerifyPage() {
   // If already verified, show success
   if (user.emailVerified) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
         <main className="max-w-3xl mx-auto px-6 lg:px-8 py-12">
           <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
             <div className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -156,7 +156,7 @@ export default function VerifyPage() {
             <p className="text-gray-600 mb-8">Your identity has been successfully verified. You can now enjoy all the benefits of a verified user.</p>
             <button
               onClick={() => router.push('/profile')}
-              className="bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white rounded-xl px-8 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+              className="bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-8 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
             >
               Go to Profile
             </button>
@@ -167,15 +167,15 @@ export default function VerifyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
       <main className="max-w-3xl mx-auto px-6 lg:px-8 py-12">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-teal-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
+                <ShieldCheck className="w-6 h-6 text-rose-600" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 via-teal-600 to-teal-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
                 Verify Your Identity
               </h1>
             </div>
@@ -202,7 +202,7 @@ export default function VerifyPage() {
                     onClick={() => setIdType(option.value)}
                     className={`py-3 px-4 rounded-lg border-2 text-sm font-medium transition ${
                       idType === option.value
-                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        ? 'border-rose-500 bg-rose-50 text-rose-700'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300'
                     }`}
                   >
@@ -215,7 +215,7 @@ export default function VerifyPage() {
             {/* ID Document Upload */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Upload className="w-5 h-5 text-teal-600" />
+                <Upload className="w-5 h-5 text-rose-600" />
                 Upload ID Document
               </h2>
               <p className="text-sm text-gray-600 mb-4">
@@ -241,7 +241,7 @@ export default function VerifyPage() {
                   </button>
                 </div>
               ) : (
-                <label className="block w-full h-64 border-2 border-dashed border-gray-300 rounded-xl hover:border-teal-500 transition cursor-pointer">
+                <label className="block w-full h-64 border-2 border-dashed border-gray-300 rounded-xl hover:border-rose-500 transition cursor-pointer">
                   <input
                     type="file"
                     accept="image/*"
@@ -261,7 +261,7 @@ export default function VerifyPage() {
             {/* Selfie Upload */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Camera className="w-5 h-5 text-teal-600" />
+                <Camera className="w-5 h-5 text-rose-600" />
                 Upload Selfie Photo
               </h2>
               <p className="text-sm text-gray-600 mb-4">
@@ -287,7 +287,7 @@ export default function VerifyPage() {
                   </button>
                 </div>
               ) : (
-                <label className="block w-full h-64 border-2 border-dashed border-gray-300 rounded-xl hover:border-teal-500 transition cursor-pointer">
+                <label className="block w-full h-64 border-2 border-dashed border-gray-300 rounded-xl hover:border-rose-500 transition cursor-pointer">
                   <input
                     type="file"
                     accept="image/*"
@@ -320,7 +320,7 @@ export default function VerifyPage() {
               <button
                 type="submit"
                 disabled={!idDocument || !selfiePhoto || isSubmitting}
-                className="flex-1 bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white rounded-xl px-8 py-4 transition-all shadow-lg hover:shadow-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-8 py-4 transition-all shadow-lg hover:shadow-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
               </button>

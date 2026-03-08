@@ -254,7 +254,7 @@ export default function AdvancedMessaging() {
               placeholder="Search messages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:outline-none text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function AdvancedMessaging() {
               key={conv.id}
               onClick={() => setActiveConversation(conv)}
               className={`w-full p-4 flex gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 ${
-                activeConversation?.id === conv.id ? 'bg-teal-50 dark:bg-teal-900/20' : ''
+                activeConversation?.id === conv.id ? 'bg-rose-50 dark:bg-rose-900/20' : ''
               }`}
             >
               <div className="relative shrink-0">
@@ -296,7 +296,7 @@ export default function AdvancedMessaging() {
                 </p>
               </div>
               {conv.unreadCount > 0 && (
-                <div className="w-6 h-6 bg-teal-600 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">
+                <div className="w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                   {conv.unreadCount}
                 </div>
               )}
@@ -362,7 +362,7 @@ export default function AdvancedMessaging() {
                     <div
                       className={`rounded-2xl px-4 py-2 ${
                         isMe
-                          ? 'bg-gradient-to-r from-teal-600 to-teal-800 text-white'
+                          ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white'
                           : 'bg-gray-100 text-gray-900'
                       }`}
                     >
@@ -409,7 +409,7 @@ export default function AdvancedMessaging() {
               <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <ImageIcon className="w-5 h-5 text-gray-600" />
               </button>
-              <div className="flex-1 bg-gray-100 rounded-2xl px-4 py-2 focus-within:ring-2 focus-within:ring-teal-600">
+              <div className="flex-1 bg-gray-100 rounded-2xl px-4 py-2 focus-within:ring-2 focus-within:ring-rose-500">
                 <textarea
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
@@ -430,7 +430,7 @@ export default function AdvancedMessaging() {
               <button
                 onClick={handleSendMessage}
                 disabled={!messageText.trim()}
-                className="p-3 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all shadow-lg hover:shadow-xl"
+                className="p-3 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all shadow-lg hover:shadow-xl"
               >
                 <Send className="w-5 h-5 text-white" />
               </button>

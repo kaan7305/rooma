@@ -232,7 +232,7 @@ export default function ImageUpload({
           onDrop={handleDrop}
           className={`
             relative border-2 border-dashed rounded-lg p-8 text-center transition-all
-            ${dragActive ? 'border-teal-600 bg-teal-50' : 'border-gray-300 hover:border-gray-400'}
+            ${dragActive ? 'border-rose-500 bg-rose-50' : 'border-gray-300 hover:border-gray-400'}
           `}
         >
           <input
@@ -270,7 +270,7 @@ export default function ImageUpload({
           <button
             onClick={handleUpload}
             disabled={uploading}
-            className="flex-1 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl px-6 py-3 font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+            className="flex-1 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl px-6 py-3 font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
           >
             {uploading ? (
               <>
@@ -304,7 +304,7 @@ export default function ImageUpload({
       {uploading && (
         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-teal-600 via-teal-600 to-teal-700 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 transition-all duration-300"
             style={{ width: `${uploadProgress}%` }}
           />
         </div>

@@ -200,16 +200,16 @@ export default function AddressesPage() {
   const getAddressIcon = (type: string) => {
     switch (type) {
       case 'home':
-        return <Home className="w-6 h-6 text-teal-700" />;
+        return <Home className="w-6 h-6 text-rose-600" />;
       case 'work':
-        return <Briefcase className="w-6 h-6 text-teal-700" />;
+        return <Briefcase className="w-6 h-6 text-rose-600" />;
       default:
-        return <MapPin className="w-6 h-6 text-teal-700" />;
+        return <MapPin className="w-6 h-6 text-rose-600" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -221,7 +221,7 @@ export default function AddressesPage() {
         <div className="mb-6">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 text-white rounded-lg hover:from-teal-700 hover:to-teal-900 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg hover:from-rose-600 hover:to-pink-700 transition"
           >
             <Plus className="w-4 h-4" />
             Add New Address
@@ -233,19 +233,19 @@ export default function AddressesPage() {
           {addresses.map(address => (
             <div
               key={address.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-teal-300 transition"
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-rose-300 transition"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-teal-100 to-teal-100 flex items-center justify-center flex-shrink-0">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-rose-100 to-pink-100 flex items-center justify-center flex-shrink-0">
                     {getAddressIcon(address.type)}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-semibold text-gray-900">{address.label}</h3>
                       {address.isDefault && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 bg-teal-100 text-teal-800 text-xs font-medium rounded">
-                          <Star className="w-3 h-3 fill-teal-800" />
+                        <span className="flex items-center gap-1 px-2 py-0.5 bg-rose-100 text-rose-700 text-xs font-medium rounded">
+                          <Star className="w-3 h-3 fill-rose-700" />
                           Default
                         </span>
                       )}
@@ -261,14 +261,14 @@ export default function AddressesPage() {
                   {!address.isDefault && (
                     <button
                       onClick={() => handleSetDefault(address.id)}
-                      className="px-3 py-1.5 text-sm text-teal-700 hover:bg-teal-50 rounded-lg transition"
+                      className="px-3 py-1.5 text-sm text-rose-600 hover:bg-rose-50 rounded-lg transition"
                     >
                       Set as default
                     </button>
                   )}
                   <button
                     onClick={() => handleEdit(address)}
-                    className="p-2 text-gray-400 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition"
+                    className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
@@ -291,7 +291,7 @@ export default function AddressesPage() {
             <p className="text-gray-500 mb-6">Add an address to make booking faster</p>
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 text-white rounded-lg hover:from-teal-700 hover:to-teal-900 transition"
+              className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg hover:from-rose-600 hover:to-pink-700 transition"
             >
               Add Your First Address
             </button>
@@ -319,7 +319,7 @@ export default function AddressesPage() {
                   value={formData.label}
                   onChange={e => setFormData({ ...formData, label: e.target.value })}
                   placeholder="e.g., Home, Work, etc."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
 
@@ -335,7 +335,7 @@ export default function AddressesPage() {
                       onClick={() => setFormData({ ...formData, type: type as any })}
                       className={`flex-1 px-4 py-2 rounded-lg border-2 transition ${
                         formData.type === type
-                          ? 'border-teal-600 bg-teal-50 text-teal-800'
+                          ? 'border-rose-500 bg-rose-50 text-rose-700'
                           : 'border-gray-200 text-gray-700 hover:border-gray-300'
                       }`}
                     >
@@ -364,7 +364,7 @@ export default function AddressesPage() {
                     }
                   }}
                   placeholder="Start typing an address..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   autoComplete="off"
                 />
 
@@ -376,10 +376,10 @@ export default function AddressesPage() {
                         key={index}
                         type="button"
                         onClick={() => handleSelectSuggestion(suggestion)}
-                        className="w-full px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-100 last:border-b-0"
+                        className="w-full px-4 py-3 text-left hover:bg-rose-50 transition-colors border-b border-gray-100 last:border-b-0"
                       >
                         <div className="flex items-start gap-2">
-                          <MapPin className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                          <MapPin className="w-4 h-4 text-rose-500 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm font-medium text-gray-900">{suggestion.description}</p>
                           </div>
@@ -404,7 +404,7 @@ export default function AddressesPage() {
                     value={formData.city}
                     onChange={e => setFormData({ ...formData, city: e.target.value })}
                     placeholder="New York"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -416,7 +416,7 @@ export default function AddressesPage() {
                     value={formData.state}
                     onChange={e => setFormData({ ...formData, state: e.target.value })}
                     placeholder="NY"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -428,7 +428,7 @@ export default function AddressesPage() {
                     value={formData.zipCode}
                     onChange={e => setFormData({ ...formData, zipCode: e.target.value })}
                     placeholder="10001"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -441,7 +441,7 @@ export default function AddressesPage() {
                 <select
                   value={formData.country}
                   onChange={e => setFormData({ ...formData, country: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 >
                   <option>United States</option>
                   <option>Canada</option>
@@ -461,7 +461,7 @@ export default function AddressesPage() {
               </button>
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 text-white rounded-lg hover:from-teal-700 hover:to-teal-900 transition"
+                className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg hover:from-rose-600 hover:to-pink-700 transition"
               >
                 {editingAddress ? 'Save Changes' : 'Add Address'}
               </button>

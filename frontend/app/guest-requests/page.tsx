@@ -248,15 +248,15 @@ export default function GuestRequestsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <Briefcase className="w-10 h-10 text-teal-600" />
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent">
+                <Briefcase className="w-10 h-10 text-rose-600" />
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
                   Guest Requests
                 </h1>
               </div>
@@ -266,7 +266,7 @@ export default function GuestRequestsPage() {
             </div>
             <button
               onClick={() => router.push('/guest-requests/new')}
-              className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Post Your Request
@@ -302,7 +302,7 @@ export default function GuestRequestsPage() {
               onClick={() => setFilterStatus('all')}
               className={`px-6 py-2 rounded-full font-medium transition ${
                 filterStatus === 'all'
-                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -312,7 +312,7 @@ export default function GuestRequestsPage() {
               onClick={() => setFilterStatus('active')}
               className={`px-6 py-2 rounded-full font-medium transition ${
                 filterStatus === 'active'
-                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -322,7 +322,7 @@ export default function GuestRequestsPage() {
               onClick={() => setFilterStatus('offers_received')}
               className={`px-6 py-2 rounded-full font-medium transition ${
                 filterStatus === 'offers_received'
-                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -344,7 +344,7 @@ export default function GuestRequestsPage() {
                 <Heart
                   className={`w-5 h-5 ${
                     isGuestRequestFavorite(request.id)
-                      ? 'fill-teal-500 text-teal-500'
+                      ? 'fill-rose-500 text-rose-500'
                       : 'text-gray-400'
                   }`}
                 />
@@ -353,7 +353,7 @@ export default function GuestRequestsPage() {
               {/* Guest Info */}
               <div className="flex items-start justify-between mb-4 pr-12">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-500 flex items-center justify-center text-lg font-semibold text-white">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-lg font-semibold text-white">
                     {request.guestAvatar}
                   </div>
                   <div>
@@ -383,11 +383,11 @@ export default function GuestRequestsPage() {
               {/* Location & Dates */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-gray-900">
-                  <MapPin className="w-5 h-5 text-teal-500" />
+                  <MapPin className="w-5 h-5 text-rose-500" />
                   <span className="font-semibold text-lg">{request.location}, {request.country}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-700">
-                  <Calendar className="w-4 h-4 text-teal-500" />
+                  <Calendar className="w-4 h-4 text-rose-500" />
                   <span className="text-sm">
                     {new Date(request.checkInDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - {new Date(request.checkOutDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
@@ -398,7 +398,7 @@ export default function GuestRequestsPage() {
                   <span className="text-sm font-semibold text-green-700">{request.budget}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-700">
-                  <Users className="w-4 h-4 text-teal-500" />
+                  <Users className="w-4 h-4 text-rose-500" />
                   <span className="text-sm">{request.guests} {request.guests === 1 ? 'guest' : 'guests'}</span>
                 </div>
               </div>
@@ -408,7 +408,7 @@ export default function GuestRequestsPage() {
                 <p className="text-xs text-gray-600 mb-2">Looking for:</p>
                 <div className="flex flex-wrap gap-2">
                   {request.propertyType.map((type) => (
-                    <span key={type} className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-medium">
+                    <span key={type} className="px-3 py-1 bg-rose-50 text-rose-700 rounded-full text-xs font-medium">
                       {type}
                     </span>
                   ))}
@@ -448,7 +448,7 @@ export default function GuestRequestsPage() {
                       setSelectedRequest(request);
                       setShowOfferModal(true);
                     }}
-                    className="flex-1 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                    className="flex-1 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                   >
                     <Send className="w-5 h-5" />
                     Submit Offer
@@ -459,7 +459,7 @@ export default function GuestRequestsPage() {
                     toast.info(`Contact ${request.guestName} via messages to discuss their request further.`);
                     router.push('/messages');
                   }}
-                  className="px-4 py-3 border-2 border-teal-500 text-teal-600 hover:bg-teal-50 rounded-lg font-semibold transition flex items-center gap-2"
+                  className="px-4 py-3 border-2 border-rose-500 text-rose-600 hover:bg-rose-50 rounded-lg font-semibold transition flex items-center gap-2"
                 >
                   <MessageCircle className="w-5 h-5" />
                 </button>
@@ -524,11 +524,11 @@ function OfferModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-teal-500 to-teal-600 p-6 rounded-t-2xl">
+        <div className="sticky top-0 bg-gradient-to-r from-rose-500 to-pink-600 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white mb-1">Submit Your Offer</h2>
-              <p className="text-teal-100 text-sm">to {request.guestName}</p>
+              <p className="text-rose-100 text-sm">to {request.guestName}</p>
             </div>
             <button
               onClick={onClose}
@@ -544,11 +544,11 @@ function OfferModal({
           <h3 className="font-semibold text-gray-900 mb-3">Request Summary</h3>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-teal-500" />
+              <MapPin className="w-4 h-4 text-rose-500" />
               <span className="font-medium">{request.location}, {request.country}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-teal-500" />
+              <Calendar className="w-4 h-4 text-rose-500" />
               <span>{new Date(request.checkInDate).toLocaleDateString()} - {new Date(request.checkOutDate).toLocaleDateString()}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -556,7 +556,7 @@ function OfferModal({
               <span className="font-semibold text-green-700">{request.budget}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-teal-500" />
+              <Users className="w-4 h-4 text-rose-500" />
               <span>{request.guests} {request.guests === 1 ? 'guest' : 'guests'}</span>
             </div>
           </div>
@@ -574,7 +574,7 @@ function OfferModal({
                 value={propertyTitle}
                 onChange={(e) => setPropertyTitle(e.target.value)}
                 placeholder="e.g., Cozy Studio Near University"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                 required
               />
             </div>
@@ -590,7 +590,7 @@ function OfferModal({
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   placeholder="e.g., $950"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   required
                 />
               </div>
@@ -605,7 +605,7 @@ function OfferModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={`Hi ${request.guestName.split(' ')[0]},\n\nI have a property that matches your requirements in ${request.location}. It includes...\n\nI'd be happy to discuss the details further!`}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[150px]"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[150px]"
                 required
               />
             </div>
@@ -621,7 +621,7 @@ function OfferModal({
             </button>
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
+              className="flex-1 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
             >
               Submit Offer
             </button>

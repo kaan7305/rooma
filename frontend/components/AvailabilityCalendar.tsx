@@ -119,8 +119,8 @@ export default function AvailabilityCalendar({
             isDisabled
               ? 'text-gray-300 cursor-not-allowed'
               : isSelected
-              ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md'
-              : 'hover:bg-teal-50 text-gray-700'
+              ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md'
+              : 'hover:bg-rose-50 text-gray-700'
           }`}
         >
           {day}
@@ -139,7 +139,7 @@ export default function AvailabilityCalendar({
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl flex items-center justify-center">
+        <div className="w-12 h-12 bg-gradient-to-r from-rose-500 to-pink-500 rounded-2xl flex items-center justify-center">
           <CalendarIcon className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -151,7 +151,7 @@ export default function AvailabilityCalendar({
       {/* Legend */}
       <div className="flex items-center gap-4 mb-6 text-xs">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-gradient-to-r from-teal-600 to-teal-700" />
+          <div className="w-4 h-4 rounded bg-gradient-to-r from-rose-500 to-pink-500" />
           <span className="text-gray-600">Selected</span>
         </div>
         <div className="flex items-center gap-2">

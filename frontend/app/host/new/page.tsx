@@ -438,10 +438,10 @@ export default function NewListingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
       <main className="max-w-4xl mx-auto px-6 lg:px-8 py-12">
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 via-teal-600 to-teal-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
             List Your Property
           </h1>
           <p className="text-gray-600 mb-8">Share your space with students looking for sublets</p>
@@ -450,7 +450,7 @@ export default function NewListingPage() {
             {/* Property Details */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Home className="w-5 h-5 text-teal-600" />
+                <Home className="w-5 h-5 text-rose-600" />
                 Property Details
               </h2>
               <div className="space-y-4">
@@ -464,7 +464,7 @@ export default function NewListingPage() {
                     value={formData.title}
                     onChange={handleChange}
                     placeholder="e.g., Cozy 2BR Near Campus"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                     required
                   />
                 </div>
@@ -487,13 +487,13 @@ export default function NewListingPage() {
                           }
                         }}
                         placeholder="Start typing an address..."
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                         required
                         autoComplete="off"
                       />
                       {isLoadingSuggestions && (
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-600"></div>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-rose-600"></div>
                         </div>
                       )}
                     </div>
@@ -509,10 +509,10 @@ export default function NewListingPage() {
                               e.preventDefault();
                               handleSelectAddress(suggestion);
                             }}
-                            className="w-full px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-100 last:border-b-0"
+                            className="w-full px-4 py-3 text-left hover:bg-rose-50 transition-colors border-b border-gray-100 last:border-b-0"
                           >
                             <div className="flex items-start gap-2">
-                              <MapPin className="w-4 h-4 text-teal-500 mt-0.5 flex-shrink-0" />
+                              <MapPin className="w-4 h-4 text-rose-500 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-sm font-medium text-gray-900">{suggestion.display_name}</p>
                               </div>
@@ -536,7 +536,7 @@ export default function NewListingPage() {
                       value={formData.city}
                       onChange={handleChange}
                       placeholder="e.g., Cambridge"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                       required
                     />
                   </div>
@@ -553,7 +553,7 @@ export default function NewListingPage() {
                       value={formData.country}
                       onChange={handleChange}
                       placeholder="e.g., United States"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                       required
                     />
                   </div>
@@ -568,7 +568,7 @@ export default function NewListingPage() {
                       value={formData.postcode}
                       onChange={handleChange}
                       placeholder="e.g., 02138"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                       required
                     />
                   </div>
@@ -583,7 +583,7 @@ export default function NewListingPage() {
                       name="type"
                       value={formData.type}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900"
                     >
                       {typeOptions.map(type => (
                         <option key={type} value={type}>{type}</option>
@@ -601,7 +601,7 @@ export default function NewListingPage() {
                       value={formData.sqft}
                       onChange={handleChange}
                       placeholder="e.g., 850"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                       required
                     />
                   </div>
@@ -616,7 +616,7 @@ export default function NewListingPage() {
                       name="beds"
                       value={formData.beds}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900"
                     >
                       {[1, 2, 3, 4, 5].map(num => (
                         <option key={num} value={num}>{num}</option>
@@ -632,7 +632,7 @@ export default function NewListingPage() {
                       name="baths"
                       value={formData.baths}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900"
                     >
                       {[1, 1.5, 2, 2.5, 3].map(num => (
                         <option key={num} value={num}>{num}</option>
@@ -646,7 +646,7 @@ export default function NewListingPage() {
             {/* Pricing & Availability */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-teal-600" />
+                <DollarSign className="w-5 h-5 text-rose-600" />
                 Pricing & Availability
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -660,7 +660,7 @@ export default function NewListingPage() {
                     value={formData.price}
                     onChange={handleChange}
                     placeholder="e.g., 1800"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                     required
                   />
                 </div>
@@ -673,7 +673,7 @@ export default function NewListingPage() {
                     name="duration"
                     value={formData.duration}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900"
                   >
                     {durationOptions.map(duration => (
                       <option key={duration} value={duration}>{duration}</option>
@@ -691,7 +691,7 @@ export default function NewListingPage() {
                     value={formData.available}
                     onChange={handleChange}
                     placeholder="e.g., Available June 1st"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                   />
                 </div>
               </div>
@@ -708,7 +708,7 @@ export default function NewListingPage() {
                 onChange={handleChange}
                 rows={5}
                 placeholder="Describe your property, nearby amenities, transportation, etc..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                 required
               />
             </div>
@@ -726,7 +726,7 @@ export default function NewListingPage() {
                       type="checkbox"
                       checked={selectedAmenities.includes(amenity)}
                       onChange={() => toggleAmenity(amenity)}
-                      className="w-5 h-5 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                      className="w-5 h-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
                     />
                     <span className="text-sm text-gray-700">{amenity}</span>
                   </label>
@@ -737,7 +737,7 @@ export default function NewListingPage() {
             {/* Photos */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-teal-600" />
+                <ImageIcon className="w-5 h-5 text-rose-600" />
                 Photos
               </h2>
 
@@ -801,7 +801,7 @@ export default function NewListingPage() {
                     </button>
                   </div>
                 ) : (
-                  <label className="block w-full h-64 border-2 border-dashed border-gray-300 rounded-xl hover:border-teal-500 transition cursor-pointer">
+                  <label className="block w-full h-64 border-2 border-dashed border-gray-300 rounded-xl hover:border-rose-500 transition cursor-pointer">
                     <input
                       type="file"
                       accept="image/*"
@@ -852,7 +852,7 @@ export default function NewListingPage() {
                           </button>
                         </div>
                       ) : (
-                        <label className="block aspect-video border-2 border-dashed border-gray-300 rounded-xl hover:border-teal-500 transition cursor-pointer">
+                        <label className="block aspect-video border-2 border-dashed border-gray-300 rounded-xl hover:border-rose-500 transition cursor-pointer">
                           <input
                             type="file"
                             accept="image/*"
@@ -882,7 +882,7 @@ export default function NewListingPage() {
               <button
                 type="submit"
                 disabled={!isCaptchaVerified || !photoConfirmation}
-                className="flex-1 bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white rounded-xl px-8 py-4 transition-all shadow-lg hover:shadow-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-8 py-4 transition-all shadow-lg hover:shadow-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 List Property
               </button>
@@ -910,7 +910,7 @@ export default function NewListingPage() {
         {isValidating && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl p-8 max-w-md text-center shadow-2xl">
-              <div className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <div className="w-16 h-16 border-4 border-rose-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">AI Validating Image...</h3>
               <p className="text-gray-600">Please wait while we verify this is a property photo</p>
               <p className="text-sm text-gray-500 mt-4">This usually takes 3-5 seconds</p>

@@ -54,7 +54,7 @@ export default function SearchQuickFilters({ activeFilters, onFilterToggle }: Se
         {activeFilters.length > 0 && (
           <button
             onClick={() => activeFilters.forEach(filter => onFilterToggle(filter))}
-            className="text-xs text-teal-700 hover:text-teal-800 font-medium flex items-center gap-1"
+            className="text-xs text-rose-600 hover:text-rose-700 font-medium flex items-center gap-1"
           >
             <X className="w-3 h-3" />
             Clear all
@@ -72,25 +72,25 @@ export default function SearchQuickFilters({ activeFilters, onFilterToggle }: Se
               onClick={() => onFilterToggle(filter.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all whitespace-nowrap group ${
                 isActive
-                  ? 'border-teal-600 bg-gradient-to-r from-teal-50 to-teal-50 shadow-md'
-                  : 'border-gray-200 hover:border-teal-200 hover:bg-gray-50'
+                  ? 'border-rose-500 bg-gradient-to-r from-rose-50 to-pink-50 shadow-md'
+                  : 'border-gray-200 hover:border-rose-200 hover:bg-gray-50'
               }`}
               title={filter.description}
             >
               <Icon
                 className={`w-4 h-4 transition-colors ${
-                  isActive ? 'text-teal-700' : 'text-gray-500 group-hover:text-teal-600'
+                  isActive ? 'text-rose-600' : 'text-gray-500 group-hover:text-rose-500'
                 }`}
               />
               <span
                 className={`text-sm font-medium transition-colors ${
-                  isActive ? 'text-teal-700' : 'text-gray-700 group-hover:text-gray-900'
+                  isActive ? 'text-rose-600' : 'text-gray-700 group-hover:text-gray-900'
                 }`}
               >
                 {filter.label}
               </span>
               {isActive && (
-                <X className="w-3 h-3 text-teal-700" />
+                <X className="w-3 h-3 text-rose-600" />
               )}
             </button>
           );

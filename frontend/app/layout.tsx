@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { DM_Sans, Inter } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import MobileNav from '@/components/MobileNav';
@@ -7,14 +7,13 @@ import { WebSocketProvider } from '@/lib/websocket-context';
 import { ToastProvider } from '@/lib/toast-context';
 import { ThemeProvider } from '@/lib/theme-context';
 
-const dmSans = DM_Sans({
-  variable: '--font-dm-sans',
+const geistSans = Geist({
+  variable: '--font-geist-sans',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
 });
 
-const inter = Inter({
-  variable: '--font-inter',
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
   subsets: ['latin'],
 });
 
@@ -64,7 +63,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${dmSans.variable} ${inter.variable} antialiased transition-colors duration-300`} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased transition-colors duration-300`} suppressHydrationWarning>
         <ThemeProvider>
           <WebSocketProvider>
             <ToastProvider>

@@ -32,7 +32,7 @@ export default function PriceInsights({ price, duration, propertyType, location 
 
   // Demand level (simulated)
   const demandLevel = locationHash % 3 === 0 ? 'High' : locationHash % 2 === 0 ? 'Medium' : 'Low';
-  const demandColor = demandLevel === 'High' ? 'text-teal-700 bg-teal-100' : demandLevel === 'Medium' ? 'text-yellow-600 bg-yellow-100' : 'text-green-600 bg-green-100';
+  const demandColor = demandLevel === 'High' ? 'text-rose-600 bg-rose-100' : demandLevel === 'Medium' ? 'text-yellow-600 bg-yellow-100' : 'text-green-600 bg-green-100';
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -75,7 +75,7 @@ export default function PriceInsights({ price, duration, propertyType, location 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-white rounded-lg p-3">
             <p className="text-xs text-gray-600 mb-1">This Property</p>
-            <p className="text-2xl font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
+            <p className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
               ${price.toLocaleString()}
             </p>
           </div>
@@ -105,7 +105,7 @@ export default function PriceInsights({ price, duration, propertyType, location 
                   <div
                     className={`w-full rounded-t-lg transition-all ${
                       index === priceHistory.length - 1
-                        ? 'bg-gradient-to-t from-teal-600 to-teal-700'
+                        ? 'bg-gradient-to-t from-rose-500 to-pink-500'
                         : 'bg-gradient-to-t from-gray-300 to-gray-400'
                     }`}
                     style={{ height: `${Math.max(heightPercent, 20)}%` }}
@@ -126,12 +126,12 @@ export default function PriceInsights({ price, duration, propertyType, location 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <Calendar className="w-5 h-5 text-teal-700" />
+            <Calendar className="w-5 h-5 text-purple-600" />
             <h4 className="font-bold text-gray-900">Season</h4>
           </div>
           <p className="text-sm text-gray-700 mb-1">
             {isPeakSeason ? (
-              <span className="text-teal-700 font-semibold">Peak Season</span>
+              <span className="text-rose-600 font-semibold">Peak Season</span>
             ) : (
               <span className="text-emerald-600 font-semibold">Off-Peak Season</span>
             )}
@@ -164,7 +164,7 @@ export default function PriceInsights({ price, duration, propertyType, location 
       </div>
 
       {/* Price Breakdown */}
-      <div className="p-4 bg-gradient-to-br from-blue-50 to-teal-50 rounded-xl border border-blue-200">
+      <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200">
         <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
           <DollarSign className="w-5 h-5 text-blue-600" />
           Cost Breakdown
@@ -184,7 +184,7 @@ export default function PriceInsights({ price, duration, propertyType, location 
           </div>
           <div className="pt-2 border-t border-blue-300 flex items-center justify-between">
             <span className="font-bold text-gray-900">Total Move-in Cost</span>
-            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-teal-800 bg-clip-text text-transparent">
+            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               ${(price * 2 + Math.round(price * 0.1)).toLocaleString()}
             </span>
           </div>

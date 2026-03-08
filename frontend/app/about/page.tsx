@@ -33,10 +33,10 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
             About ROOMA
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
@@ -49,8 +49,8 @@ export default function AboutPage() {
             const Icon = stat.icon;
             return (
               <div key={stat.label} className="bg-white rounded-2xl p-6 shadow-md text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Icon className="w-6 h-6 text-teal-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Icon className="w-6 h-6 text-rose-600" />
                 </div>
                 <p className="text-3xl font-bold text-black mb-1">{stat.value}</p>
                 <p className="text-sm text-black">{stat.label}</p>
@@ -78,15 +78,15 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-black mb-8 text-center">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-2xl p-6 shadow-md">
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center mb-4">
-                <Heart className="w-6 h-6 text-teal-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center mb-4">
+                <Heart className="w-6 h-6 text-rose-600" />
               </div>
               <h3 className="text-xl font-bold text-black mb-2">Community First</h3>
               <p className="text-black">We prioritize the safety, trust, and well-being of our community above all else.</p>
             </div>
             <div className="bg-white rounded-2xl p-6 shadow-md">
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center mb-4">
-                <Globe className="w-6 h-6 text-teal-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center mb-4">
+                <Globe className="w-6 h-6 text-pink-600" />
               </div>
               <h3 className="text-xl font-bold text-black mb-2">Global Reach</h3>
               <p className="text-black">Connecting students worldwide with housing opportunities in every major city.</p>
@@ -113,7 +113,7 @@ export default function AboutPage() {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-black mb-1">{member.name}</h3>
-                  <p className="text-teal-600 font-semibold mb-3">{member.role}</p>
+                  <p className="text-rose-600 font-semibold mb-3">{member.role}</p>
                   <p className="text-black">{member.bio}</p>
                 </div>
               </div>
@@ -121,14 +121,14 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl p-8 text-center text-white">
+        <div className="bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-4">Join Our Team</h2>
           <p className="mb-6 text-white max-w-2xl mx-auto">
             We are always looking for passionate individuals to join our mission of revolutionizing student housing.
           </p>
           <Link
             href="/careers"
-            className="inline-block bg-white text-teal-600 px-8 py-3 rounded-xl font-semibold hover:bg-teal-50 transition-colors"
+            className="inline-block bg-white text-rose-600 px-8 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors"
           >
             View Open Positions
           </Link>

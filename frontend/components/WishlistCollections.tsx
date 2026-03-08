@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Bookmark,
+  Heart,
   Plus,
   Edit2,
   Trash2,
@@ -118,7 +118,7 @@ export default function WishlistCollections() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl"
         >
           <Plus className="w-5 h-5" />
           New Collection
@@ -133,7 +133,7 @@ export default function WishlistCollections() {
           <p className="text-gray-600 mb-6">Create your first collection to start organizing favorites</p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-lg font-medium transition-all shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg font-medium transition-all shadow-lg"
           >
             <Plus className="w-5 h-5" />
             Create Collection
@@ -148,7 +148,7 @@ export default function WishlistCollections() {
               onClick={() => setSelectedCollection(collection)}
             >
               {/* Cover Image */}
-              <div className="relative h-48 bg-gradient-to-br from-teal-400 to-teal-700">
+              <div className="relative h-48 bg-gradient-to-br from-rose-400 to-pink-500">
                 {collection.coverImage ? (
                   <img
                     src={collection.coverImage}
@@ -157,7 +157,7 @@ export default function WishlistCollections() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Bookmark className="w-16 h-16 text-white opacity-50" />
+                    <Heart className="w-16 h-16 text-white opacity-50" />
                   </div>
                 )}
                 <div className="absolute top-3 right-3 flex gap-2">
@@ -261,7 +261,7 @@ export default function WishlistCollections() {
                   value={newCollectionName}
                   onChange={(e) => setNewCollectionName(e.target.value)}
                   placeholder="e.g., Summer 2025, Budget Friendly"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
 
@@ -274,7 +274,7 @@ export default function WishlistCollections() {
                   onChange={(e) => setNewCollectionDescription(e.target.value)}
                   placeholder="Add a description for this collection..."
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent resize-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent resize-none"
                 />
               </div>
 
@@ -287,7 +287,7 @@ export default function WishlistCollections() {
                 </button>
                 <button
                   onClick={handleCreateCollection}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-lg font-medium transition"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg font-medium transition"
                 >
                   Create
                 </button>
@@ -302,7 +302,7 @@ export default function WishlistCollections() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full my-8">
             {/* Header */}
-            <div className="relative h-64 bg-gradient-to-br from-teal-400 to-teal-700">
+            <div className="relative h-64 bg-gradient-to-br from-rose-400 to-pink-500">
               {selectedCollection.coverImage ? (
                 <img
                   src={selectedCollection.coverImage}
@@ -311,7 +311,7 @@ export default function WishlistCollections() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <Bookmark className="w-24 h-24 text-white opacity-50" />
+                  <Heart className="w-24 h-24 text-white opacity-50" />
                 </div>
               )}
               <button
@@ -359,7 +359,7 @@ export default function WishlistCollections() {
                   </button>
                   <button
                     onClick={() => setShowAddPropertyModal(true)}
-                    className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-lg font-medium transition flex items-center gap-2"
+                    className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg font-medium transition flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
                     Add Property
@@ -370,11 +370,11 @@ export default function WishlistCollections() {
               {/* Properties List */}
               {selectedCollection.items.length === 0 ? (
                 <div className="text-center py-12 bg-gray-50 rounded-xl">
-                  <Bookmark className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <Heart className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 mb-4">No properties in this collection yet</p>
                   <button
                     onClick={() => setShowAddPropertyModal(true)}
-                    className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-lg font-medium transition"
+                    className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg font-medium transition"
                   >
                     Add Properties
                   </button>
@@ -394,7 +394,7 @@ export default function WishlistCollections() {
                       <div className="flex-1">
                         <h4 className="font-bold text-gray-900 mb-1">{item.property.title}</h4>
                         <p className="text-sm text-gray-600 mb-2">{item.property.location}</p>
-                        <p className="text-lg font-bold text-teal-700 mb-2">
+                        <p className="text-lg font-bold text-rose-600 mb-2">
                           ${item.property.price}/month
                         </p>
 
@@ -406,7 +406,7 @@ export default function WishlistCollections() {
                               value={noteText}
                               onChange={(e) => setNoteText(e.target.value)}
                               placeholder="Add a note..."
-                              className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                              className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                               autoFocus
                             />
                             <button
@@ -491,12 +491,12 @@ export default function WishlistCollections() {
                     <div className="flex-1">
                       <h4 className="font-bold text-gray-900">{property.title}</h4>
                       <p className="text-sm text-gray-600 mb-1">{property.location}</p>
-                      <p className="text-lg font-bold text-teal-700">
+                      <p className="text-lg font-bold text-rose-600">
                         ${property.price}/month
                       </p>
                     </div>
                     <div className="flex items-center">
-                      <Plus className="w-6 h-6 text-teal-700" />
+                      <Plus className="w-6 h-6 text-rose-600" />
                     </div>
                   </div>
                 ))}

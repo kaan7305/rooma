@@ -186,7 +186,7 @@ export default function SettingsPage() {
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600"></div>
       </div>
     );
   }
@@ -199,11 +199,11 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-2">
             Settings
           </h1>
           <p className="text-gray-600">Manage your account settings and preferences</p>
@@ -221,7 +221,7 @@ export default function SettingsPage() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition mb-2 ${
                       activeTab === tab.id
-                        ? 'bg-gradient-to-r from-teal-600 to-teal-800 text-white shadow-md'
+                        ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-md'
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
@@ -245,7 +245,7 @@ export default function SettingsPage() {
                     {/* Profile Photo */}
                     <div className="flex items-center gap-6 pb-6 border-b">
                       <div className="relative">
-                        <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-teal-400 to-teal-700 flex items-center justify-center text-white text-3xl font-bold">
+                        <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white text-3xl font-bold">
                           {profilePhoto ? (
                             <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
                           ) : (
@@ -254,7 +254,7 @@ export default function SettingsPage() {
                         </div>
                         <label
                           htmlFor="photo-upload"
-                          className="absolute bottom-0 right-0 bg-teal-600 hover:bg-teal-700 text-white p-2 rounded-full cursor-pointer shadow-lg transition"
+                          className="absolute bottom-0 right-0 bg-rose-500 hover:bg-rose-600 text-white p-2 rounded-full cursor-pointer shadow-lg transition"
                         >
                           <Camera className="w-4 h-4" />
                           <input
@@ -298,7 +298,7 @@ export default function SettingsPage() {
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
                         />
                       </div>
                       <div>
@@ -309,7 +309,7 @@ export default function SettingsPage() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
                         />
                       </div>
                     </div>
@@ -324,7 +324,7 @@ export default function SettingsPage() {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
                       />
                     </div>
 
@@ -339,7 +339,7 @@ export default function SettingsPage() {
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
                       />
                     </div>
 
@@ -353,7 +353,7 @@ export default function SettingsPage() {
                         onChange={(e) => setBio(e.target.value)}
                         placeholder="Tell us a little about yourself..."
                         rows={4}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition resize-none"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition resize-none"
                       />
                     </div>
 
@@ -367,7 +367,7 @@ export default function SettingsPage() {
                         <select
                           value={language}
                           onChange={(e) => setLanguage(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
                         >
                           <option value="English">English</option>
                           <option value="Spanish">Spanish</option>
@@ -383,7 +383,7 @@ export default function SettingsPage() {
                         <select
                           value={currency}
                           onChange={(e) => setCurrency(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
                         >
                           <option value="USD">USD ($)</option>
                           <option value="EUR">EUR (€)</option>
@@ -419,7 +419,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={emailNotifications}
                             onChange={(e) => setEmailNotifications(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
 
@@ -435,7 +435,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={smsNotifications}
                             onChange={(e) => setSmsNotifications(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
 
@@ -451,7 +451,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={pushNotifications}
                             onChange={(e) => setPushNotifications(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
                       </div>
@@ -470,7 +470,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={bookingUpdates}
                             onChange={(e) => setBookingUpdates(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
 
@@ -483,7 +483,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={messageNotifications}
                             onChange={(e) => setMessageNotifications(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
 
@@ -496,7 +496,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={marketingEmails}
                             onChange={(e) => setMarketingEmails(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
                       </div>
@@ -519,7 +519,7 @@ export default function SettingsPage() {
                       <select
                         value={profileVisibility}
                         onChange={(e) => setProfileVisibility(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
                       >
                         <option value="public">Public - Anyone can see your profile</option>
                         <option value="users">Users Only - Only registered users</option>
@@ -540,7 +540,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={showEmail}
                             onChange={(e) => setShowEmail(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
 
@@ -553,7 +553,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={showPhone}
                             onChange={(e) => setShowPhone(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
 
@@ -566,7 +566,7 @@ export default function SettingsPage() {
                             type="checkbox"
                             checked={activityStatus}
                             onChange={(e) => setActivityStatus(e.target.checked)}
-                            className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                            className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                           />
                         </label>
                       </div>
@@ -599,7 +599,7 @@ export default function SettingsPage() {
                     {/* Password */}
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">Password</h3>
-                      <button className="w-full text-left px-4 py-3 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-lg transition shadow-md">
+                      <button className="w-full text-left px-4 py-3 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg transition shadow-md">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <Lock className="w-5 h-5" />
@@ -639,7 +639,7 @@ export default function SettingsPage() {
                           type="checkbox"
                           checked={twoFactorEnabled}
                           onChange={(e) => setTwoFactorEnabled(e.target.checked)}
-                          className="w-5 h-5 text-teal-700 focus:ring-teal-600 rounded"
+                          className="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded"
                         />
                       </label>
                     </div>
@@ -660,7 +660,7 @@ export default function SettingsPage() {
                           </div>
                         </div>
                       </div>
-                      <button className="mt-4 w-full py-3 px-4 border-2 border-teal-600 text-teal-700 hover:bg-teal-50 rounded-lg font-semibold transition">
+                      <button className="mt-4 w-full py-3 px-4 border-2 border-rose-500 text-rose-600 hover:bg-rose-50 rounded-lg font-semibold transition">
                         Sign Out All Other Devices
                       </button>
                     </div>
@@ -696,7 +696,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white py-3 px-8 rounded-lg font-semibold transition shadow-lg hover:shadow-xl disabled:opacity-50"
+                  className="flex items-center gap-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-8 rounded-lg font-semibold transition shadow-lg hover:shadow-xl disabled:opacity-50"
                 >
                   <Save className="w-5 h-5" />
                   {isSaving ? 'Saving...' : 'Save Changes'}

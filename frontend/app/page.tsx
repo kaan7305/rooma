@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Zap, CalendarDays, CalendarRange, GraduationCap, CalendarClock, Home, Sparkles, Check, Shield, MessageCircle, Heart } from 'lucide-react';
+import { Zap, CalendarDays, CalendarRange, GraduationCap, CalendarClock, Home, Sparkles, Shield, Heart } from 'lucide-react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPopularSublets } from '@/data/properties';
@@ -72,16 +72,16 @@ export default function HomePage() {
           <div className="text-center mb-10">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
               <span className="text-rose-600 dark:text-rose-400">
-                Find Your Perfect Sublet
+                Student Housing, Simplified
               </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              From weekly stays to yearly leases - discover verified sublets near you
+              Verified sublets near top universities. Semester leases, student-verified hosts, no broker fees.
             </p>
           </div>
 
           {/* Smart Search Bar */}
-          <SmartSearchBar placeholder='Try "2 bed apartment in Boston under $2000" or "pet friendly near NYU"' />
+          <SmartSearchBar placeholder='Try "studio near NYU for fall semester" or "2 bed near UCLA under $2000"' />
 
           {/* Sublet Duration Categories */}
           <div className="mt-12 relative">
@@ -116,9 +116,9 @@ export default function HomePage() {
         {/* Section Title */}
         <div className="mb-6 text-center">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Popular sublets right now
+            Trending near top universities
           </h2>
-          <p className="text-gray-600 mt-2">Handpicked by our community of students and young professionals</p>
+          <p className="text-gray-600 mt-2">Student-verified sublets available for upcoming semesters</p>
         </div>
 
         {/* Property Grid */}
@@ -184,29 +184,29 @@ export default function HomePage() {
         {/* Why Choose ROOMA */}
         <section className="mt-24 bg-gradient-to-br from-white via-rose-50/30 to-purple-50/30 rounded-3xl p-12 shadow-xl border border-gray-100">
           <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 animate-fade-in">
-            Why sublet with ROOMA?
+            Why students choose ROOMA
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center group animate-slide-up-fade" style={{ animationDelay: '0.1s' }}>
               <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-2xl">
-                <Check className="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" strokeWidth={3} />
+                <Shield className="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" strokeWidth={3} />
               </div>
-              <h3 className="text-xl font-bold text-black mb-2">Verified Listings</h3>
-              <p className="text-black">Every sublet is verified with photo ID and lease documentation</p>
+              <h3 className="text-xl font-bold text-black mb-2">Student Verified</h3>
+              <p className="text-black">.edu email verification. Only verified students and trusted hosts on the platform.</p>
             </div>
             <div className="text-center group animate-slide-up-fade" style={{ animationDelay: '0.3s' }}>
               <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-2xl">
-                <Shield className="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" />
+                <CalendarDays className="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-bold text-black mb-2">Secure Payments</h3>
-              <p className="text-black">Bank-level encryption and payment protection on all transactions</p>
+              <h3 className="text-xl font-bold text-black mb-2">Semester-Based Leases</h3>
+              <p className="text-black">Flexible terms aligned with your academic calendar. No long-term commitments required.</p>
             </div>
             <div className="text-center group animate-slide-up-fade" style={{ animationDelay: '0.5s' }}>
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-2xl">
-                <MessageCircle className="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" />
+                <GraduationCap className="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-bold text-black mb-2">24/7 Support</h3>
-              <p className="text-black">Our team is always here to help with any questions or issues</p>
+              <h3 className="text-xl font-bold text-black mb-2">Campus Community</h3>
+              <p className="text-black">Connect with students at your university. Find roommates, share tips, and build your network.</p>
             </div>
           </div>
         </section>
@@ -258,7 +258,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-12 pt-2 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-600">© 2024 ROOMA, Inc. All rights reserved.</p>
+            <p className="text-sm text-gray-600">© {new Date().getFullYear()} ROOMA, Inc. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <Link href="/privacy" className="hover:text-rose-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-rose-600 transition-colors">Terms</Link>

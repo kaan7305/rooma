@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { mockReviews } from '@/data/mock-reviews';
 
 export interface Review {
   id: string;
@@ -33,16 +34,24 @@ export const useReviewsStore = create<ReviewsState>((set, get) => ({
   reviews: [],
 
   loadReviews: () => {
+    // Start with mock reviews as base data
+    let reviews: Review[] = [...mockReviews];
+
+    // Merge any user-added reviews from localStorage on top
     const reviewsJson = localStorage.getItem('rooma_reviews');
     if (reviewsJson) {
       try {
-        const reviews = JSON.parse(reviewsJson);
-        set({ reviews });
+        const userReviews: Review[] = JSON.parse(reviewsJson);
+        // Only add user reviews that don't duplicate mock review IDs
+        const mockIds = new Set(mockReviews.map(r => r.id));
+        const newUserReviews = userReviews.filter(r => !mockIds.has(r.id));
+        reviews = [...reviews, ...newUserReviews];
       } catch (error) {
-        console.error('Failed to load reviews', error);
-        set({ reviews: [] });
+        console.error('Failed to load user reviews', error);
       }
     }
+
+    set({ reviews });
   },
 
   addReview: (reviewData) => {

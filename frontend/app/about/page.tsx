@@ -5,10 +5,10 @@ import { Target, Users, Globe, Heart, Award, TrendingUp } from 'lucide-react';
 
 export default function AboutPage() {
   const stats = [
-    { label: 'Active Users', value: '50K+', icon: Users },
-    { label: 'Properties Listed', value: '15K+', icon: Globe },
-    { label: 'Cities Worldwide', value: '200+', icon: Target },
-    { label: 'Successful Bookings', value: '100K+', icon: Award },
+    { label: 'Early Adopters', value: '500+', icon: Users },
+    { label: 'Verified Listings', value: '200+', icon: Globe },
+    { label: 'Universities', value: '25+', icon: Target },
+    { label: 'Bookings Completed', value: '1,000+', icon: Award },
   ];
 
   const team = [
@@ -69,7 +69,7 @@ export default function AboutPage() {
               Our mission is to make student housing accessible, transparent, and trustworthy. We verify every property and user, ensure secure payments, and provide 24/7 support to create a safe community for students worldwide.
             </p>
             <p>
-              Today, ROOMA serves over 50,000 students across 200+ cities globally, offering short-term sublets, semester housing, summer internships, and study abroad accommodations.
+              Today, ROOMA serves a growing community of students across 25+ universities, offering semester sublets, summer internship housing, and study abroad accommodations.
             </p>
           </div>
         </div>

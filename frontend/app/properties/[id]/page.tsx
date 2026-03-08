@@ -11,6 +11,7 @@ import { useFavoritesStore } from '@/lib/favorites-store';
 import { useMessagesStore } from '@/lib/messages-store';
 import { useNotificationsStore } from '@/lib/notifications-store';
 import { useRecentlyViewedStore } from '@/lib/recently-viewed-store';
+import { useReviewsStore } from '@/lib/reviews-store';
 import { emailService } from '@/lib/email-service';
 import { useToast } from '@/lib/toast-context';
 import PropertyGallery from '@/components/PropertyGallery';
@@ -41,11 +42,13 @@ export default function PropertyDetailsPage() {
   const { createConversation, loadMessages: loadMessagesStore } = useMessagesStore();
   const { addNotification } = useNotificationsStore();
   const { addRecentlyViewed } = useRecentlyViewedStore();
+  const { loadReviews, getPropertyReviews, getAverageRating } = useReviewsStore();
   const toast = useToast();
 
   useEffect(() => {
     loadFavorites();
-  }, [loadFavorites]);
+    loadReviews();
+  }, [loadFavorites, loadReviews]);
 
   useEffect(() => {
     const loadProperty = async () => {
@@ -178,8 +181,9 @@ export default function PropertyDetailsPage() {
     );
   }
 
-  const avgRating = property.rating;
-  const totalReviews = property.reviews;
+  const storeReviews = getPropertyReviews(property.id);
+  const avgRating = storeReviews.length > 0 ? getAverageRating(property.id) : property.rating;
+  const totalReviews = storeReviews.length > 0 ? storeReviews.length : property.reviews;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">

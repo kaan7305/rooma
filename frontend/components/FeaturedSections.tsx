@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Star, TrendingUp, GraduationCap, Award, DollarSign, Heart, MapPin } from 'lucide-react';
+import { Star, TrendingUp, Award, DollarSign, Heart, MapPin } from 'lucide-react';
 import { allProperties } from '@/data/properties';
 import { useFavoritesStore } from '@/lib/favorites-store';
 import { useToast } from '@/lib/toast-context';
@@ -15,26 +15,12 @@ export default function FeaturedSections() {
   const bestValue = [...allProperties].sort((a, b) => a.price - b.price).slice(0, 4);
   const topRated = [...allProperties].sort((a, b) => b.rating - a.rating).slice(0, 4);
 
-  // Compute property counts per university from actual mock data
-  const universityData = [
-    { name: 'NYU', city: 'New York' },
-    { name: 'Columbia', city: 'New York' },
-    { name: 'Harvard', city: 'Boston' },
-    { name: 'BU', city: 'Boston' },
-    { name: 'UCLA', city: 'Los Angeles' },
-    { name: 'USC', city: 'Los Angeles' },
-    { name: 'UC Berkeley', city: 'San Francisco' },
-    { name: 'UChicago', city: 'Chicago' },
-    { name: 'UW', city: 'Seattle' },
-    { name: 'UT Austin', city: 'Austin' },
-    { name: 'U of Miami', city: 'Miami' },
-  ];
-
-  const universityPropertyCounts: Record<string, number> = {};
-  for (const uni of universityData) {
-    universityPropertyCounts[uni.name] = allProperties.filter(
-      p => p.university?.toLowerCase().includes(uni.name.toLowerCase()) ||
-           p.city.toLowerCase() === uni.city.toLowerCase()
+  // Compute property counts per city from actual mock data
+  const cities = ['New York', 'Boston', 'Los Angeles', 'San Francisco', 'Chicago', 'Seattle', 'Austin', 'Miami'];
+  const cityPropertyCounts: Record<string, number> = {};
+  for (const city of cities) {
+    cityPropertyCounts[city] = allProperties.filter(
+      p => p.city.toLowerCase().includes(city.toLowerCase())
     ).length;
   }
 
@@ -115,7 +101,7 @@ export default function FeaturedSections() {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">New Listings</h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">Available for upcoming semesters</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Just added this week</p>
             </div>
           </div>
           <Link
@@ -139,7 +125,7 @@ export default function FeaturedSections() {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Best Value</h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">Student-friendly prices near campus</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Great properties at great prices</p>
             </div>
           </div>
           <Link
@@ -163,7 +149,7 @@ export default function FeaturedSections() {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Top Rated</h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">Highest rated by students</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Highest rated by guests</p>
             </div>
           </div>
           <Link
@@ -178,26 +164,26 @@ export default function FeaturedSections() {
         </div>
       </section>
 
-      {/* Browse by University */}
+      {/* Explore by Location */}
       <section className="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl p-8 md:p-12">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Browse by University</h2>
-          <p className="text-gray-600 dark:text-gray-300">Find sublets near your campus</p>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Explore by Location</h2>
+          <p className="text-gray-600 dark:text-gray-300">Find your perfect sublet in popular cities</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {universityData.slice(0, 8).map((uni) => (
+          {cities.map((city) => (
             <Link
-              key={uni.name}
-              href={`/search?location=${uni.city}`}
+              key={city}
+              href={`/search?location=${city}`}
               className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-700 p-6 shadow-md hover:shadow-xl transition-all"
             >
               <div className="flex flex-col items-center gap-3">
                 <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900 dark:to-pink-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <GraduationCap className="w-8 h-8 text-rose-600 dark:text-rose-400" />
+                  <MapPin className="w-8 h-8 text-rose-600 dark:text-rose-400" />
                 </div>
                 <div className="text-center">
-                  <h3 className="font-bold text-gray-900 dark:text-gray-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">{uni.name}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{universityPropertyCounts[uni.name]} listing{universityPropertyCounts[uni.name] !== 1 ? 's' : ''}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">{city}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{cityPropertyCounts[city]} listing{cityPropertyCounts[city] !== 1 ? 's' : ''}</p>
                 </div>
               </div>
             </Link>

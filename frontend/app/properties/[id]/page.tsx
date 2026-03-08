@@ -150,8 +150,8 @@ export default function PropertyDetailsPage() {
       participant1Name: `${user.firstName} ${user.lastName}`,
       participant1Initials: `${user.firstName[0]}${user.lastName[0]}`,
       participant2Id: '999', // Dummy host ID
-      participant2Name: 'John Doe',
-      participant2Initials: 'JD',
+      participant2Name: property.hostName || 'Host',
+      participant2Initials: property.hostInitials || 'H',
     });
 
     router.push(`/messages/${conversationId}`);
@@ -418,10 +418,10 @@ export default function PropertyDetailsPage() {
                 <h3 className="font-semibold text-gray-900 mb-4">Hosted by</h3>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-12 w-12 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white font-semibold text-lg">
-                    JD
+                    {property.hostInitials || 'H'}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">John Doe</p>
+                    <p className="font-semibold text-gray-900">{property.hostName || 'Host'}</p>
                     <p className="text-sm text-gray-600 flex items-center gap-1">
                       <Check className="w-4 h-4 text-emerald-600" />
                       Verified Host

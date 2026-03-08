@@ -239,14 +239,14 @@ export interface SearchSuggestion {
 }
 
 const POPULAR_SEARCHES = [
-  'Studio near NYU for fall semester',
-  '2 bed near UCLA under $2000',
-  'Room near Harvard for summer',
-  'Furnished apartment near Columbia',
-  '1 bed near BU under $1800',
-  'Pet friendly near UC Berkeley',
-  'Private room near UChicago',
-  'Apartment near UT Austin with WiFi',
+  '2 bed apartment in Boston under $2000',
+  'Studio near NYU',
+  'Pet friendly apartment in San Francisco',
+  'Cheap room in Chicago',
+  '1 bed near MIT for semester',
+  'Furnished apartment in Manhattan',
+  'Private room in LA under $1500',
+  'Apartment with parking in Seattle',
 ];
 
 export function getAutocompleteSuggestions(query: string): SearchSuggestion[] {

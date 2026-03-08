@@ -20,13 +20,15 @@ export interface Property {
   description: string;
   lat?: number; // Latitude for map pin
   lng?: number; // Longitude for map pin
+  hostName?: string;
+  hostInitials?: string;
 }
 
 export const allProperties: Property[] = [
   // New York Properties — NYU, Columbia, The New School
   {
     id: 1,
-    title: 'Bright Studio Near NYU — 5 Min Walk to Campus',
+    title: 'Bright Studio Near NYU, 5 Min Walk to Campus',
     location: 'Greenwich Village, NY',
     city: 'New York, NY',
     university: 'NYU',
@@ -52,10 +54,12 @@ export const allProperties: Property[] = [
     description: 'Fully furnished studio in the heart of Greenwich Village, steps from NYU campus. Fast WiFi, dedicated study desk, and a quiet building perfect for late-night study sessions. Grocery stores and coffee shops right downstairs.',
     lat: 40.7295,
     lng: -73.9965,
+    hostName: 'Sarah Chen',
+    hostInitials: 'SC',
   },
   {
     id: 2,
-    title: 'Spacious 2BR Near Columbia — Morningside Heights',
+    title: 'Spacious 2BR Near Columbia, Morningside Heights',
     location: 'Morningside Heights, NY',
     city: 'New York, NY',
     university: 'Columbia',
@@ -80,10 +84,12 @@ export const allProperties: Property[] = [
     description: 'Two-bedroom apartment ideal for roommates attending Columbia or Barnard. 8-minute walk to campus, right on the 1 train line. Fully furnished with two study areas. Building has laundry and a quiet courtyard.',
     lat: 40.8075,
     lng: -73.9626,
+    hostName: 'Marcus Johnson',
+    hostInitials: 'MJ',
   },
   {
     id: 3,
-    title: 'Cozy Room in Chelsea — Near The New School',
+    title: 'Cozy Room in Chelsea, Near The New School',
     location: 'Chelsea, NY',
     city: 'New York, NY',
     university: 'The New School',
@@ -109,6 +115,8 @@ export const allProperties: Property[] = [
     description: 'Private room in a shared apartment, perfect for New School students. Walking distance to campus and Union Square. Shared kitchen and living room with one other student. Quiet, respectful household.',
     lat: 40.7434,
     lng: -73.9949,
+    hostName: 'Emily Rodriguez',
+    hostInitials: 'ER',
   },
   // Boston Properties — Harvard, BU, Northeastern
   {
@@ -132,6 +140,8 @@ export const allProperties: Property[] = [
     description: 'Ideal for summer researchers or visiting scholars. Two-minute walk from Harvard Square, furnished with two desks and a reading nook. Quiet residential street, great for focused work. Laundry in unit.',
     lat: 42.3736,
     lng: -71.1197,
+    hostName: 'David Park',
+    hostInitials: 'DP',
   },
   {
     id: 5,
@@ -154,10 +164,12 @@ export const allProperties: Property[] = [
     description: 'Budget-friendly private room in a 3BR shared with BU students. On the B Line, 10 minutes to campus. Shared kitchen stocked with basics. Great if you want an affordable alternative to campus housing.',
     lat: 42.3535,
     lng: -71.1320,
+    hostName: 'Aisha Williams',
+    hostInitials: 'AW',
   },
   {
     id: 6,
-    title: 'Modern Apartment Near Northeastern — Fenway',
+    title: 'Modern Apartment Near Northeastern, Fenway',
     location: 'Fenway, Boston',
     city: 'Boston, MA',
     university: 'Northeastern',
@@ -176,6 +188,8 @@ export const allProperties: Property[] = [
     description: 'Two-bedroom in a modern building near Northeastern campus. In-unit washer/dryer, building gym, and a dedicated study nook. Perfect for co-op students who need a stable base year-round.',
     lat: 42.3420,
     lng: -71.0960,
+    hostName: 'Rachel Kim',
+    hostInitials: 'RK',
   },
   // San Francisco Properties — UC Berkeley, Stanford
   {
@@ -196,13 +210,15 @@ export const allProperties: Property[] = [
     sqft: 280,
     amenities: ['WiFi', 'Kitchen', 'Furnished', 'Study Desk', 'Near Transit', 'Quiet Hours'],
     available: 'Available Aug 2026',
-    description: 'Private room in a house shared with Cal grad students. 7-minute bike ride to campus, on the bus line. Shared kitchen and backyard. House enforces quiet hours after 10 PM — great for studying.',
+    description: 'Private room in a house shared with Cal grad students. 7-minute bike ride to campus, on the bus line. Shared kitchen and backyard. House enforces quiet hours after 10 PM, great for studying.',
     lat: 37.8750,
     lng: -122.2600,
+    hostName: 'James Liu',
+    hostInitials: 'JL',
   },
   {
     id: 8,
-    title: 'Furnished Studio Near Stanford — Palo Alto',
+    title: 'Furnished Studio Near Stanford, Palo Alto',
     location: 'Palo Alto, CA',
     city: 'San Francisco, CA',
     university: 'Stanford',
@@ -221,11 +237,13 @@ export const allProperties: Property[] = [
     description: 'Clean, fully furnished studio ideal for Stanford summer researchers. Bike-friendly route to campus. Free parking spot. Fast WiFi and a large desk for working from home. Quiet neighborhood.',
     lat: 37.4275,
     lng: -122.1697,
+    hostName: 'Priya Patel',
+    hostInitials: 'PP',
   },
   // Los Angeles Properties — UCLA, USC
   {
     id: 9,
-    title: 'Bright 1BR Near UCLA — Westwood',
+    title: 'Bright 1BR Near UCLA, Westwood',
     location: 'Westwood, Los Angeles',
     city: 'Los Angeles, CA',
     university: 'UCLA',
@@ -244,10 +262,12 @@ export const allProperties: Property[] = [
     description: 'One-bedroom in the heart of Westwood, walking distance to UCLA. Building has a pool and study lounge. Fully furnished with a comfortable desk setup. Close to restaurants, Target, and Trader Joe\'s.',
     lat: 34.0612,
     lng: -118.4462,
+    hostName: 'Carlos Mendez',
+    hostInitials: 'CM',
   },
   {
     id: 10,
-    title: 'Affordable Room Near USC — University Park',
+    title: 'Affordable Room Near USC, University Park',
     location: 'University Park, Los Angeles',
     city: 'Los Angeles, CA',
     university: 'USC',
@@ -266,10 +286,12 @@ export const allProperties: Property[] = [
     description: 'Budget-friendly private room 5 minutes from USC campus. Shared with two other USC students. Furnished bedroom with desk. Secure building with coded entry. Much cheaper than university housing.',
     lat: 34.0224,
     lng: -118.2851,
+    hostName: 'Olivia Brown',
+    hostInitials: 'OB',
   },
   {
     id: 11,
-    title: 'Spacious 2BR Near UCLA — Mar Vista',
+    title: 'Spacious 2BR Near UCLA, Mar Vista',
     location: 'Mar Vista, Los Angeles',
     city: 'Los Angeles, CA',
     university: 'UCLA',
@@ -285,9 +307,11 @@ export const allProperties: Property[] = [
     sqft: 950,
     amenities: ['WiFi', 'Kitchen', 'Washer', 'Parking', 'Patio', 'Furnished'],
     available: 'Available Sep 2026',
-    description: 'Two-bedroom with a private patio, perfect for UCLA roommates. 15-minute bus ride to campus. Comes with two parking spots — rare for the area. Quiet residential street, ideal for grad students.',
+    description: 'Two-bedroom with a private patio, perfect for UCLA roommates. 15-minute bus ride to campus. Comes with two parking spots, rare for the area. Quiet residential street, ideal for grad students.',
     lat: 34.0012,
     lng: -118.4298,
+    hostName: 'Tyler Scott',
+    hostInitials: 'TS',
   },
   // Chicago Properties — UChicago, Northwestern
   {
@@ -311,6 +335,8 @@ export const allProperties: Property[] = [
     description: 'Clean studio in a secure building, 3 blocks from UChicago\'s main quad. Perfect for summer research students. Furnished with a proper desk and ergonomic chair. Building has 24/7 security.',
     lat: 41.7943,
     lng: -87.5907,
+    hostName: 'Nadia Hassan',
+    hostInitials: 'NH',
   },
   {
     id: 13,
@@ -333,11 +359,13 @@ export const allProperties: Property[] = [
     description: 'Well-maintained two-bedroom a 10-minute walk from Northwestern campus. Furnished with two desks and plenty of storage. Free street parking. Close to downtown Evanston restaurants and shops.',
     lat: 42.0451,
     lng: -87.6877,
+    hostName: 'Michael Torres',
+    hostInitials: 'MT',
   },
   // Seattle Properties — UW
   {
     id: 14,
-    title: 'Quiet Room in U-District — Near UW',
+    title: 'Quiet Room in U-District, Near UW',
     location: 'University District, Seattle',
     city: 'Seattle, WA',
     university: 'UW',
@@ -356,10 +384,12 @@ export const allProperties: Property[] = [
     description: 'Affordable private room in the U-District, shared with two UW grad students. 5-minute walk to campus and the Burke-Gilman Trail. Quiet house with enforced study hours. On the bus line to downtown.',
     lat: 47.6588,
     lng: -122.3130,
+    hostName: 'Lauren Chang',
+    hostInitials: 'LC',
   },
   {
     id: 15,
-    title: 'Modern 1BR Near UW — Wallingford',
+    title: 'Modern 1BR Near UW, Wallingford',
     location: 'Wallingford, Seattle',
     city: 'Seattle, WA',
     university: 'UW',
@@ -378,11 +408,13 @@ export const allProperties: Property[] = [
     description: 'Clean one-bedroom in quiet Wallingford, a quick bus ride to UW. Modern kitchen, in-unit laundry, and a dedicated workspace. Great coffee shops within walking distance. Ideal for grad students.',
     lat: 47.6615,
     lng: -122.3342,
+    hostName: 'Alex Rivera',
+    hostInitials: 'AR',
   },
   // Austin Properties — UT Austin
   {
     id: 16,
-    title: 'West Campus Room — Steps from UT Austin',
+    title: 'West Campus Room, Steps from UT Austin',
     location: 'West Campus, Austin',
     city: 'Austin, TX',
     university: 'UT Austin',
@@ -401,10 +433,12 @@ export const allProperties: Property[] = [
     description: 'Private room in West Campus, the student neighborhood right next to UT. Walk to class in under 10 minutes. Building has a pool and study rooms. Furnished with bed, desk, and dresser.',
     lat: 30.2849,
     lng: -97.7494,
+    hostName: 'Jordan Baker',
+    hostInitials: 'JB',
   },
   {
     id: 17,
-    title: 'Furnished 2BR Near UT — North Campus',
+    title: 'Furnished 2BR Near UT, North Campus',
     location: 'North Campus, Austin',
     city: 'Austin, TX',
     university: 'UT Austin',
@@ -423,11 +457,13 @@ export const allProperties: Property[] = [
     description: 'Two-bedroom apartment perfect for summer session students. Walking distance to UT campus and Guadalupe Street. Furnished with desks in both rooms. Comes with one covered parking spot.',
     lat: 30.2900,
     lng: -97.7386,
+    hostName: 'Sam Nguyen',
+    hostInitials: 'SN',
   },
   // Miami Properties — University of Miami
   {
     id: 18,
-    title: 'Studio Near University of Miami — Coral Gables',
+    title: 'Studio Near University of Miami, Coral Gables',
     location: 'Coral Gables, FL',
     city: 'Miami, FL',
     university: 'University of Miami',
@@ -446,10 +482,12 @@ export const allProperties: Property[] = [
     description: 'Furnished studio with pool access, 10-minute bike ride to UM campus. AC is a must in Miami and this unit stays ice cold. Free parking included. Close to Miracle Mile shops and restaurants.',
     lat: 25.7215,
     lng: -80.2684,
+    hostName: 'Isabella Gomez',
+    hostInitials: 'IG',
   },
   {
     id: 19,
-    title: 'Affordable Room Near UM — South Miami',
+    title: 'Affordable Room Near UM, South Miami',
     location: 'South Miami, FL',
     city: 'Miami, FL',
     university: 'University of Miami',
@@ -468,10 +506,12 @@ export const allProperties: Property[] = [
     description: 'Budget-friendly room shared with two UM students. On the Metrorail, easy commute to campus. Furnished bedroom with desk. The cheapest option near University of Miami you\'ll find.',
     lat: 25.7076,
     lng: -80.2921,
+    hostName: 'Daniel Wright',
+    hostInitials: 'DW',
   },
   {
     id: 20,
-    title: 'Modern 2BR Near UM — Brickell',
+    title: 'Modern 2BR Near UM, Brickell',
     location: 'Brickell, Miami',
     city: 'Miami, FL',
     university: 'University of Miami',
@@ -490,6 +530,8 @@ export const allProperties: Property[] = [
     description: 'Premium two-bedroom in Brickell with skyline views. Building has a pool, gym, and co-working space. 20-minute Metrorail to UM campus. Ideal for grad students or those interning in downtown Miami.',
     lat: 25.7617,
     lng: -80.1918,
+    hostName: 'Sophie Lee',
+    hostInitials: 'SL',
   },
 ];
 
@@ -539,6 +581,8 @@ const mapApiProperty = (p: any): Property => ({
   description: p.description || '',
   lat: p.latitude,
   lng: p.longitude,
+  hostName: p.host_name || 'Host',
+  hostInitials: p.host_name ? p.host_name.split(' ').map((n: string) => n[0]).join('') : 'H',
 });
 
 // Fetch properties from API with fallback to mock data

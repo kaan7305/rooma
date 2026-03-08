@@ -1,7 +1,12 @@
 import Stripe from 'stripe';
 import supabase from '../config/supabase';
-import stripe from '../config/stripe';
+import stripeClient from '../config/stripe';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../utils/errors';
+
+const getStripe = (): Stripe => {
+  if (!stripeClient) throw new BadRequestError('Stripe is not configured. Set STRIPE_SECRET_KEY to enable payments.');
+  return stripeClient;
+};
 import type {
   CreatePaymentIntentInput,
   ConfirmPaymentInput,
@@ -52,7 +57,7 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
   // Check if booking already has a payment intent
   if (booking.stripe_payment_intent_id) {
     // Retrieve existing payment intent
-    const existingIntent = await stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
+    const existingIntent = await getStripe().paymentIntents.retrieve(booking.stripe_payment_intent_id);
 
     // If payment is already succeeded, return error
     if (existingIntent.status === 'succeeded') {
@@ -71,7 +76,7 @@ export const createPaymentIntent = async (userId: string, data: CreatePaymentInt
   }
 
   // Create new payment intent
-  const paymentIntent = await stripe.paymentIntents.create({
+  const paymentIntent = await getStripe().paymentIntents.create({
     amount: booking.total_cents,
     currency: 'usd',
     payment_method_types: payment_method ? [payment_method] : ['card'],
@@ -133,7 +138,7 @@ export const confirmPayment = async (bookingId: string, userId: string, data: Co
   }
 
   // Retrieve payment intent from Stripe
-  const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent_id);
+  const paymentIntent = await getStripe().paymentIntents.retrieve(payment_intent_id);
 
   // Check if payment succeeded
   if (paymentIntent.status !== 'succeeded') {
@@ -201,7 +206,7 @@ export const getPaymentDetails = async (bookingId: string, userId: string) => {
   }
 
   // Retrieve payment intent from Stripe
-  const paymentIntent = await stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id, {
+  const paymentIntent = await getStripe().paymentIntents.retrieve(booking.stripe_payment_intent_id, {
     expand: ['latest_charge'],
   });
 
@@ -278,7 +283,7 @@ export const refundPayment = async (
   }
 
   // Retrieve payment intent
-  const paymentIntent = await stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
+  const paymentIntent = await getStripe().paymentIntents.retrieve(booking.stripe_payment_intent_id);
 
   // Verify payment succeeded
   if (paymentIntent.status !== 'succeeded') {
@@ -311,7 +316,7 @@ export const refundPayment = async (
     refundParams.reason = 'requested_by_customer';
   }
 
-  const refund = await stripe.refunds.create(refundParams);
+  const refund = await getStripe().refunds.create(refundParams);
 
   // Update booking payment status
   const newPaymentStatus = refundAmount === booking.total_cents ? 'refunded' : 'partial';
@@ -343,7 +348,7 @@ export const handleStripeWebhook = async (signature: string, rawBody: Buffer) =>
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
+    event = getStripe().webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (err: any) {
     throw new BadRequestError(`Webhook signature verification failed: ${err.message}`);
   }

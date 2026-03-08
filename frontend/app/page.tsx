@@ -85,7 +85,7 @@ export default function HomePage() {
 
           {/* Sublet Duration Categories */}
           <div className="mt-12 relative">
-            <div className="flex items-center gap-6 overflow-x-auto pb-4 hide-scrollbar">
+            <div className="flex items-center justify-center gap-6 overflow-x-auto pb-4 hide-scrollbar">
               {subletDurations.map((duration) => {
                 return (
                   <button
@@ -114,7 +114,7 @@ export default function HomePage() {
         <RecentlyViewed />
 
         {/* Section Title */}
-        <div className="mb-2">
+        <div className="mb-6 text-center">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
             Popular sublets right now
           </h2>

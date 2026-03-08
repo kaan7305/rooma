@@ -77,7 +77,7 @@ export default function BookingsManager({ bookings, onCancelBooking }: BookingsM
     <div className="space-y-6">
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-rose-500">
+        <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-teal-600">
           <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
           <div className="text-sm text-gray-600">Total Bookings</div>
         </div>
@@ -106,7 +106,7 @@ export default function BookingsManager({ bookings, onCancelBooking }: BookingsM
               placeholder="Search bookings..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
 
@@ -116,7 +116,7 @@ export default function BookingsManager({ bookings, onCancelBooking }: BookingsM
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as BookingStatus)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -130,7 +130,7 @@ export default function BookingsManager({ bookings, onCancelBooking }: BookingsM
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'date' | 'price')}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
           >
             <option value="date">Sort by Date</option>
             <option value="price">Sort by Price</option>
@@ -179,7 +179,7 @@ export default function BookingsManager({ bookings, onCancelBooking }: BookingsM
                       <div className="flex-1">
                         <Link
                           href={`/properties/${booking.propertyId}`}
-                          className="text-xl font-bold text-gray-900 hover:text-rose-600 transition-colors mb-2 block"
+                          className="text-xl font-bold text-gray-900 hover:text-teal-700 transition-colors mb-2 block"
                         >
                           {booking.property.title}
                         </Link>

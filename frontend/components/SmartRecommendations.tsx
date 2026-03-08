@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Sparkles, Heart, TrendingUp, MapPin, Star, Zap } from 'lucide-react';
+import { Sparkles, Bookmark, TrendingUp, MapPin, Star, Zap } from 'lucide-react';
 import { allProperties, type Property } from '@/data/properties';
 import { useRecentlyViewedStore } from '@/lib/recently-viewed-store';
 import { useFavoritesStore } from '@/lib/favorites-store';
@@ -119,7 +119,7 @@ export default function SmartRecommendations() {
     <div className="bg-white rounded-2xl shadow-xl p-8">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-2xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -134,7 +134,7 @@ export default function SmartRecommendations() {
             onClick={() => setRecommendationType('smart')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               recommendationType === 'smart'
-                ? 'bg-white text-rose-600 shadow-md'
+                ? 'bg-white text-teal-700 shadow-md'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -145,7 +145,7 @@ export default function SmartRecommendations() {
             onClick={() => setRecommendationType('trending')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               recommendationType === 'trending'
-                ? 'bg-white text-rose-600 shadow-md'
+                ? 'bg-white text-teal-700 shadow-md'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -156,7 +156,7 @@ export default function SmartRecommendations() {
             onClick={() => setRecommendationType('new')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               recommendationType === 'new'
-                ? 'bg-white text-rose-600 shadow-md'
+                ? 'bg-white text-teal-700 shadow-md'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -186,23 +186,23 @@ export default function SmartRecommendations() {
                 onClick={(e) => toggleFavorite(e, property.id)}
                 className="absolute top-3 left-3 w-8 h-8 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
               >
-                <Heart
+                <Bookmark
                   className={`w-4 h-4 ${
                     isFavorite(property.id)
-                      ? 'fill-rose-500 text-rose-500'
-                      : 'text-rose-500'
+                      ? 'fill-teal-600 text-teal-600'
+                      : 'text-teal-600'
                   }`}
                 />
               </button>
 
               {/* Badge */}
-              <div className="absolute top-3 right-3 px-2 py-1 bg-purple-500 text-white text-xs font-bold rounded-full shadow-lg">
+              <div className="absolute top-3 right-3 px-2 py-1 bg-teal-600 text-white text-xs font-bold rounded-full shadow-lg">
                 Match
               </div>
 
               {/* Duration Badge */}
               <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
-                <span className="text-xs font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="text-xs font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
                   {property.duration}
                 </span>
               </div>
@@ -221,7 +221,7 @@ export default function SmartRecommendations() {
                 {property.location}
               </p>
               <div className="flex items-baseline gap-1">
-                <span className="text-lg font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="text-lg font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
                   ${property.price.toLocaleString()}
                 </span>
                 <span className="text-sm text-gray-600">/month</span>
@@ -235,7 +235,7 @@ export default function SmartRecommendations() {
       <div className="mt-6 text-center">
         <Link
           href="/search"
-          className="inline-flex items-center gap-2 text-rose-600 hover:text-rose-700 font-semibold transition-colors"
+          className="inline-flex items-center gap-2 text-teal-700 hover:text-teal-800 font-semibold transition-colors"
         >
           View all recommendations
           <span>→</span>

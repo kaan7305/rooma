@@ -206,12 +206,12 @@ export default function ConversationPage() {
 
   if (!conversation) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 flex items-center justify-center">
         <div className="text-center">
           <h3 className="text-xl font-bold text-gray-900 mb-2">Conversation not found</h3>
           <Link
             href="/messages"
-            className="inline-block bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold mt-4"
+            className="inline-block bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold mt-4"
           >
             Back to Messages
           </Link>
@@ -226,7 +226,7 @@ export default function ConversationPage() {
     : conversation.participant1Id;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <div className="max-w-5xl mx-auto px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl mb-6">
@@ -249,7 +249,7 @@ export default function ConversationPage() {
 
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="relative w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold text-xs">
+                  <div className="relative w-8 h-8 rounded-full bg-gradient-to-r from-teal-400 to-teal-500 flex items-center justify-center text-white font-bold text-xs">
                     {otherParticipant.initials}
                     {ws.onlineUsers.has(otherParticipantId) && (
                       <Circle className="absolute -bottom-0.5 -right-0.5 w-3 h-3 text-emerald-500 fill-emerald-500" />
@@ -292,14 +292,14 @@ export default function ConversationPage() {
                       <div
                         className={`max-w-md rounded-2xl px-4 py-3 ${
                           isOwnMessage
-                            ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white'
+                            ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white'
                             : 'bg-white text-gray-900 shadow-sm'
                         }`}
                       >
                         <p className="text-sm leading-relaxed">{message.content}</p>
                         <p
                           className={`text-xs mt-1 ${
-                            isOwnMessage ? 'text-rose-100' : 'text-gray-500'
+                            isOwnMessage ? 'text-teal-100' : 'text-gray-500'
                           }`}
                         >
                           {formatTime(message.timestamp)}
@@ -327,7 +327,7 @@ export default function ConversationPage() {
               <button
                 type="button"
                 onClick={() => setShowTemplates(!showTemplates)}
-                className="text-sm text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-2 mb-3"
+                className="text-sm text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 mb-3"
               >
                 <MessageCircle className="w-4 h-4" />
                 {showTemplates ? 'Hide' : 'Show'} Quick Templates
@@ -340,7 +340,7 @@ export default function ConversationPage() {
                       key={index}
                       type="button"
                       onClick={() => handleTemplateSelect(template)}
-                      className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-sm text-left transition-colors border border-rose-200"
+                      className="px-4 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-lg text-sm text-left transition-colors border border-teal-200"
                     >
                       {template}
                     </button>
@@ -355,12 +355,12 @@ export default function ConversationPage() {
                 value={newMessage}
                 onChange={handleInputChange}
                 placeholder="Type a message..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none text-black placeholder:text-gray-900"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-black placeholder:text-gray-900"
               />
               <button
                 type="submit"
                 disabled={!newMessage.trim()}
-                className="px-6 py-3 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 <Send className="w-5 h-5" />
                 Send

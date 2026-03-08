@@ -90,7 +90,7 @@ export default function PaymentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -105,7 +105,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveSection('payment')}
               className={`flex-1 px-6 py-4 text-sm font-medium transition ${
                 activeSection === 'payment'
-                  ? 'text-rose-600 border-b-2 border-rose-600'
+                  ? 'text-teal-700 border-b-2 border-teal-700'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -116,7 +116,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveSection('payout')}
               className={`flex-1 px-6 py-4 text-sm font-medium transition ${
                 activeSection === 'payout'
-                  ? 'text-rose-600 border-b-2 border-rose-600'
+                  ? 'text-teal-700 border-b-2 border-teal-700'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -133,7 +133,7 @@ export default function PaymentsPage() {
               <h2 className="text-xl font-semibold text-gray-900">Your Payment Methods</h2>
               <button
                 onClick={() => setShowAddPaymentModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg hover:from-rose-600 hover:to-pink-700 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 text-white rounded-lg hover:from-teal-700 hover:to-teal-900 transition"
               >
                 <Plus className="w-4 h-4" />
                 Add Payment Method
@@ -144,11 +144,11 @@ export default function PaymentsPage() {
               {paymentMethods.map(method => (
                 <div
                   key={method.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-rose-300 transition"
+                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-teal-300 transition"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-rose-100 to-pink-100 flex items-center justify-center">
-                      <CreditCard className="w-6 h-6 text-rose-600" />
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-teal-100 to-teal-100 flex items-center justify-center">
+                      <CreditCard className="w-6 h-6 text-teal-700" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -156,7 +156,7 @@ export default function PaymentsPage() {
                           {method.brand} •••• {method.last4}
                         </p>
                         {method.isDefault && (
-                          <span className="px-2 py-0.5 bg-rose-100 text-rose-700 text-xs font-medium rounded">
+                          <span className="px-2 py-0.5 bg-teal-100 text-teal-800 text-xs font-medium rounded">
                             Default
                           </span>
                         )}
@@ -170,7 +170,7 @@ export default function PaymentsPage() {
                     {!method.isDefault && (
                       <button
                         onClick={() => handleSetDefaultPayment(method.id)}
-                        className="px-3 py-1.5 text-sm text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                        className="px-3 py-1.5 text-sm text-teal-700 hover:bg-teal-50 rounded-lg transition"
                       >
                         Set as default
                       </button>
@@ -207,7 +207,7 @@ export default function PaymentsPage() {
               </div>
               <button
                 onClick={() => setShowAddPayoutModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg hover:from-rose-600 hover:to-pink-700 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 text-white rounded-lg hover:from-teal-700 hover:to-teal-900 transition"
               >
                 <Plus className="w-4 h-4" />
                 Add Payout Method
@@ -218,11 +218,11 @@ export default function PaymentsPage() {
               {payoutMethods.map(method => (
                 <div
                   key={method.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-rose-300 transition"
+                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-teal-300 transition"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-rose-100 to-pink-100 flex items-center justify-center">
-                      <Building className="w-6 h-6 text-rose-600" />
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-teal-100 to-teal-100 flex items-center justify-center">
+                      <Building className="w-6 h-6 text-teal-700" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -230,7 +230,7 @@ export default function PaymentsPage() {
                           {method.bankName || method.email}
                         </p>
                         {method.isDefault && (
-                          <span className="px-2 py-0.5 bg-rose-100 text-rose-700 text-xs font-medium rounded">
+                          <span className="px-2 py-0.5 bg-teal-100 text-teal-800 text-xs font-medium rounded">
                             Default
                           </span>
                         )}
@@ -244,7 +244,7 @@ export default function PaymentsPage() {
                     {!method.isDefault && (
                       <button
                         onClick={() => handleSetDefaultPayout(method.id)}
-                        className="px-3 py-1.5 text-sm text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                        className="px-3 py-1.5 text-sm text-teal-700 hover:bg-teal-50 rounded-lg transition"
                       >
                         Set as default
                       </button>

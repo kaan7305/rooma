@@ -105,7 +105,7 @@ export default function PropertyMap({ properties }: PropertyMapProps) {
               </div>
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="font-bold text-black line-clamp-1 group-hover:text-rose-600 transition-colors">
+                  <h3 className="font-bold text-black line-clamp-1 group-hover:text-teal-700 transition-colors">
                     {selectedProperty.title}
                   </h3>
                   <div className="flex items-center gap-1 shrink-0">

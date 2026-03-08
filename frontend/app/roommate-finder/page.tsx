@@ -296,15 +296,15 @@ export default function RoommateFinderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <UserPlus className="w-10 h-10 text-rose-600" />
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                <UserPlus className="w-10 h-10 text-teal-600" />
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent">
                   Roommate Finder
                 </h1>
               </div>
@@ -314,7 +314,7 @@ export default function RoommateFinderPage() {
             </div>
             <button
               onClick={() => router.push('/roommate-finder/new')}
-              className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Post Roommate Listing
@@ -323,14 +323,14 @@ export default function RoommateFinderPage() {
         </div>
 
         {/* Info Banner */}
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-6">
+        <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-6">
           <div className="flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm text-rose-900 font-semibold mb-1">
+              <p className="text-sm text-teal-900 font-semibold mb-1">
                 Already have a place? Looking for roommates?
               </p>
-              <p className="text-sm text-rose-800">
+              <p className="text-sm text-teal-800">
                 Post your listing here to find compatible roommates to share rent and living space!
               </p>
             </div>
@@ -353,7 +353,7 @@ export default function RoommateFinderPage() {
                     onClick={() => setFilterGender(gender as any)}
                     className={`px-4 py-2 rounded-lg font-medium transition ${
                       filterGender === gender
-                        ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -371,7 +371,7 @@ export default function RoommateFinderPage() {
                     onClick={() => setFilterPropertyType(type as any)}
                     className={`px-4 py-2 rounded-lg font-medium transition ${
                       filterPropertyType === type
-                        ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -405,13 +405,13 @@ export default function RoommateFinderPage() {
                   <Heart
                     className={`w-5 h-5 ${
                       isRoommateFavorite(listing.id)
-                        ? 'fill-rose-500 text-rose-500'
+                        ? 'fill-teal-500 text-teal-500'
                         : 'text-gray-600'
                     }`}
                   />
                 </button>
                 {/* Occupancy Badge */}
-                <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-rose-600 text-white text-xs font-semibold flex items-center gap-1">
+                <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-teal-600 text-white text-xs font-semibold flex items-center gap-1">
                   <Users className="w-3 h-3" />
                   {listing.currentOccupants} looking for {listing.lookingFor}
                 </div>
@@ -422,7 +422,7 @@ export default function RoommateFinderPage() {
                 {/* Poster Info */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-sm font-semibold text-white">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-r from-teal-400 to-teal-500 flex items-center justify-center text-sm font-semibold text-white">
                       {listing.posterAvatar}
                     </div>
                     <div>
@@ -448,26 +448,26 @@ export default function RoommateFinderPage() {
 
                 {/* Location */}
                 <div className="flex items-center gap-2 text-gray-700 mb-3">
-                  <MapPin className="w-4 h-4 text-rose-500" />
+                  <MapPin className="w-4 h-4 text-teal-500" />
                   <span className="text-sm font-medium">{listing.location}</span>
                 </div>
 
                 {/* Property Details */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="flex items-center gap-2 text-gray-600 text-sm">
-                    <Home className="w-4 h-4 text-rose-500" />
+                    <Home className="w-4 h-4 text-teal-500" />
                     <span>{listing.propertyType}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 text-sm">
-                    <Bed className="w-4 h-4 text-rose-500" />
+                    <Bed className="w-4 h-4 text-teal-500" />
                     <span>{listing.totalBedrooms} bed</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 text-sm">
-                    <Bath className="w-4 h-4 text-rose-500" />
+                    <Bath className="w-4 h-4 text-teal-500" />
                     <span>{listing.totalBathrooms} bath</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 text-sm">
-                    <Calendar className="w-4 h-4 text-rose-500" />
+                    <Calendar className="w-4 h-4 text-teal-500" />
                     <span>{listing.leaseDuration}</span>
                   </div>
                 </div>
@@ -491,14 +491,14 @@ export default function RoommateFinderPage() {
                 <div className="mb-4">
                   <p className="text-xs text-gray-600 mb-2">Looking for:</p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-2 py-1 bg-rose-50 text-rose-700 rounded text-xs font-medium">
+                    <span className="px-2 py-1 bg-teal-50 text-teal-700 rounded text-xs font-medium">
                       {listing.roommatePreferences.gender === 'any' ? 'Any gender' : listing.roommatePreferences.gender}
                     </span>
-                    <span className="px-2 py-1 bg-rose-50 text-rose-700 rounded text-xs font-medium">
+                    <span className="px-2 py-1 bg-teal-50 text-teal-700 rounded text-xs font-medium">
                       Age: {listing.roommatePreferences.age}
                     </span>
                     {listing.roommatePreferences.occupation.slice(0, 2).map(occ => (
-                      <span key={occ} className="px-2 py-1 bg-pink-50 text-pink-700 rounded text-xs font-medium">
+                      <span key={occ} className="px-2 py-1 bg-teal-50 text-teal-700 rounded text-xs font-medium">
                         {occ}
                       </span>
                     ))}
@@ -517,12 +517,12 @@ export default function RoommateFinderPage() {
                       toast.info(`Contact ${listing.posterName} via messages`);
                       router.push('/messages');
                     }}
-                    className="flex-1 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                    className="flex-1 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                   >
                     <MessageCircle className="w-5 h-5" />
                     Contact
                   </button>
-                  <button className="px-4 py-3 border-2 border-rose-500 text-rose-600 hover:bg-rose-50 rounded-lg font-semibold transition">
+                  <button className="px-4 py-3 border-2 border-teal-500 text-teal-600 hover:bg-teal-50 rounded-lg font-semibold transition">
                     Details
                   </button>
                 </div>

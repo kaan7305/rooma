@@ -180,13 +180,13 @@ export default function NewRoommateListingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <UserPlus className="w-12 h-12 text-rose-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+            <UserPlus className="w-12 h-12 text-teal-600" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent">
               Post Roommate Listing
             </h1>
           </div>
@@ -209,7 +209,7 @@ export default function NewRoommateListingPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Looking for 1 Roommate in Spacious 3BR Apartment"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                 required
               />
             </div>
@@ -218,7 +218,7 @@ export default function NewRoommateListingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                  <MapPin className="w-4 h-4 inline mr-1 text-rose-500" />
+                  <MapPin className="w-4 h-4 inline mr-1 text-teal-500" />
                   Location (City, State) *
                 </label>
                 <input
@@ -227,7 +227,7 @@ export default function NewRoommateListingPage() {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g., Palo Alto, CA"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   required
                 />
               </div>
@@ -242,7 +242,7 @@ export default function NewRoommateListingPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="e.g., 456 University Ave"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   required
                 />
               </div>
@@ -252,14 +252,14 @@ export default function NewRoommateListingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="propertyType" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Home className="w-4 h-4 inline mr-1 text-rose-500" />
+                  <Home className="w-4 h-4 inline mr-1 text-teal-500" />
                   Property Type *
                 </label>
                 <select
                   id="propertyType"
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 >
                   <option value="Apartment">Apartment</option>
@@ -277,7 +277,7 @@ export default function NewRoommateListingPage() {
                   id="leaseDuration"
                   value={leaseDuration}
                   onChange={(e) => setLeaseDuration(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 >
                   <option value="3 months">3 months</option>
@@ -293,7 +293,7 @@ export default function NewRoommateListingPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Bed className="w-4 h-4 inline mr-1 text-rose-500" />
+                  <Bed className="w-4 h-4 inline mr-1 text-teal-500" />
                   Bedrooms *
                 </label>
                 <input
@@ -303,14 +303,14 @@ export default function NewRoommateListingPage() {
                   onChange={(e) => setTotalBedrooms(Number(e.target.value))}
                   min="1"
                   max="10"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 />
               </div>
 
               <div>
                 <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Bath className="w-4 h-4 inline mr-1 text-rose-500" />
+                  <Bath className="w-4 h-4 inline mr-1 text-teal-500" />
                   Bathrooms *
                 </label>
                 <input
@@ -321,14 +321,14 @@ export default function NewRoommateListingPage() {
                   min="1"
                   max="10"
                   step="0.5"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 />
               </div>
 
               <div>
                 <label htmlFor="currentOccupants" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Users className="w-4 h-4 inline mr-1 text-rose-500" />
+                  <Users className="w-4 h-4 inline mr-1 text-teal-500" />
                   Current *
                 </label>
                 <input
@@ -338,7 +338,7 @@ export default function NewRoommateListingPage() {
                   onChange={(e) => setCurrentOccupants(Number(e.target.value))}
                   min="1"
                   max="10"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 />
               </div>
@@ -354,7 +354,7 @@ export default function NewRoommateListingPage() {
                   onChange={(e) => setLookingFor(Number(e.target.value))}
                   min="1"
                   max="5"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 />
               </div>
@@ -373,7 +373,7 @@ export default function NewRoommateListingPage() {
                   value={rentPerPerson}
                   onChange={(e) => setRentPerPerson(e.target.value)}
                   placeholder="e.g., 1200"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   required
                 />
               </div>
@@ -386,7 +386,7 @@ export default function NewRoommateListingPage() {
                   id="utilities"
                   value={utilities}
                   onChange={(e) => setUtilities(e.target.value as any)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 >
                   <option value="included">Included in rent</option>
@@ -399,7 +399,7 @@ export default function NewRoommateListingPage() {
             {/* Available From */}
             <div>
               <label htmlFor="availableFrom" className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="w-4 h-4 inline mr-1 text-rose-500" />
+                <Calendar className="w-4 h-4 inline mr-1 text-teal-500" />
                 Available From *
               </label>
               <input
@@ -408,7 +408,7 @@ export default function NewRoommateListingPage() {
                 value={availableFrom}
                 onChange={(e) => setAvailableFrom(e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                 required
               />
             </div>
@@ -426,7 +426,7 @@ export default function NewRoommateListingPage() {
                     onClick={() => toggleAmenity(amenity)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
                       amenities.includes(amenity)
-                        ? 'bg-rose-500 text-white shadow-md'
+                        ? 'bg-teal-500 text-white shadow-md'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -455,7 +455,7 @@ export default function NewRoommateListingPage() {
                         onClick={() => setPreferredGender(gender as any)}
                         className={`flex-1 px-4 py-2 rounded-lg font-medium transition ${
                           preferredGender === gender
-                            ? 'bg-rose-500 text-white shadow-lg'
+                            ? 'bg-teal-500 text-white shadow-lg'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -475,7 +475,7 @@ export default function NewRoommateListingPage() {
                     value={preferredAge}
                     onChange={(e) => setPreferredAge(e.target.value)}
                     placeholder="e.g., 22-28"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   />
                 </div>
               </div>
@@ -493,7 +493,7 @@ export default function NewRoommateListingPage() {
                       onClick={() => toggleOccupation(occ)}
                       className={`px-4 py-2 rounded-lg font-medium transition ${
                         preferredOccupation.includes(occ)
-                          ? 'bg-rose-500 text-white shadow-md'
+                          ? 'bg-teal-500 text-white shadow-md'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
@@ -517,7 +517,7 @@ export default function NewRoommateListingPage() {
                       onClick={() => toggleLifestyle(lifestyle)}
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
                         preferredLifestyle.includes(lifestyle)
-                          ? 'bg-pink-500 text-white shadow-md'
+                          ? 'bg-teal-500 text-white shadow-md'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
@@ -539,7 +539,7 @@ export default function NewRoommateListingPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your living situation, the home, and what you're looking for in a roommate..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[150px]"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[150px]"
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -548,10 +548,10 @@ export default function NewRoommateListingPage() {
             </div>
 
             {/* Info Box */}
-            <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-rose-800">
+                <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-teal-800">
                   <p className="font-semibold mb-1">What happens next:</p>
                   <ul className="list-disc list-inside space-y-1">
                     <li>Your listing will be visible to students looking for roommates</li>
@@ -574,7 +574,7 @@ export default function NewRoommateListingPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-4 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-4 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Posting Listing...' : 'Post Listing'}
               </button>

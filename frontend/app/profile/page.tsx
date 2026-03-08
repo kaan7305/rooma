@@ -80,12 +80,12 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Main Profile Card */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
           {/* Header with gradient */}
-          <div className="relative bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 h-40 sm:h-48"></div>
+          <div className="relative bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 h-40 sm:h-48"></div>
 
           {/* Profile Content */}
           <div className="px-6 sm:px-8 pb-8">
@@ -95,7 +95,7 @@ export default function ProfilePage() {
                 <div className="flex flex-col sm:flex-row sm:items-end gap-4">
                   {/* Avatar */}
                   <div className="relative">
-                    <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-4xl sm:text-5xl font-bold text-white shadow-2xl border-4 border-white">
+                    <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-700 flex items-center justify-center text-4xl sm:text-5xl font-bold text-white shadow-2xl border-4 border-white">
                       {user.firstName[0]}
                       {user.lastName[0]}
                     </div>
@@ -112,7 +112,7 @@ export default function ProfilePage() {
                       {user.firstName} {user.lastName}
                     </h1>
                     <p className="text-gray-600 flex items-center gap-2 text-sm sm:text-base">
-                      <Mail className="w-4 h-4 text-rose-500" />
+                      <Mail className="w-4 h-4 text-teal-600" />
                       {user.email}
                     </p>
                   </div>
@@ -121,7 +121,7 @@ export default function ProfilePage() {
                 {!editing && (
                   <button
                     onClick={() => setEditing(true)}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl sm:self-end"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl sm:self-end"
                   >
                     <Edit2 className="w-4 h-4" />
                     Edit Profile
@@ -141,7 +141,7 @@ export default function ProfilePage() {
                     <input
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
                     />
                   </div>
                   <div>
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                     <input
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
                     />
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export default function ProfilePage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
                   />
                 </div>
 
@@ -177,7 +177,7 @@ export default function ProfilePage() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+1 (555) 123-4567"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition"
                   />
                 </div>
 
@@ -190,14 +190,14 @@ export default function ProfilePage() {
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                     rows={4}
                     placeholder="Tell us about yourself..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition resize-none"
                   />
                 </div>
 
                 <div className="flex gap-4 pt-4">
                   <button
                     onClick={handleSave}
-                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-4 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
+                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white py-4 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
                   >
                     <Save className="w-5 h-5" />
                     Save Changes
@@ -218,8 +218,8 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="h-10 w-10 rounded-lg bg-rose-100 flex items-center justify-center">
-                        <Home className="w-5 h-5 text-rose-600" />
+                      <div className="h-10 w-10 rounded-lg bg-teal-100 flex items-center justify-center">
+                        <Home className="w-5 h-5 text-teal-700" />
                       </div>
                       <div>
                         <p className="text-2xl font-bold text-gray-900">0</p>
@@ -230,8 +230,8 @@ export default function ProfilePage() {
 
                   <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="h-10 w-10 rounded-lg bg-pink-100 flex items-center justify-center">
-                        <Heart className="w-5 h-5 text-pink-600" />
+                      <div className="h-10 w-10 rounded-lg bg-teal-100 flex items-center justify-center">
+                        <Heart className="w-5 h-5 text-teal-700" />
                       </div>
                       <div>
                         <p className="text-2xl font-bold text-gray-900">0</p>
@@ -268,7 +268,7 @@ export default function ProfilePage() {
                 {/* Profile Information */}
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <User className="w-5 h-5 text-rose-500" />
+                    <User className="w-5 h-5 text-teal-600" />
                     Profile Information
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -393,7 +393,7 @@ export default function ProfilePage() {
                 {/* Quick Actions */}
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-rose-500" />
+                    <TrendingUp className="w-5 h-5 text-teal-600" />
                     Quick Actions
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -406,10 +406,10 @@ export default function ProfilePage() {
                     </Link>
                     <Link
                       href="/favorites"
-                      className="flex items-center justify-between p-4 bg-gradient-to-r from-rose-50 to-pink-50 hover:from-rose-100 hover:to-pink-100 border border-rose-200 rounded-xl transition-all group"
+                      className="flex items-center justify-between p-4 bg-gradient-to-r from-teal-50 to-teal-50 hover:from-teal-100 hover:to-teal-100 border border-teal-200 rounded-xl transition-all group"
                     >
                       <span className="font-semibold text-gray-900">View Favorites</span>
-                      <span className="text-rose-600 group-hover:translate-x-1 transition-transform">→</span>
+                      <span className="text-teal-700 group-hover:translate-x-1 transition-transform">→</span>
                     </Link>
                     <Link
                       href="/settings"

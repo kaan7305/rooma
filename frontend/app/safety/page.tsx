@@ -38,14 +38,14 @@ export default function SafetyCenterPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Shield className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent mb-4">
             Safety Center
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
@@ -58,8 +58,8 @@ export default function SafetyCenterPage() {
           <h2 className="text-2xl font-bold text-black mb-6">How ROOMA Protects You</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center shrink-0">
-                <UserCheck className="w-6 h-6 text-rose-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center shrink-0">
+                <UserCheck className="w-6 h-6 text-teal-600" />
               </div>
               <div>
                 <h3 className="font-bold text-black mb-2">Identity Verification</h3>
@@ -67,8 +67,8 @@ export default function SafetyCenterPage() {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center shrink-0">
-                <CreditCard className="w-6 h-6 text-pink-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center shrink-0">
+                <CreditCard className="w-6 h-6 text-teal-600" />
               </div>
               <div>
                 <h3 className="font-bold text-black mb-2">Secure Payments</h3>
@@ -104,8 +104,8 @@ export default function SafetyCenterPage() {
               const Icon = tip.icon;
               return (
                 <div key={idx} className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow">
-                  <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center mb-4">
-                    <Icon className="w-6 h-6 text-rose-600" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center mb-4">
+                    <Icon className="w-6 h-6 text-teal-600" />
                   </div>
                   <h3 className="font-bold text-black mb-2">{tip.title}</h3>
                   <p className="text-black">{tip.description}</p>
@@ -116,7 +116,7 @@ export default function SafetyCenterPage() {
         </div>
 
         {/* Report Issues */}
-        <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl p-8 border-2 border-red-200">
+        <div className="bg-gradient-to-br from-red-50 to-teal-50 rounded-2xl p-8 border-2 border-red-200">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
               <AlertTriangle className="w-6 h-6 text-red-600" />

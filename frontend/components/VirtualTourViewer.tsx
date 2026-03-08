@@ -202,7 +202,7 @@ export default function VirtualTourViewer({ propertyId, propertyTitle, onClose }
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Eye className="w-6 h-6 text-rose-500" />
+          <Eye className="w-6 h-6 text-teal-600" />
           <div>
             <h2 className="text-xl font-bold">{propertyTitle}</h2>
             <p className="text-sm text-gray-300">Virtual Tour - {currentStop.name}</p>
@@ -211,14 +211,14 @@ export default function VirtualTourViewer({ propertyId, propertyTitle, onClose }
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className={`p-2 rounded-lg transition-colors ${showInfo ? 'bg-rose-500' : 'bg-white/10 hover:bg-white/20'}`}
+            className={`p-2 rounded-lg transition-colors ${showInfo ? 'bg-teal-600' : 'bg-white/10 hover:bg-white/20'}`}
             title="Toggle info"
           >
             <Info className="w-5 h-5" />
           </button>
           <button
             onClick={() => setIsAutoRotate(!isAutoRotate)}
-            className={`p-2 rounded-lg transition-colors ${isAutoRotate ? 'bg-rose-500' : 'bg-white/10 hover:bg-white/20'}`}
+            className={`p-2 rounded-lg transition-colors ${isAutoRotate ? 'bg-teal-600' : 'bg-white/10 hover:bg-white/20'}`}
             title={isAutoRotate ? 'Pause rotation' : 'Auto rotate'}
           >
             {isAutoRotate ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
@@ -239,7 +239,7 @@ export default function VirtualTourViewer({ propertyId, propertyTitle, onClose }
           </button>
           <button
             onClick={onClose}
-            className="p-2 bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors"
+            className="p-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors"
             title="Close tour"
           >
             <X className="w-5 h-5" />
@@ -271,7 +271,7 @@ export default function VirtualTourViewer({ propertyId, propertyTitle, onClose }
             {currentStop.hotspots?.map((hotspot) => (
               <button
                 key={hotspot.id}
-                className="absolute w-12 h-12 -ml-6 -mt-6 bg-rose-500 hover:bg-rose-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-125 group animate-pulse"
+                className="absolute w-12 h-12 -ml-6 -mt-6 bg-teal-600 hover:bg-teal-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-125 group animate-pulse"
                 style={{
                   left: `${hotspot.x}%`,
                   top: `${hotspot.y}%`,
@@ -296,7 +296,7 @@ export default function VirtualTourViewer({ propertyId, propertyTitle, onClose }
             <div className="flex items-center gap-3 mb-3">
               {(() => {
                 const Icon = currentStop.icon;
-                return <Icon className="w-6 h-6 text-rose-500" />;
+                return <Icon className="w-6 h-6 text-teal-600" />;
               })()}
               <h3 className="text-xl font-bold">{currentStop.name}</h3>
             </div>
@@ -359,7 +359,7 @@ export default function VirtualTourViewer({ propertyId, propertyTitle, onClose }
                 }}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all ${
                   index === currentStopIndex
-                    ? 'bg-rose-500 shadow-lg scale-105'
+                    ? 'bg-teal-600 shadow-lg scale-105'
                     : 'bg-white/10 hover:bg-white/20'
                 }`}
               >

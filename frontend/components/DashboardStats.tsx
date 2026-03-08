@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp, Heart, Eye, Calendar, DollarSign, MapPin, Star, Users } from 'lucide-react';
+import { TrendingUp, Bookmark, Eye, Calendar, DollarSign, MapPin, Star, Users } from 'lucide-react';
 import { useBookingsStore } from '@/lib/bookings-store';
 import { useFavoritesStore } from '@/lib/favorites-store';
 import { useRecentlyViewedStore } from '@/lib/recently-viewed-store';
@@ -40,19 +40,19 @@ export default function DashboardStats() {
       name: 'Saved Favorites',
       value: favorites.length.toString(),
       change: favorites.length > 0 ? 'View all' : 'Start exploring',
-      icon: Heart,
-      color: 'from-rose-500 to-pink-500',
-      bgColor: 'from-rose-50 to-pink-50',
-      textColor: 'text-rose-600',
+      icon: Bookmark,
+      color: 'from-teal-600 to-teal-700',
+      bgColor: 'from-teal-50 to-teal-50',
+      textColor: 'text-teal-700',
     },
     {
       name: 'Recently Viewed',
       value: recentlyViewed.length.toString(),
       change: recentlyViewed.length > 0 ? 'Continue browsing' : 'Start searching',
       icon: Eye,
-      color: 'from-purple-500 to-indigo-500',
-      bgColor: 'from-purple-50 to-indigo-50',
-      textColor: 'text-purple-600',
+      color: 'from-teal-600 to-teal-800',
+      bgColor: 'from-teal-50 to-teal-50',
+      textColor: 'text-teal-700',
     },
     {
       name: 'Total Spent',

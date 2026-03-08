@@ -170,7 +170,7 @@ export default function StudentVerificationPage() {
   // Show status if already verified
   if (user.studentVerified) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-12 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center">
@@ -186,7 +186,7 @@ export default function StudentVerificationPage() {
 
               <button
                 onClick={() => router.push('/')}
-                className="bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-3 px-8 rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
+                className="bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white py-3 px-8 rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
               >
                 Return to Home
               </button>
@@ -201,12 +201,12 @@ export default function StudentVerificationPage() {
 
   // Main verification form
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <GraduationCap className="w-16 h-16 text-rose-600 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+          <GraduationCap className="w-16 h-16 text-teal-600 mx-auto mb-4" />
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent">
             Student Verification
           </h1>
           <p className="text-gray-600 mt-2">
@@ -254,7 +254,7 @@ export default function StudentVerificationPage() {
         {/* Manual Verification Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="flex items-start gap-4 mb-6">
-            <FileText className="w-6 h-6 text-rose-600 flex-shrink-0 mt-1" />
+            <FileText className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
             <div className="flex-1">
               <h2 className="text-xl font-bold text-gray-900 mb-2">Option 2: Manual Verification</h2>
               <p className="text-gray-600">
@@ -275,7 +275,7 @@ export default function StudentVerificationPage() {
                   id="university"
                   value={universityName}
                   onChange={(e) => setUniversityName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   placeholder="e.g., Stanford University"
                   required
                 />
@@ -290,7 +290,7 @@ export default function StudentVerificationPage() {
                   id="universityEmail"
                   value={universityEmail}
                   onChange={(e) => setUniversityEmail(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   placeholder="e.g., john@stanford.edu"
                   required
                 />
@@ -305,7 +305,7 @@ export default function StudentVerificationPage() {
                   id="studentId"
                   value={studentIdNumber}
                   onChange={(e) => setStudentIdNumber(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   placeholder="e.g., 20230001"
                   required
                 />
@@ -319,7 +319,7 @@ export default function StudentVerificationPage() {
                   id="graduationYear"
                   value={graduationYear}
                   onChange={(e) => setGraduationYear(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 >
                   <option value="">Select year</option>
@@ -338,7 +338,7 @@ export default function StudentVerificationPage() {
                   id="major"
                   value={major}
                   onChange={(e) => setMajor(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   placeholder="e.g., Computer Science"
                   required
                 />
@@ -352,7 +352,7 @@ export default function StudentVerificationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Student ID Card *
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-rose-500 transition">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-teal-500 transition">
                   {studentIdPreview ? (
                     <div className="space-y-3">
                       <img src={studentIdPreview} alt="Student ID" className="max-h-40 mx-auto rounded" />
@@ -389,7 +389,7 @@ export default function StudentVerificationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Enrollment Letter *
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-rose-500 transition">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-teal-500 transition">
                   {enrollmentLetterPreview ? (
                     <div className="space-y-3">
                       <img src={enrollmentLetterPreview} alt="Enrollment Letter" className="max-h-40 mx-auto rounded" />
@@ -443,7 +443,7 @@ export default function StudentVerificationPage() {
             <button
               type="submit"
               disabled={isSubmitting || !studentIdDocument || !enrollmentLetter}
-              className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-4 px-6 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white py-4 px-6 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Submitting Verification...' : 'Submit for Manual Review'}
             </button>
@@ -454,7 +454,7 @@ export default function StudentVerificationPage() {
         <div className="mt-6 text-center">
           <button
             onClick={() => router.push('/')}
-            className="text-rose-600 hover:text-rose-700 font-medium"
+            className="text-teal-600 hover:text-teal-700 font-medium"
           >
             ← Back to Home
           </button>

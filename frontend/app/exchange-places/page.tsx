@@ -224,13 +224,13 @@ export default function ExchangePlacesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <ArrowLeftRight className="w-12 h-12 text-rose-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+            <ArrowLeftRight className="w-12 h-12 text-teal-600" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent">
               Exchange Places
             </h1>
           </div>
@@ -251,7 +251,7 @@ export default function ExchangePlacesPage() {
               onClick={() => setSelectedExchangeType('all')}
               className={`px-6 py-2 rounded-full font-medium transition ${
                 selectedExchangeType === 'all'
-                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -261,7 +261,7 @@ export default function ExchangePlacesPage() {
               onClick={() => setSelectedExchangeType('home')}
               className={`px-6 py-2 rounded-full font-medium transition flex items-center gap-2 ${
                 selectedExchangeType === 'home'
-                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -272,7 +272,7 @@ export default function ExchangePlacesPage() {
               onClick={() => setSelectedExchangeType('family')}
               className={`px-6 py-2 rounded-full font-medium transition flex items-center gap-2 ${
                 selectedExchangeType === 'family'
-                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -283,7 +283,7 @@ export default function ExchangePlacesPage() {
               onClick={() => setSelectedExchangeType('both')}
               className={`px-6 py-2 rounded-full font-medium transition flex items-center gap-2 ${
                 selectedExchangeType === 'both'
-                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -315,7 +315,7 @@ export default function ExchangePlacesPage() {
                   <Heart
                     className={`w-5 h-5 ${
                       favoriteIds.has(place.id)
-                        ? 'fill-rose-500 text-rose-500'
+                        ? 'fill-teal-500 text-teal-500'
                         : 'text-gray-600'
                     }`}
                   />
@@ -333,7 +333,7 @@ export default function ExchangePlacesPage() {
               <div className="p-5">
                 {/* Host Info */}
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-sm font-semibold text-white">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-teal-400 to-teal-500 flex items-center justify-center text-sm font-semibold text-white">
                     {place.hostAvatar}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -348,7 +348,7 @@ export default function ExchangePlacesPage() {
 
                 {/* Location */}
                 <div className="flex items-center gap-2 text-gray-700 mb-2">
-                  <MapPin className="w-4 h-4 text-rose-500" />
+                  <MapPin className="w-4 h-4 text-teal-500" />
                   <span className="font-medium">{place.location}, {place.country}</span>
                 </div>
 
@@ -369,17 +369,17 @@ export default function ExchangePlacesPage() {
                 {/* Duration & Availability */}
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Clock className="w-4 h-4 text-rose-500" />
+                    <Clock className="w-4 h-4 text-teal-500" />
                     <span>Duration: {place.duration}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Calendar className="w-4 h-4 text-rose-500" />
+                    <Calendar className="w-4 h-4 text-teal-500" />
                     <span>Available: {new Date(place.availableFrom).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - {new Date(place.availableTo).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
                   </div>
                 </div>
 
                 {/* Looking For */}
-                <div className="bg-rose-50 rounded-lg p-3 mb-4">
+                <div className="bg-teal-50 rounded-lg p-3 mb-4">
                   <p className="text-xs text-gray-600 mb-1">Looking for:</p>
                   <p className="text-sm font-medium text-gray-900">{place.lookingFor}</p>
                 </div>
@@ -387,7 +387,7 @@ export default function ExchangePlacesPage() {
                 {/* Actions */}
                 <button
                   onClick={() => handleContactHost(place)}
-                  className="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Contact Host
@@ -449,15 +449,15 @@ function ChatModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-rose-500 to-pink-600 p-6 rounded-t-2xl">
+        <div className="sticky top-0 bg-gradient-to-r from-teal-500 to-teal-600 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center text-lg font-semibold text-rose-600">
+              <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center text-lg font-semibold text-teal-600">
                 {place.hostAvatar}
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">{place.hostName}</h2>
-                <p className="text-rose-100 text-sm">{place.location}, {place.country}</p>
+                <p className="text-teal-100 text-sm">{place.location}, {place.country}</p>
               </div>
             </div>
             <button
@@ -478,18 +478,18 @@ function ChatModal({
           />
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-gray-700">
-              <Home className="w-4 h-4 text-rose-500" />
+              <Home className="w-4 h-4 text-teal-500" />
               <span className="font-medium">{place.propertyType}</span>
               <span>•</span>
-              <Users className="w-4 h-4 text-rose-500" />
+              <Users className="w-4 h-4 text-teal-500" />
               <span>Up to {place.maxGuests} guests</span>
             </div>
             <div className="flex items-center gap-2 text-gray-700">
-              <Clock className="w-4 h-4 text-rose-500" />
+              <Clock className="w-4 h-4 text-teal-500" />
               <span>Duration: {place.duration}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-700">
-              <Calendar className="w-4 h-4 text-rose-500" />
+              <Calendar className="w-4 h-4 text-teal-500" />
               <span>{new Date(place.availableFrom).toLocaleDateString()} - {new Date(place.availableTo).toLocaleDateString()}</span>
             </div>
           </div>
@@ -504,7 +504,7 @@ function ChatModal({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={`Hi ${place.hostName.split(' ')[0]}, I'm interested in your ${place.exchangeType === 'home' ? 'home exchange' : place.exchangeType === 'family' ? 'host family' : 'exchange'} program in ${place.location}...`}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[120px]"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[120px]"
             required
           />
           <div className="flex gap-3 mt-4">
@@ -517,7 +517,7 @@ function ChatModal({
             </button>
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
+              className="flex-1 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-3 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
             >
               Send Message
             </button>

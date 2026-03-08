@@ -32,7 +32,7 @@ export default function PropertyComparison() {
       {/* Floating Comparison Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 hover:from-purple-600 hover:via-pink-600 hover:to-rose-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all z-50 flex items-center gap-3 px-6 py-4 group"
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-700 hover:from-teal-700 hover:via-teal-700 hover:to-teal-800 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all z-50 flex items-center gap-3 px-6 py-4 group"
       >
         <GitCompare className="w-6 h-6 group-hover:scale-110 transition-transform" />
         <div className="flex flex-col items-start">
@@ -49,10 +49,10 @@ export default function PropertyComparison() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-hidden flex flex-col">
             {/* Header */}
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 via-pink-50 to-rose-50">
+            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-teal-50 via-teal-50 to-teal-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-2xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center">
                     <GitCompare className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -110,7 +110,7 @@ export default function PropertyComparison() {
                                 alt={property.title}
                                 className="w-full h-40 object-cover rounded-xl mb-3 hover:scale-105 transition-transform"
                               />
-                              <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-rose-600 transition">
+                              <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-teal-700 transition">
                                 {property.title}
                               </h3>
                             </Link>
@@ -134,7 +134,7 @@ export default function PropertyComparison() {
                         {properties.map((property) => (
                           <td key={property.id} className="p-4 text-center">
                             {feature.key === 'price' ? (
-                              <div className="font-bold text-lg bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                              <div className="font-bold text-lg bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
                                 ${property.price.toLocaleString()}/mo
                               </div>
                             ) : feature.key === 'rating' ? (
@@ -176,7 +176,7 @@ export default function PropertyComparison() {
                             {property.amenities.slice(0, 6).map((amenity) => (
                               <span
                                 key={amenity}
-                                className="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-medium"
+                                className="px-2 py-1 bg-teal-100 text-teal-800 rounded-lg text-xs font-medium"
                               >
                                 {amenity}
                               </span>
@@ -198,7 +198,7 @@ export default function PropertyComparison() {
                         <td key={property.id} className="p-4">
                           <Link
                             href={`/properties/${property.id}`}
-                            className="block w-full py-3 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl font-semibold text-center transition-all shadow-lg hover:shadow-xl"
+                            className="block w-full py-3 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white rounded-xl font-semibold text-center transition-all shadow-lg hover:shadow-xl"
                           >
                             View Details
                           </Link>

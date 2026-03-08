@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Heart, Eye, MessageCircle, Home, Clock } from 'lucide-react';
+import { Calendar, Bookmark, Eye, MessageCircle, Home, Clock } from 'lucide-react';
 import { useBookingsStore } from '@/lib/bookings-store';
 import { useFavoritesStore } from '@/lib/favorites-store';
 import { useRecentlyViewedStore } from '@/lib/recently-viewed-store';
@@ -79,9 +79,9 @@ export default function ActivityTimeline() {
       case 'booking':
         return { icon: Calendar, color: 'bg-blue-100 text-blue-600' };
       case 'favorite':
-        return { icon: Heart, color: 'bg-rose-100 text-rose-600' };
+        return { icon: Bookmark, color: 'bg-teal-100 text-teal-700' };
       case 'view':
-        return { icon: Eye, color: 'bg-purple-100 text-purple-600' };
+        return { icon: Eye, color: 'bg-teal-100 text-teal-700' };
       case 'message':
         return { icon: MessageCircle, color: 'bg-emerald-100 text-emerald-600' };
       default:
@@ -122,7 +122,7 @@ export default function ActivityTimeline() {
           <p className="text-gray-500 text-sm mt-2">Start exploring properties to see your activity here</p>
           <Link
             href="/search"
-            className="inline-block mt-4 px-6 py-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
+            className="inline-block mt-4 px-6 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
           >
             Start Exploring
           </Link>
@@ -134,7 +134,7 @@ export default function ActivityTimeline() {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center">
+        <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl flex items-center justify-center">
           <Clock className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -159,7 +159,7 @@ export default function ActivityTimeline() {
               <div className="flex-1 pb-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-900 group-hover:text-rose-600 transition-colors">
+                    <p className="font-semibold text-gray-900 group-hover:text-teal-700 transition-colors">
                       {activity.title}
                     </p>
                     <p className="text-sm text-gray-600 mt-1 line-clamp-1">{activity.description}</p>

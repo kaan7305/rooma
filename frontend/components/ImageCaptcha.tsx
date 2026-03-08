@@ -153,7 +153,7 @@ export default function ImageCaptcha({ onVerify, isVerified }: ImageCaptchaProps
 
       <div className="bg-white rounded-xl p-4 mb-4">
         <p className="text-sm font-semibold text-gray-900 mb-4">
-          Select all images with <span className="text-rose-600">{targetType}</span>
+          Select all images with <span className="text-teal-700">{targetType}</span>
         </p>
 
         <div className="grid grid-cols-3 gap-2 mb-4">
@@ -164,7 +164,7 @@ export default function ImageCaptcha({ onVerify, isVerified }: ImageCaptchaProps
               onClick={() => toggleSelection(item.id)}
               className={`aspect-square rounded-lg border-2 flex items-center justify-center text-5xl transition-all hover:scale-105 ${
                 selectedIds.includes(item.id)
-                  ? 'border-rose-500 bg-rose-50 shadow-lg'
+                  ? 'border-teal-600 bg-teal-50 shadow-lg'
                   : 'border-gray-300 bg-white hover:border-gray-400'
               }`}
             >
@@ -181,7 +181,7 @@ export default function ImageCaptcha({ onVerify, isVerified }: ImageCaptchaProps
           <button
             type="button"
             onClick={handleVerify}
-            className="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold transition"
+            className="flex-1 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg font-semibold transition"
           >
             Verify
           </button>

@@ -147,13 +147,13 @@ export default function NewGuestRequestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Briefcase className="w-12 h-12 text-rose-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+            <Briefcase className="w-12 h-12 text-teal-600" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent">
               Post Your Request
             </h1>
           </div>
@@ -169,7 +169,7 @@ export default function NewGuestRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                  <MapPin className="w-4 h-4 inline mr-1 text-rose-500" />
+                  <MapPin className="w-4 h-4 inline mr-1 text-teal-500" />
                   City/Location *
                 </label>
                 <input
@@ -178,7 +178,7 @@ export default function NewGuestRequestPage() {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g., Barcelona, Tokyo"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   required
                 />
               </div>
@@ -193,7 +193,7 @@ export default function NewGuestRequestPage() {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   placeholder="e.g., Spain, Japan"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                   required
                 />
               </div>
@@ -203,7 +203,7 @@ export default function NewGuestRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Calendar className="w-4 h-4 inline mr-1 text-rose-500" />
+                  <Calendar className="w-4 h-4 inline mr-1 text-teal-500" />
                   Check-in Date *
                 </label>
                 <input
@@ -212,7 +212,7 @@ export default function NewGuestRequestPage() {
                   value={checkInDate}
                   onChange={(e) => setCheckInDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 />
               </div>
@@ -227,7 +227,7 @@ export default function NewGuestRequestPage() {
                   value={checkOutDate}
                   onChange={(e) => setCheckOutDate(e.target.value)}
                   min={checkInDate || new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                   required
                 />
               </div>
@@ -246,7 +246,7 @@ export default function NewGuestRequestPage() {
                     value={budgetMin}
                     onChange={(e) => setBudgetMin(e.target.value)}
                     placeholder="Min (e.g., 800)"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1">Minimum</p>
@@ -257,7 +257,7 @@ export default function NewGuestRequestPage() {
                     value={budgetMax}
                     onChange={(e) => setBudgetMax(e.target.value)}
                     placeholder="Max (e.g., 1200)"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500"
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1">Maximum</p>
@@ -268,14 +268,14 @@ export default function NewGuestRequestPage() {
             {/* Number of Guests */}
             <div>
               <label htmlFor="guests" className="block text-sm font-medium text-gray-700 mb-2">
-                <Users className="w-4 h-4 inline mr-1 text-rose-500" />
+                <Users className="w-4 h-4 inline mr-1 text-teal-500" />
                 Number of Guests *
               </label>
               <select
                 id="guests"
                 value={guests}
                 onChange={(e) => setGuests(Number(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900"
                 required
               >
                 {[1, 2, 3, 4, 5, 6].map(num => (
@@ -287,7 +287,7 @@ export default function NewGuestRequestPage() {
             {/* Property Types */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                <Home className="w-4 h-4 inline mr-1 text-rose-500" />
+                <Home className="w-4 h-4 inline mr-1 text-teal-500" />
                 Property Types (select all that work for you) *
               </label>
               <div className="flex flex-wrap gap-3">
@@ -298,7 +298,7 @@ export default function NewGuestRequestPage() {
                     onClick={() => togglePropertyType(type)}
                     className={`px-4 py-2 rounded-lg font-medium transition ${
                       propertyTypes.includes(type)
-                        ? 'bg-rose-500 text-white shadow-lg'
+                        ? 'bg-teal-500 text-white shadow-lg'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -322,7 +322,7 @@ export default function NewGuestRequestPage() {
                     onClick={() => toggleAmenity(amenity)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
                       amenities.includes(amenity)
-                        ? 'bg-rose-500 text-white shadow-md'
+                        ? 'bg-teal-500 text-white shadow-md'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -343,7 +343,7 @@ export default function NewGuestRequestPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Tell hosts about yourself and what you're looking for. Include details about your study program, lifestyle, preferences, etc."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[150px]"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition text-gray-900 placeholder:text-gray-500 min-h-[150px]"
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -379,7 +379,7 @@ export default function NewGuestRequestPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-4 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white py-4 px-6 rounded-lg font-semibold transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Posting Request...' : 'Post Request'}
               </button>

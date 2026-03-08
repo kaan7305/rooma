@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, Home, Heart, Calendar, MessageCircle, Settings, User, Bell } from 'lucide-react';
+import { Search, Home, Bookmark, Calendar, MessageCircle, Settings, User, Bell } from 'lucide-react';
 
 export default function QuickActions() {
   const actions = [
@@ -10,8 +10,8 @@ export default function QuickActions() {
       description: 'Search for properties',
       icon: Search,
       href: '/search',
-      color: 'from-rose-500 to-pink-500',
-      hoverColor: 'hover:from-rose-600 hover:to-pink-600',
+      color: 'from-teal-600 to-teal-700',
+      hoverColor: 'hover:from-teal-700 hover:to-teal-800',
     },
     {
       name: 'List Property',
@@ -24,10 +24,10 @@ export default function QuickActions() {
     {
       name: 'My Favorites',
       description: 'View saved properties',
-      icon: Heart,
+      icon: Bookmark,
       href: '/favorites',
-      color: 'from-purple-500 to-indigo-500',
-      hoverColor: 'hover:from-purple-600 hover:to-indigo-600',
+      color: 'from-teal-600 to-teal-800',
+      hoverColor: 'hover:from-teal-700 hover:to-teal-900',
     },
     {
       name: 'My Bookings',
@@ -50,8 +50,8 @@ export default function QuickActions() {
       description: 'Edit your profile',
       icon: User,
       href: '/profile',
-      color: 'from-pink-500 to-rose-500',
-      hoverColor: 'hover:from-pink-600 hover:to-rose-600',
+      color: 'from-teal-600 to-teal-700',
+      hoverColor: 'hover:from-teal-700 hover:to-teal-800',
     },
   ];
 
@@ -71,7 +71,7 @@ export default function QuickActions() {
                 <div className={`w-12 h-12 bg-gradient-to-r ${action.color} ${action.hoverColor} rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-1 group-hover:text-rose-600 transition-colors">
+                <h3 className="font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
                   {action.name}
                 </h3>
                 <p className="text-xs text-gray-500">{action.description}</p>

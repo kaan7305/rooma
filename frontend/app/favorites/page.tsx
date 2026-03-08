@@ -345,7 +345,7 @@ export default function FavoritesPage() {
   const totalFavorites = favoriteProperties.length + favoriteGuestRequests.length + favoriteRoommateListings.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         {/* Page Title */}
@@ -364,7 +364,7 @@ export default function FavoritesPage() {
             onClick={() => setActiveTab('properties')}
             className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 ${
               activeTab === 'properties'
-                ? 'bg-rose-600 text-white shadow-lg'
+                ? 'bg-teal-700 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -375,7 +375,7 @@ export default function FavoritesPage() {
             onClick={() => setActiveTab('requests')}
             className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 ${
               activeTab === 'requests'
-                ? 'bg-rose-600 text-white shadow-lg'
+                ? 'bg-teal-700 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -386,7 +386,7 @@ export default function FavoritesPage() {
             onClick={() => setActiveTab('roommates')}
             className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 ${
               activeTab === 'roommates'
-                ? 'bg-rose-600 text-white shadow-lg'
+                ? 'bg-teal-700 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -400,14 +400,14 @@ export default function FavoritesPage() {
           <>
             {favoriteProperties.length === 0 ? (
               <div className="text-center py-20">
-                <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-10 h-10 text-rose-600" />
+                <div className="w-20 h-20 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-10 h-10 text-teal-700" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">No property favorites yet</h3>
                 <p className="text-gray-600 mb-6">Start exploring and save your favorite properties!</p>
                 <Link
                   href="/"
-                  className="inline-block bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+                  className="inline-block bg-teal-700 hover:bg-teal-800 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                   Browse Properties
                 </Link>
@@ -428,7 +428,7 @@ export default function FavoritesPage() {
                   />
                   {/* Duration Badge */}
                   <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-                    <span className="text-xs font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                    <span className="text-xs font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
                       {property.duration}
                     </span>
                   </div>
@@ -440,8 +440,8 @@ export default function FavoritesPage() {
                     <Heart
                       className={`w-5 h-5 ${
                         isFavorite(property.id)
-                          ? 'fill-rose-500 text-rose-500'
-                          : 'text-rose-500'
+                          ? 'fill-teal-600 text-teal-600'
+                          : 'text-teal-600'
                       }`}
                     />
                   </button>
@@ -462,7 +462,7 @@ export default function FavoritesPage() {
                     {property.type} · {property.beds} bed{property.beds > 1 ? 's' : ''} · {property.baths} bath{property.baths > 1 ? 's' : ''}
                   </p>
                   <div className="flex items-baseline gap-1 pt-1">
-                    <span className="text-lg font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                    <span className="text-lg font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
                       ${property.price.toLocaleString()}
                     </span>
                     <span className="text-sm text-gray-600">/ month</span>
@@ -481,14 +481,14 @@ export default function FavoritesPage() {
           <>
             {favoriteGuestRequests.length === 0 ? (
               <div className="text-center py-20">
-                <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-10 h-10 text-rose-600" />
+                <div className="w-20 h-20 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-10 h-10 text-teal-700" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">No guest request favorites yet</h3>
                 <p className="text-gray-600 mb-6">Browse guest requests and save the ones you're interested in!</p>
                 <Link
                   href="/guest-requests"
-                  className="inline-block bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+                  className="inline-block bg-teal-700 hover:bg-teal-800 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                   Browse Guest Requests
                 </Link>
@@ -503,13 +503,13 @@ export default function FavoritesPage() {
                       className="absolute top-4 right-4 p-2 rounded-full bg-white hover:bg-gray-50 transition shadow-md z-10"
                       title="Remove from favorites"
                     >
-                      <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
+                      <Heart className="w-5 h-5 fill-teal-600 text-teal-600" />
                     </button>
 
                     {/* Guest Info */}
                     <div className="flex items-start justify-between mb-4 pr-12">
                       <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-lg font-semibold text-white">
+                        <div className="h-12 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 flex items-center justify-center text-lg font-semibold text-white">
                           {request.guestAvatar}
                         </div>
                         <div>
@@ -538,11 +538,11 @@ export default function FavoritesPage() {
                     {/* Location & Dates */}
                     <div className="space-y-2 mb-4">
                       <div className="flex items-center gap-2 text-gray-900">
-                        <MapPin className="w-5 h-5 text-rose-500" />
+                        <MapPin className="w-5 h-5 text-teal-600" />
                         <span className="font-semibold text-lg">{request.location}, {request.country}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-700">
-                        <Calendar className="w-4 h-4 text-rose-500" />
+                        <Calendar className="w-4 h-4 text-teal-600" />
                         <span className="text-sm">
                           {new Date(request.checkInDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - {new Date(request.checkOutDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </span>
@@ -552,7 +552,7 @@ export default function FavoritesPage() {
                         <span className="text-sm font-semibold text-green-700">{request.budget}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-700">
-                        <Users className="w-4 h-4 text-rose-500" />
+                        <Users className="w-4 h-4 text-teal-600" />
                         <span className="text-sm">{request.guests} {request.guests === 1 ? 'guest' : 'guests'}</span>
                       </div>
                     </div>
@@ -562,7 +562,7 @@ export default function FavoritesPage() {
                       <p className="text-xs text-gray-600 mb-2">Looking for:</p>
                       <div className="flex flex-wrap gap-2">
                         {request.propertyType.map((type) => (
-                          <span key={type} className="px-3 py-1 bg-rose-50 text-rose-700 rounded-full text-xs font-medium">
+                          <span key={type} className="px-3 py-1 bg-teal-50 text-teal-800 rounded-full text-xs font-medium">
                             {type}
                           </span>
                         ))}
@@ -577,7 +577,7 @@ export default function FavoritesPage() {
                     {/* View Button */}
                     <Link
                       href="/guest-requests"
-                      className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      className="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                     >
                       View Request
                     </Link>
@@ -593,14 +593,14 @@ export default function FavoritesPage() {
           <>
             {favoriteRoommateListings.length === 0 ? (
               <div className="text-center py-20">
-                <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-10 h-10 text-rose-600" />
+                <div className="w-20 h-20 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-10 h-10 text-teal-700" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">No roommate listing favorites yet</h3>
                 <p className="text-gray-600 mb-6">Browse roommate listings and save the ones you're interested in!</p>
                 <Link
                   href="/roommate-finder"
-                  className="inline-block bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+                  className="inline-block bg-teal-700 hover:bg-teal-800 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                   Browse Roommate Listings
                 </Link>
@@ -622,10 +622,10 @@ export default function FavoritesPage() {
                         className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white transition shadow-lg"
                         title="Remove from favorites"
                       >
-                        <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
+                        <Heart className="w-5 h-5 fill-teal-600 text-teal-600" />
                       </button>
                       {/* Occupancy Badge */}
-                      <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-rose-600 text-white text-xs font-semibold flex items-center gap-1">
+                      <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-teal-700 text-white text-xs font-semibold flex items-center gap-1">
                         <Users className="w-3 h-3" />
                         {listing.currentOccupants} looking for {listing.lookingFor}
                       </div>
@@ -636,7 +636,7 @@ export default function FavoritesPage() {
                       {/* Poster Info */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-sm font-semibold text-white">
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 flex items-center justify-center text-sm font-semibold text-white">
                             {listing.posterAvatar}
                           </div>
                           <div>
@@ -662,22 +662,22 @@ export default function FavoritesPage() {
 
                       {/* Location */}
                       <div className="flex items-center gap-2 text-gray-700 mb-3">
-                        <MapPin className="w-4 h-4 text-rose-500" />
+                        <MapPin className="w-4 h-4 text-teal-600" />
                         <span className="text-sm font-medium">{listing.location}</span>
                       </div>
 
                       {/* Property Details */}
                       <div className="grid grid-cols-2 gap-3 mb-4">
                         <div className="flex items-center gap-2 text-gray-600 text-sm">
-                          <HomeIcon className="w-4 h-4 text-rose-500" />
+                          <HomeIcon className="w-4 h-4 text-teal-600" />
                           <span>{listing.propertyType}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600 text-sm">
-                          <Bed className="w-4 h-4 text-rose-500" />
+                          <Bed className="w-4 h-4 text-teal-600" />
                           <span>{listing.totalBedrooms} bed</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600 text-sm">
-                          <Bath className="w-4 h-4 text-rose-500" />
+                          <Bath className="w-4 h-4 text-teal-600" />
                           <span>{listing.totalBathrooms} bath</span>
                         </div>
                       </div>
@@ -701,10 +701,10 @@ export default function FavoritesPage() {
                       <div className="mb-4">
                         <p className="text-xs text-gray-600 mb-2">Looking for:</p>
                         <div className="flex flex-wrap gap-2">
-                          <span className="px-2 py-1 bg-rose-50 text-rose-700 rounded text-xs font-medium">
+                          <span className="px-2 py-1 bg-teal-50 text-teal-800 rounded text-xs font-medium">
                             {listing.roommatePreferences.gender === 'any' ? 'Any gender' : listing.roommatePreferences.gender}
                           </span>
-                          <span className="px-2 py-1 bg-rose-50 text-rose-700 rounded text-xs font-medium">
+                          <span className="px-2 py-1 bg-teal-50 text-teal-800 rounded text-xs font-medium">
                             Age: {listing.roommatePreferences.age}
                           </span>
                         </div>
@@ -718,7 +718,7 @@ export default function FavoritesPage() {
                       {/* View Button */}
                       <Link
                         href="/roommate-finder"
-                        className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                        className="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 px-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                       >
                         View Listing
                       </Link>

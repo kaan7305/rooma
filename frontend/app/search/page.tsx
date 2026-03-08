@@ -342,7 +342,7 @@ function SearchResults() {
     (instantBook ? 1 : 0) + (verifiedHost ? 1 : 0) + (petFriendly ? 1 : 0) + (studentVerified ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       {/* Smart Search Bar */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-8 pb-4">
         <SmartSearchBar
@@ -386,7 +386,7 @@ function SearchResults() {
                 {activeFiltersCount > 0 && (
                   <button
                     onClick={clearFilters}
-                    className="text-sm text-rose-600 hover:text-rose-700 font-semibold"
+                    className="text-sm text-teal-700 hover:text-teal-800 font-semibold"
                   >
                     Clear all
                   </button>
@@ -406,7 +406,7 @@ function SearchResults() {
                       step="100"
                       value={priceRange[0]}
                       onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-                      className="w-full accent-rose-600"
+                      className="w-full accent-teal-700"
                     />
                   </div>
                   <div className="space-y-2">
@@ -418,10 +418,10 @@ function SearchResults() {
                       step="100"
                       value={priceRange[1]}
                       onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                      className="w-full accent-rose-600"
+                      className="w-full accent-teal-700"
                     />
                   </div>
-                  <div className="flex items-center justify-between text-sm font-semibold text-black dark:text-gray-100 bg-rose-50 dark:bg-gray-700 p-3 rounded-lg">
+                  <div className="flex items-center justify-between text-sm font-semibold text-black dark:text-gray-100 bg-teal-50 dark:bg-gray-700 p-3 rounded-lg">
                     <span>${priceRange[0]}</span>
                     <span>to</span>
                     <span>${priceRange[1]}</span>
@@ -438,7 +438,7 @@ function SearchResults() {
                       type="checkbox"
                       checked={instantBook}
                       onChange={(e) => setInstantBook(e.target.checked)}
-                      className="w-5 h-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                      className="w-5 h-5 rounded border-gray-300 text-teal-700 focus:ring-teal-600"
                     />
                     <div className="flex-1">
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Instant Book</span>
@@ -451,7 +451,7 @@ function SearchResults() {
                       type="checkbox"
                       checked={verifiedHost}
                       onChange={(e) => setVerifiedHost(e.target.checked)}
-                      className="w-5 h-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                      className="w-5 h-5 rounded border-gray-300 text-teal-700 focus:ring-teal-600"
                     />
                     <div className="flex-1">
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Verified Host</span>
@@ -464,7 +464,7 @@ function SearchResults() {
                       type="checkbox"
                       checked={petFriendly}
                       onChange={(e) => setPetFriendly(e.target.checked)}
-                      className="w-5 h-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                      className="w-5 h-5 rounded border-gray-300 text-teal-700 focus:ring-teal-600"
                     />
                     <div className="flex-1">
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Pet Friendly</span>
@@ -477,7 +477,7 @@ function SearchResults() {
                       type="checkbox"
                       checked={studentVerified}
                       onChange={(e) => setStudentVerified(e.target.checked)}
-                      className="w-5 h-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                      className="w-5 h-5 rounded border-gray-300 text-teal-700 focus:ring-teal-600"
                     />
                     <div className="flex-1">
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Student Verified</span>
@@ -497,7 +497,7 @@ function SearchResults() {
                       type="date"
                       value={moveInDate}
                       onChange={(e) => setMoveInDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-black dark:text-gray-100 dark:bg-gray-700"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent text-black dark:text-gray-100 dark:bg-gray-700"
                     />
                   </div>
                   <div>
@@ -507,7 +507,7 @@ function SearchResults() {
                       value={moveOutDate}
                       onChange={(e) => setMoveOutDate(e.target.value)}
                       min={moveInDate}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-black dark:text-gray-100 dark:bg-gray-700"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent text-black dark:text-gray-100 dark:bg-gray-700"
                     />
                   </div>
                 </div>
@@ -527,7 +527,7 @@ function SearchResults() {
                         name="propertyType"
                         checked={propertyType === type}
                         onChange={() => setPropertyType(type)}
-                        className="w-4 h-4 text-rose-600 focus:ring-rose-500"
+                        className="w-4 h-4 text-teal-700 focus:ring-teal-600"
                       />
                       <span className="text-sm text-black dark:text-gray-300">{type || 'Any Type'}</span>
                     </label>
@@ -545,7 +545,7 @@ function SearchResults() {
                       onClick={() => setBeds(num)}
                       className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
                         beds === num
-                          ? 'bg-rose-600 text-white'
+                          ? 'bg-teal-700 text-white'
                           : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                       }`}
                     >
@@ -565,7 +565,7 @@ function SearchResults() {
                       onClick={() => setBaths(num)}
                       className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
                         baths === num
-                          ? 'bg-rose-600 text-white'
+                          ? 'bg-teal-700 text-white'
                           : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                       }`}
                     >
@@ -588,7 +588,7 @@ function SearchResults() {
                         type="checkbox"
                         checked={selectedAmenities.includes(amenity)}
                         onChange={() => toggleAmenity(amenity)}
-                        className="w-5 h-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                        className="w-5 h-5 rounded border-gray-300 text-teal-700 focus:ring-teal-600"
                       />
                       <span className="text-sm text-gray-700 dark:text-gray-300">{amenity}</span>
                     </label>
@@ -628,7 +628,7 @@ function SearchResults() {
                 >
                   <SlidersHorizontal className="w-5 h-5" />
                   {activeFiltersCount > 0 && (
-                    <span className="w-5 h-5 bg-rose-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    <span className="w-5 h-5 bg-teal-700 text-white text-xs font-bold rounded-full flex items-center justify-center">
                       {activeFiltersCount}
                     </span>
                   )}
@@ -641,7 +641,7 @@ function SearchResults() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-black dark:text-gray-100 bg-white dark:bg-gray-800"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent text-black dark:text-gray-100 bg-white dark:bg-gray-800"
                 >
                   <option value="recommended">Recommended</option>
                   {activeParsed && <option value="match-score">Best Match</option>}
@@ -658,7 +658,7 @@ function SearchResults() {
                     className={`px-4 py-2 rounded-lg transition-all ${
                       viewMode === 'list'
                         ? 'bg-white dark:bg-gray-800 text-black dark:text-gray-100 shadow-md'
-                        : 'text-black dark:text-gray-300 hover:text-rose-600'
+                        : 'text-black dark:text-gray-300 hover:text-teal-700'
                     }`}
                   >
                     <List className="w-5 h-5" />
@@ -668,7 +668,7 @@ function SearchResults() {
                     className={`px-4 py-2 rounded-lg transition-all ${
                       viewMode === 'map'
                         ? 'bg-white dark:bg-gray-800 text-black dark:text-gray-100 shadow-md'
-                        : 'text-black dark:text-gray-300 hover:text-rose-600'
+                        : 'text-black dark:text-gray-300 hover:text-teal-700'
                     }`}
                   >
                     <Map className="w-5 h-5" />
@@ -699,7 +699,7 @@ function SearchResults() {
                       />
                       {/* Duration Badge */}
                       <div className="absolute top-3 right-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-                        <span className="text-xs font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                        <span className="text-xs font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
                           {property.duration}
                         </span>
                       </div>
@@ -727,8 +727,8 @@ function SearchResults() {
                           <Heart
                             className={`w-5 h-5 ${
                               isFavorite(property.id)
-                                ? 'fill-rose-500 text-rose-500'
-                                : 'text-rose-500'
+                                ? 'fill-teal-600 text-teal-600'
+                                : 'text-teal-600'
                             }`}
                           />
                         </button>
@@ -764,7 +764,7 @@ function SearchResults() {
                         {property.type} · {property.beds} bed{property.beds > 1 ? 's' : ''} · {property.baths} bath{property.baths > 1 ? 's' : ''}
                       </p>
                       <div className="flex items-baseline gap-1 pt-1">
-                        <span className="text-lg font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                        <span className="text-lg font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">
                           ${property.price.toLocaleString()}
                         </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400">/ month</span>
@@ -777,14 +777,14 @@ function SearchResults() {
               )
             ) : (
               <div className="text-center py-20">
-                <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-10 h-10 text-rose-600" />
+                <div className="w-20 h-20 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="w-10 h-10 text-teal-700" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No sublets found</h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">Try adjusting your search filters</p>
                 <button
                   onClick={clearFilters}
-                  className="inline-block bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
+                  className="inline-block bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                   Clear Filters
                 </button>
@@ -803,9 +803,9 @@ function SearchResults() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-rose-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-teal-700 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading results...</p>
         </div>
       </div>

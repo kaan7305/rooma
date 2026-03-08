@@ -59,13 +59,13 @@ export default function PressPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Newspaper className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent mb-4">
             Press & Media
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
@@ -81,11 +81,11 @@ export default function PressPage() {
                 {pressReleases.map((release) => (
                   <div key={release.id} className="border-b border-gray-200 last:border-0 pb-6 last:pb-0">
                     <p className="text-sm text-black mb-2">{release.date}</p>
-                    <h3 className="text-xl font-bold text-black mb-2 hover:text-rose-600 transition-colors cursor-pointer">
+                    <h3 className="text-xl font-bold text-black mb-2 hover:text-teal-600 transition-colors cursor-pointer">
                       {release.title}
                     </h3>
                     <p className="text-black mb-3">{release.excerpt}</p>
-                    <button className="text-rose-600 font-semibold hover:text-rose-700 transition-colors flex items-center gap-2">
+                    <button className="text-teal-600 font-semibold hover:text-teal-700 transition-colors flex items-center gap-2">
                       Read Full Release
                       <ExternalLink className="w-4 h-4" />
                     </button>
@@ -101,17 +101,17 @@ export default function PressPage() {
                   <a
                     key={idx}
                     href={article.url}
-                    className="block p-4 border border-gray-200 rounded-xl hover:border-rose-300 hover:shadow-md transition-all group"
+                    className="block p-4 border border-gray-200 rounded-xl hover:border-teal-300 hover:shadow-md transition-all group"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <p className="text-sm font-bold text-rose-600 mb-1">{article.outlet}</p>
-                        <h4 className="font-bold text-black group-hover:text-rose-600 transition-colors mb-1">
+                        <p className="text-sm font-bold text-teal-600 mb-1">{article.outlet}</p>
+                        <h4 className="font-bold text-black group-hover:text-teal-600 transition-colors mb-1">
                           {article.title}
                         </h4>
                         <p className="text-sm text-black">{article.date}</p>
                       </div>
-                      <ExternalLink className="w-5 h-5 text-black group-hover:text-rose-600 transition-colors shrink-0" />
+                      <ExternalLink className="w-5 h-5 text-black group-hover:text-teal-600 transition-colors shrink-0" />
                     </div>
                   </a>
                 ))}
@@ -123,19 +123,19 @@ export default function PressPage() {
             <div className="bg-white rounded-2xl p-6 shadow-md">
               <h3 className="text-xl font-bold text-black mb-4">Press Kit</h3>
               <p className="text-black mb-6">Download our official press kit including logos, brand assets, and company information.</p>
-              <button className="w-full bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-rose-600 hover:to-pink-700 transition-all flex items-center justify-center gap-2">
+              <button className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all flex items-center justify-center gap-2">
                 <Download className="w-5 h-5" />
                 Download Press Kit
               </button>
             </div>
 
-            <div className="bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-6 text-white">
+            <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl p-6 text-white">
               <h3 className="text-xl font-bold mb-4">Media Inquiries</h3>
               <p className="mb-6 text-white">For press inquiries, interviews, or more information, please contact our media team.</p>
               <div className="space-y-3">
                 <a
                   href="mailto:press@rooma.com"
-                  className="block w-full text-center bg-white text-rose-600 px-6 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors"
+                  className="block w-full text-center bg-white text-teal-600 px-6 py-3 rounded-xl font-semibold hover:bg-teal-50 transition-colors"
                 >
                   <Mail className="w-5 h-5 inline mr-2" />
                   press@rooma.com

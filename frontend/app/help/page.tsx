@@ -113,11 +113,11 @@ export default function HelpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-rose-500 to-pink-600 rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full mb-4">
             <HelpCircle className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">How can we help you?</h1>
@@ -133,48 +133,48 @@ export default function HelpPage() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search for help..."
-              className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-lg"
+              className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-lg"
             />
           </div>
         </div>
 
         {/* Contact Options */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-rose-300 transition cursor-pointer">
-            <div className="h-12 w-12 bg-gradient-to-r from-rose-100 to-pink-100 rounded-lg flex items-center justify-center mb-4">
-              <MessageCircle className="w-6 h-6 text-rose-600" />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-teal-300 transition cursor-pointer">
+            <div className="h-12 w-12 bg-gradient-to-r from-teal-100 to-teal-100 rounded-lg flex items-center justify-center mb-4">
+              <MessageCircle className="w-6 h-6 text-teal-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Live Chat</h3>
             <p className="text-sm text-gray-600 mb-4">
               Chat with our support team in real-time
             </p>
-            <button className="text-rose-600 font-medium hover:text-rose-700 transition">
+            <button className="text-teal-600 font-medium hover:text-teal-700 transition">
               Start Chat →
             </button>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-rose-300 transition cursor-pointer">
-            <div className="h-12 w-12 bg-gradient-to-r from-rose-100 to-pink-100 rounded-lg flex items-center justify-center mb-4">
-              <Mail className="w-6 h-6 text-rose-600" />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-teal-300 transition cursor-pointer">
+            <div className="h-12 w-12 bg-gradient-to-r from-teal-100 to-teal-100 rounded-lg flex items-center justify-center mb-4">
+              <Mail className="w-6 h-6 text-teal-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Email Support</h3>
             <p className="text-sm text-gray-600 mb-4">
               Get help via email within 24 hours
             </p>
-            <a href="mailto:support@rooma.com" className="text-rose-600 font-medium hover:text-rose-700 transition">
+            <a href="mailto:support@rooma.com" className="text-teal-600 font-medium hover:text-teal-700 transition">
               support@rooma.com →
             </a>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-rose-300 transition cursor-pointer">
-            <div className="h-12 w-12 bg-gradient-to-r from-rose-100 to-pink-100 rounded-lg flex items-center justify-center mb-4">
-              <Phone className="w-6 h-6 text-rose-600" />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:border-teal-300 transition cursor-pointer">
+            <div className="h-12 w-12 bg-gradient-to-r from-teal-100 to-teal-100 rounded-lg flex items-center justify-center mb-4">
+              <Phone className="w-6 h-6 text-teal-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Phone Support</h3>
             <p className="text-sm text-gray-600 mb-4">
               Call us for urgent assistance
             </p>
-            <a href="tel:+1-800-NEST-HELP" className="text-rose-600 font-medium hover:text-rose-700 transition">
+            <a href="tel:+1-800-NEST-HELP" className="text-teal-600 font-medium hover:text-teal-700 transition">
               1-800-NEST-HELP →
             </a>
           </div>
@@ -191,7 +191,7 @@ export default function HelpPage() {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
                     selectedCategory === category.id
-                      ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
+                      ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
                       : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                   }`}
                 >
@@ -246,16 +246,16 @@ export default function HelpPage() {
         </div>
 
         {/* Still Need Help */}
-        <div className="mt-12 bg-gradient-to-r from-rose-500 to-pink-600 rounded-lg shadow-lg p-8 text-center text-white">
+        <div className="mt-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg shadow-lg p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-2">Still need help?</h2>
-          <p className="mb-6 text-rose-100">
+          <p className="mb-6 text-teal-100">
             Our support team is available 24/7 to assist you
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-6 py-3 bg-white text-rose-600 rounded-lg font-semibold hover:bg-gray-50 transition">
+            <button className="px-6 py-3 bg-white text-teal-600 rounded-lg font-semibold hover:bg-gray-50 transition">
               Contact Support
             </button>
-            <button className="px-6 py-3 bg-rose-700 text-white rounded-lg font-semibold hover:bg-rose-800 transition">
+            <button className="px-6 py-3 bg-teal-700 text-white rounded-lg font-semibold hover:bg-teal-800 transition">
               Submit a Ticket
             </button>
           </div>

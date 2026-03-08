@@ -112,7 +112,7 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -128,7 +128,7 @@ export default function PaymentsPage() {
                 onClick={() => setActiveTab('methods')}
                 className={`flex items-center gap-2 px-6 py-4 font-semibold transition-colors ${
                   activeTab === 'methods'
-                    ? 'text-rose-600 border-b-2 border-rose-600'
+                    ? 'text-teal-700 border-b-2 border-teal-700'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -139,7 +139,7 @@ export default function PaymentsPage() {
                 onClick={() => setActiveTab('transactions')}
                 className={`flex items-center gap-2 px-6 py-4 font-semibold transition-colors ${
                   activeTab === 'transactions'
-                    ? 'text-rose-600 border-b-2 border-rose-600'
+                    ? 'text-teal-700 border-b-2 border-teal-700'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -155,7 +155,7 @@ export default function PaymentsPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-bold text-gray-900">Saved Payment Methods</h3>
-                  <button className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
+                  <button className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
                     <Plus className="w-4 h-4" />
                     Add Payment Method
                   </button>
@@ -165,7 +165,7 @@ export default function PaymentsPage() {
                   {paymentMethods.map((method) => (
                     <div
                       key={method.id}
-                      className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border-2 border-gray-200 hover:border-rose-500 hover:shadow-lg transition-all relative"
+                      className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border-2 border-gray-200 hover:border-teal-600 hover:shadow-lg transition-all relative"
                     >
                       {method.isDefault && (
                         <div className="absolute top-4 right-4 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
@@ -236,7 +236,7 @@ export default function PaymentsPage() {
                       placeholder="Search transactions..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function PaymentsPage() {
                     <select
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value as any)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                     >
                       <option value="all">All Transactions</option>
                       <option value="completed">Completed</option>

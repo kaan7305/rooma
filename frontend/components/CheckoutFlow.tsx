@@ -150,13 +150,13 @@ export default function CheckoutFlow({
     if (method.type === 'bank') {
       return <Building2 className="w-8 h-8 text-blue-600" />;
     }
-    return <CreditCard className="w-8 h-8 text-purple-600" />;
+    return <CreditCard className="w-8 h-8 text-teal-700" />;
   };
 
   if (step === 'processing') {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <div className="w-20 h-20 bg-gradient-to-r from-rose-500 to-pink-600 rounded-full flex items-center justify-center mb-6 animate-pulse">
+        <div className="w-20 h-20 bg-gradient-to-r from-teal-600 to-teal-700 rounded-full flex items-center justify-center mb-6 animate-pulse">
           <Lock className="w-10 h-10 text-white" />
         </div>
         <h3 className="text-2xl font-bold text-gray-900 mb-2">Processing Payment</h3>
@@ -172,7 +172,7 @@ export default function CheckoutFlow({
           <h3 className="text-2xl font-bold text-gray-900">Review & Confirm</h3>
           <button
             onClick={() => setStep('payment')}
-            className="text-rose-600 hover:text-rose-700 font-medium"
+            className="text-teal-700 hover:text-teal-800 font-medium"
           >
             ← Edit
           </button>
@@ -289,7 +289,7 @@ export default function CheckoutFlow({
               onClick={() => setSelectedPaymentMethod(method)}
               className={`w-full p-4 rounded-xl border-2 transition-all ${
                 selectedPaymentMethod?.id === method.id
-                  ? 'border-rose-500 bg-rose-50'
+                  ? 'border-teal-600 bg-teal-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
@@ -309,7 +309,7 @@ export default function CheckoutFlow({
                   )}
                 </div>
                 {selectedPaymentMethod?.id === method.id && (
-                  <Check className="w-6 h-6 text-rose-500" />
+                  <Check className="w-6 h-6 text-teal-600" />
                 )}
               </div>
             </button>
@@ -319,13 +319,13 @@ export default function CheckoutFlow({
           {!showAddCard ? (
             <button
               onClick={() => setShowAddCard(true)}
-              className="w-full p-4 rounded-xl border-2 border-dashed border-gray-300 hover:border-rose-500 hover:bg-rose-50 transition-all flex items-center justify-center gap-2 text-gray-600 hover:text-rose-600"
+              className="w-full p-4 rounded-xl border-2 border-dashed border-gray-300 hover:border-teal-600 hover:bg-teal-50 transition-all flex items-center justify-center gap-2 text-gray-600 hover:text-teal-700"
             >
               <Plus className="w-5 h-5" />
               <span className="font-medium">Add New Card</span>
             </button>
           ) : (
-            <div className="p-6 rounded-xl border-2 border-rose-500 bg-rose-50">
+            <div className="p-6 rounded-xl border-2 border-teal-600 bg-teal-50">
               <div className="flex items-center justify-between mb-4">
                 <h5 className="font-semibold text-gray-900">Add New Card</h5>
                 <button
@@ -341,7 +341,7 @@ export default function CheckoutFlow({
                   placeholder="Card Number"
                   value={newCard.cardNumber}
                   onChange={(e) => setNewCard({ ...newCard, cardNumber: e.target.value.replace(/\s/g, '').slice(0, 16) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                 />
                 <div className="grid grid-cols-3 gap-3">
                   <input
@@ -349,21 +349,21 @@ export default function CheckoutFlow({
                     placeholder="MM"
                     value={newCard.expiryMonth}
                     onChange={(e) => setNewCard({ ...newCard, expiryMonth: e.target.value.slice(0, 2) })}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                   />
                   <input
                     type="text"
                     placeholder="YYYY"
                     value={newCard.expiryYear}
                     onChange={(e) => setNewCard({ ...newCard, expiryYear: e.target.value.slice(0, 4) })}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                   />
                   <input
                     type="text"
                     placeholder="CVV"
                     value={newCard.cvv}
                     onChange={(e) => setNewCard({ ...newCard, cvv: e.target.value.slice(0, 4) })}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                   />
                 </div>
                 <input
@@ -371,11 +371,11 @@ export default function CheckoutFlow({
                   placeholder="Card Nickname (optional)"
                   value={newCard.nickname}
                   onChange={(e) => setNewCard({ ...newCard, nickname: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                 />
                 <button
                   onClick={handleAddNewCard}
-                  className="w-full px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-medium transition-colors"
+                  className="w-full px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors"
                 >
                   Add Card
                 </button>
@@ -395,7 +395,7 @@ export default function CheckoutFlow({
           <button
             onClick={() => setEnableSplitPayment(!enableSplitPayment)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              enableSplitPayment ? 'bg-rose-500' : 'bg-gray-300'
+              enableSplitPayment ? 'bg-teal-600' : 'bg-gray-300'
             }`}
           >
             <span
@@ -415,14 +415,14 @@ export default function CheckoutFlow({
                   placeholder="Email address"
                   value={participant.email}
                   onChange={(e) => handleParticipantChange(index, 'email', e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                 />
                 <input
                   type="number"
                   placeholder="Amount"
                   value={participant.amount}
                   onChange={(e) => handleParticipantChange(index, 'amount', parseFloat(e.target.value) || 0)}
-                  className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
                 />
                 <button
                   onClick={() => handleRemoveParticipant(index)}
@@ -434,7 +434,7 @@ export default function CheckoutFlow({
             ))}
             <button
               onClick={handleAddParticipant}
-              className="w-full px-4 py-2 border-2 border-dashed border-gray-300 hover:border-rose-500 hover:bg-rose-50 rounded-lg text-gray-600 hover:text-rose-600 font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full px-4 py-2 border-2 border-dashed border-gray-300 hover:border-teal-600 hover:bg-teal-50 rounded-lg text-gray-600 hover:text-teal-700 font-medium transition-all flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add Participant
@@ -461,7 +461,7 @@ export default function CheckoutFlow({
         </button>
         <button
           onClick={handleProceedToReview}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-700 hover:from-teal-700 hover:via-teal-700 hover:to-teal-800 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
         >
           Continue to Review
           <ChevronRight className="w-5 h-5" />

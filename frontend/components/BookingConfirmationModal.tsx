@@ -36,7 +36,7 @@ export default function BookingConfirmationModal({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 p-6 rounded-t-3xl">
+        <div className="sticky top-0 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 p-6 rounded-t-3xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
@@ -71,7 +71,7 @@ export default function BookingConfirmationModal({
                 {property.location}
               </p>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 rounded-lg text-xs font-medium">
+                <span className="px-2 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300 rounded-lg text-xs font-medium">
                   {property.type}
                 </span>
                 <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-medium">
@@ -84,7 +84,7 @@ export default function BookingConfirmationModal({
           {/* Booking Details */}
           <div className="space-y-4">
             <h3 className="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <Calendar className="w-5 h-5 text-teal-700 dark:text-teal-400" />
               Booking Details
             </h3>
 
@@ -101,16 +101,16 @@ export default function BookingConfirmationModal({
                 <p className="text-xs text-blue-600 dark:text-blue-300">After 3:00 PM</p>
               </div>
 
-              <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl border border-purple-200 dark:border-purple-700">
-                <p className="text-xs text-purple-600 dark:text-purple-300 font-medium mb-1">Check-out</p>
-                <p className="text-lg font-bold text-purple-900 dark:text-purple-100">
+              <div className="p-4 bg-teal-50 dark:bg-teal-900/30 rounded-xl border border-teal-200 dark:border-teal-700">
+                <p className="text-xs text-teal-700 dark:text-teal-300 font-medium mb-1">Check-out</p>
+                <p className="text-lg font-bold text-teal-900 dark:text-teal-100">
                   {new Date(checkOut).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                   })}
                 </p>
-                <p className="text-xs text-purple-600 dark:text-purple-300">Before 11:00 AM</p>
+                <p className="text-xs text-teal-700 dark:text-teal-300">Before 11:00 AM</p>
               </div>
             </div>
 
@@ -165,7 +165,7 @@ export default function BookingConfirmationModal({
           </div>
 
           {/* Payment Info */}
-          <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border-2 border-blue-200">
+          <div className="p-4 bg-gradient-to-br from-blue-50 to-teal-50 rounded-xl border-2 border-blue-200">
             <div className="flex items-start gap-3">
               <CreditCard className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
@@ -206,7 +206,7 @@ export default function BookingConfirmationModal({
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold"
             >
               Confirm Booking
             </button>
@@ -215,11 +215,11 @@ export default function BookingConfirmationModal({
           {/* Terms */}
           <p className="text-xs text-gray-500 text-center">
             By confirming, you agree to the{' '}
-            <a href="/terms" className="text-rose-600 hover:underline">
+            <a href="/terms" className="text-teal-700 hover:underline">
               Terms of Service
             </a>{' '}
             and{' '}
-            <a href="/privacy" className="text-rose-600 hover:underline">
+            <a href="/privacy" className="text-teal-700 hover:underline">
               Privacy Policy
             </a>
           </p>

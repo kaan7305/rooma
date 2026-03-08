@@ -41,14 +41,14 @@ export default function CancellationPolicyPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileText className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent mb-4">
             Cancellation Policy
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
@@ -65,7 +65,7 @@ export default function CancellationPolicyPage() {
               const colorMap: Record<string, string> = {
                 emerald: 'from-emerald-100 to-green-100',
                 yellow: 'from-yellow-100 to-orange-100',
-                red: 'from-red-100 to-rose-100',
+                red: 'from-red-100 to-teal-100',
               };
               const iconColorMap: Record<string, string> = {
                 emerald: 'text-emerald-600',
@@ -82,7 +82,7 @@ export default function CancellationPolicyPage() {
                   <ul className="space-y-2">
                     {policy.details.map((detail, detailIdx) => (
                       <li key={detailIdx} className="flex items-start gap-2 text-sm text-black">
-                        <CheckCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" />
                         <span>{detail}</span>
                       </li>
                     ))}
@@ -98,8 +98,8 @@ export default function CancellationPolicyPage() {
           <h2 className="text-2xl font-bold text-black mb-6">Important Information</h2>
           <div className="space-y-6">
             <div className="flex gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6 text-rose-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 text-teal-600" />
               </div>
               <div>
                 <h3 className="font-bold text-black mb-2">Check the Policy Before Booking</h3>
@@ -107,8 +107,8 @@ export default function CancellationPolicyPage() {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center shrink-0">
-                <DollarSign className="w-6 h-6 text-pink-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center shrink-0">
+                <DollarSign className="w-6 h-6 text-teal-600" />
               </div>
               <div>
                 <h3 className="font-bold text-black mb-2">Service Fees Are Non-Refundable</h3>
@@ -128,27 +128,27 @@ export default function CancellationPolicyPage() {
         </div>
 
         {/* How to Cancel */}
-        <div className="bg-gradient-to-br from-rose-100 to-pink-100 rounded-2xl p-8 mb-12">
+        <div className="bg-gradient-to-br from-teal-100 to-teal-100 rounded-2xl p-8 mb-12">
           <h2 className="text-2xl font-bold text-black mb-4">How to Cancel a Booking</h2>
           <ol className="space-y-3 text-black">
             <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-rose-600 shrink-0">1</span>
+              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-teal-600 shrink-0">1</span>
               <span>Go to "Bookings" in your account</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-rose-600 shrink-0">2</span>
+              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-teal-600 shrink-0">2</span>
               <span>Select the booking you want to cancel</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-rose-600 shrink-0">3</span>
+              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-teal-600 shrink-0">3</span>
               <span>Click "Cancel Booking" and review the refund amount</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-rose-600 shrink-0">4</span>
+              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-teal-600 shrink-0">4</span>
               <span>Confirm the cancellation</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-rose-600 shrink-0">5</span>
+              <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-teal-600 shrink-0">5</span>
               <span>Refunds will be processed within 5-10 business days</span>
             </li>
           </ol>
@@ -160,7 +160,7 @@ export default function CancellationPolicyPage() {
           <p className="text-black mb-6">Our support team is here to help clarify any questions about our cancellation policies.</p>
           <Link 
             href="/help"
-            className="inline-block bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-8 py-3 font-semibold transition-all shadow-lg hover:shadow-xl"
+            className="inline-block bg-gradient-to-r from-teal-500 via-teal-500 to-teal-600 hover:from-teal-600 hover:via-teal-600 hover:to-teal-700 text-white rounded-xl px-8 py-3 font-semibold transition-all shadow-lg hover:shadow-xl"
           >
             Contact Support
           </Link>

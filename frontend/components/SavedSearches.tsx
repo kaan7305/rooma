@@ -123,13 +123,13 @@ export default function SavedSearches({ currentSearch, onApplySearch }: SavedSea
     <div className="bg-white rounded-2xl shadow-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Bookmark className="w-5 h-5 text-rose-600" />
+          <Bookmark className="w-5 h-5 text-teal-700" />
           <h2 className="text-xl font-bold text-gray-900">Saved Searches</h2>
         </div>
         {currentSearch && (
           <button
             onClick={() => setShowSaveDialog(true)}
-            className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-lg transition font-semibold text-sm flex items-center gap-2"
+            className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg transition font-semibold text-sm flex items-center gap-2"
           >
             <Bookmark className="w-4 h-4" />
             Save Current Search
@@ -139,7 +139,7 @@ export default function SavedSearches({ currentSearch, onApplySearch }: SavedSea
 
       {/* Save Search Dialog */}
       {showSaveDialog && (
-        <div className="mb-6 p-4 bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl border border-rose-200">
+        <div className="mb-6 p-4 bg-gradient-to-br from-teal-50 to-teal-50 rounded-xl border border-teal-200">
           <h3 className="font-semibold text-gray-900 mb-3">Save This Search</h3>
           <div className="space-y-3">
             <div>
@@ -151,7 +151,7 @@ export default function SavedSearches({ currentSearch, onApplySearch }: SavedSea
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
                 placeholder="e.g., 2BR in Boston"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -160,7 +160,7 @@ export default function SavedSearches({ currentSearch, onApplySearch }: SavedSea
                 id="alerts-enabled"
                 checked={alertsEnabled}
                 onChange={(e) => setAlertsEnabled(e.target.checked)}
-                className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+                className="w-4 h-4 text-teal-700 border-gray-300 rounded focus:ring-teal-600"
               />
               <label htmlFor="alerts-enabled" className="text-sm text-gray-700">
                 Email me when new properties match this search
@@ -169,7 +169,7 @@ export default function SavedSearches({ currentSearch, onApplySearch }: SavedSea
             <div className="flex gap-2">
               <button
                 onClick={handleSaveSearch}
-                className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-lg transition font-semibold text-sm"
+                className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg transition font-semibold text-sm"
               >
                 Save
               </button>

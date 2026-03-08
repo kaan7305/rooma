@@ -41,11 +41,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">ROOMA</h1>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-700 to-teal-800 bg-clip-text text-transparent">ROOMA</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">Welcome back! Please login to your account.</p>
         </div>
 
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 {...register('email')}
                 type="email"
                 id="email"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-600 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-600 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                 placeholder="you@example.com"
               />
               {errors.email && (
@@ -88,7 +88,7 @@ export default function LoginPage() {
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition placeholder:text-gray-600 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition placeholder:text-gray-600 dark:placeholder:text-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                   placeholder="Enter your password"
                 />
                 <button
@@ -110,7 +110,7 @@ export default function LoginPage() {
                 <input
                   type="checkbox"
                   id="remember"
-                  className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300 dark:border-gray-700 rounded"
+                  className="h-4 w-4 text-teal-700 focus:ring-teal-600 border-gray-300 dark:border-gray-700 rounded"
                 />
                 <label htmlFor="remember" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                   Remember me
@@ -118,7 +118,7 @@ export default function LoginPage() {
               </div>
               <Link
                 href="/auth/forgot-password"
-                className="text-sm text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300"
+                className="text-sm text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300"
               >
                 Forgot password?
               </Link>
@@ -131,7 +131,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading || !isCaptchaVerified}
-              className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -148,7 +148,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-300">
               Don't have an account?{' '}
-              <Link href="/auth/register" className="text-rose-600 dark:text-rose-400 font-medium hover:text-rose-700 dark:hover:text-rose-300">
+              <Link href="/auth/register" className="text-teal-700 dark:text-teal-400 font-medium hover:text-teal-800 dark:hover:text-teal-300">
                 Sign up
               </Link>
             </p>
@@ -158,11 +158,11 @@ export default function LoginPage() {
         {/* Footer */}
         <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-300">
           By continuing, you agree to our{' '}
-          <Link href="/terms" className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300">
+          <Link href="/terms" className="text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300">
+          <Link href="/privacy" className="text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300">
             Privacy Policy
           </Link>
         </p>

@@ -31,7 +31,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-300">Loading...</p>
         </div>
       </div>
@@ -43,14 +43,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         {/* Welcome Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center text-2xl font-bold text-white shadow-lg">
                 {user.firstName[0]}
                 {user.lastName[0]}
               </div>
@@ -66,13 +66,13 @@ export default function DashboardPage() {
                 href="/notifications"
                 className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg flex items-center justify-center transition-all group"
               >
-                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-rose-600 transition-colors" />
+                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-teal-700 transition-colors" />
               </Link>
               <Link
                 href="/settings"
                 className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg flex items-center justify-center transition-all group"
               >
-                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-rose-600 transition-colors" />
+                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-teal-700 transition-colors" />
               </Link>
             </div>
           </div>

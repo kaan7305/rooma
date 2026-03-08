@@ -146,7 +146,7 @@ export default function ShareModal({ isOpen, onClose, title, url, image }: Share
                 className={`px-4 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-2 ${
                   copied
                     ? 'bg-emerald-500 text-white'
-                    : 'bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white'
+                    : 'bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white'
                 }`}
               >
                 {copied ? (

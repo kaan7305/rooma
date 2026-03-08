@@ -70,14 +70,14 @@ export default function BlogPage() {
   const categories = ['All', 'Student Life', 'Tips & Guides', 'Internships', 'Community', 'Hosting', 'Study Abroad'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <BookOpen className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent mb-4">
             Sublet Stories
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
@@ -92,8 +92,8 @@ export default function BlogPage() {
               key={category}
               className={`px-6 py-2 rounded-xl font-semibold whitespace-nowrap transition ${
                 category === 'All'
-                  ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg'
-                  : 'bg-white text-black hover:bg-rose-50 border border-gray-200'
+                  ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg'
+                  : 'bg-white text-black hover:bg-teal-50 border border-gray-200'
               }`}
             >
               {category}
@@ -110,7 +110,7 @@ export default function BlogPage() {
               className="w-full h-64 lg:h-full object-cover"
             />
             <div className="p-8 flex flex-col justify-center">
-              <div className="inline-block px-4 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-semibold mb-4 w-fit">
+              <div className="inline-block px-4 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-semibold mb-4 w-fit">
                 <TrendingUp className="w-4 h-4 inline mr-1" />
                 Featured Story
               </div>
@@ -128,7 +128,7 @@ export default function BlogPage() {
               </div>
               <Link
                 href={`/blog/${stories[0].id}`}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-rose-600 hover:to-pink-700 transition-all w-fit"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all w-fit"
               >
                 Read Full Story
                 <ArrowRight className="w-5 h-5" />
@@ -153,10 +153,10 @@ export default function BlogPage() {
                 />
               </div>
               <div className="p-6">
-                <div className="inline-block px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-semibold mb-3">
+                <div className="inline-block px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-semibold mb-3">
                   {story.category}
                 </div>
-                <h3 className="text-xl font-bold text-black mb-2 group-hover:text-rose-600 transition-colors">
+                <h3 className="text-xl font-bold text-black mb-2 group-hover:text-teal-600 transition-colors">
                   {story.title}
                 </h3>
                 <p className="text-black mb-4 line-clamp-2">{story.excerpt}</p>
@@ -173,12 +173,12 @@ export default function BlogPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-8 text-center text-white">
+        <div className="mt-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-4">Share Your Story</h2>
           <p className="mb-6 text-white max-w-2xl mx-auto">
             Have an interesting housing or travel experience? We would love to hear from you and share it with our community.
           </p>
-          <button className="bg-white text-rose-600 px-8 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors">
+          <button className="bg-white text-teal-600 px-8 py-3 rounded-xl font-semibold hover:bg-teal-50 transition-colors">
             Submit Your Story
           </button>
         </div>

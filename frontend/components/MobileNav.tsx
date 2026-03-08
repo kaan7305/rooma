@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Heart, MessageCircle, User, Menu, X } from 'lucide-react';
+import { Home, Search, Bookmark, MessageCircle, User, Menu, X } from 'lucide-react';
 import { useAuthStore } from '@/lib/auth-store';
 
 export default function MobileNav() {
@@ -31,7 +31,7 @@ export default function MobileNav() {
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/search', label: 'Search', icon: Search },
-    { href: '/favorites', label: 'Favorites', icon: Heart },
+    { href: '/favorites', label: 'Saved', icon: Bookmark },
     { href: '/messages', label: 'Messages', icon: MessageCircle },
   ];
 
@@ -54,11 +54,11 @@ export default function MobileNav() {
                 href={item.href}
                 className={`flex flex-col items-center justify-center flex-1 h-full space-y-1 ${
                   active
-                    ? 'text-rose-600'
+                    ? 'text-teal-700'
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
-                <Icon className={`w-6 h-6 ${active ? 'fill-rose-600' : ''}`} />
+                <Icon className={`w-6 h-6 ${active ? 'fill-teal-700' : ''}`} />
                 <span className="text-xs font-medium">{item.label}</span>
               </Link>
             );
@@ -98,9 +98,9 @@ export default function MobileNav() {
 
               {/* User Section */}
               {isAuthenticated && user ? (
-                <div className="p-6 bg-gradient-to-r from-rose-50 to-pink-50 dark:from-gray-700 dark:to-gray-700">
+                <div className="p-6 bg-gradient-to-r from-teal-50 to-teal-100 dark:from-gray-700 dark:to-gray-700">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-rose-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-teal-500 to-teal-700 flex items-center justify-center text-white font-bold text-lg">
                       {user.name?.charAt(0) || user.email.charAt(0).toUpperCase()}
                     </div>
                     <div>
@@ -110,10 +110,10 @@ export default function MobileNav() {
                   </div>
                 </div>
               ) : (
-                <div className="p-6 bg-gradient-to-r from-rose-50 to-pink-50 dark:from-gray-700 dark:to-gray-700">
+                <div className="p-6 bg-gradient-to-r from-teal-50 to-teal-100 dark:from-gray-700 dark:to-gray-700">
                   <Link
                     href="/auth/login"
-                    className="block w-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold text-center"
+                    className="block w-full bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white rounded-xl px-6 py-3 transition-all shadow-lg hover:shadow-xl font-semibold text-center"
                   >
                     Sign In
                   </Link>

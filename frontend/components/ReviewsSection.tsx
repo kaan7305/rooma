@@ -136,7 +136,7 @@ export default function ReviewsSection({ propertyId, isHost = false }: ReviewsSe
         {isAuthenticated && !showReviewForm && (
           <button
             onClick={() => setShowReviewForm(true)}
-            className="px-6 py-2 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold"
+            className="px-6 py-2 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold"
           >
             Write a Review
           </button>
@@ -145,7 +145,7 @@ export default function ReviewsSection({ propertyId, isHost = false }: ReviewsSe
 
       {/* Review Form */}
       {showReviewForm && (
-        <form onSubmit={handleSubmitReview} className="mb-8 p-6 bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl border border-rose-200">
+        <form onSubmit={handleSubmitReview} className="mb-8 p-6 bg-gradient-to-br from-teal-50 to-teal-50 rounded-xl border border-teal-200">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Share Your Experience</h3>
 
           <div className="mb-4">
@@ -164,7 +164,7 @@ export default function ReviewsSection({ propertyId, isHost = false }: ReviewsSe
               onChange={(e) => setComment(e.target.value)}
               rows={4}
               placeholder="Tell others about your experience with this property..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-transparent"
               required
             />
           </div>
@@ -186,7 +186,7 @@ export default function ReviewsSection({ propertyId, isHost = false }: ReviewsSe
           <div className="flex gap-3">
             <button
               type="submit"
-              className="px-6 py-2 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold"
+              className="px-6 py-2 bg-gradient-to-r from-teal-600 via-teal-600 to-teal-800 hover:from-teal-700 hover:via-teal-700 hover:to-teal-900 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold"
             >
               Submit Review
             </button>
@@ -217,7 +217,7 @@ export default function ReviewsSection({ propertyId, isHost = false }: ReviewsSe
           {propertyReviews.map((review) => (
             <div key={review.id} className="pb-6 border-b border-gray-200 last:border-0">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 flex items-center justify-center text-white font-bold flex-shrink-0">
                   {review.userInitials}
                 </div>
                 <div className="flex-1">
@@ -293,12 +293,12 @@ export default function ReviewsSection({ propertyId, isHost = false }: ReviewsSe
                         onChange={(e) => setHostResponseText(e.target.value)}
                         rows={3}
                         placeholder="Write your response to this review..."
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent mb-2"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-transparent mb-2"
                       />
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleHostResponse(review.id)}
-                          className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-lg transition font-semibold text-sm"
+                          className="px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg transition font-semibold text-sm"
                         >
                           Post Response
                         </button>
@@ -317,9 +317,9 @@ export default function ReviewsSection({ propertyId, isHost = false }: ReviewsSe
 
                   {/* Host Response Display */}
                   {review.hostResponse && (
-                    <div className="mt-4 p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                    <div className="mt-4 p-4 bg-gradient-to-br from-teal-50 to-teal-50 rounded-lg border border-teal-200">
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-teal-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                           H
                         </div>
                         <div className="flex-1">

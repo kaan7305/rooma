@@ -52,7 +52,7 @@ export default function NeighborhoodInsights({ location, city }: NeighborhoodIns
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
+        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-teal-700 rounded-2xl flex items-center justify-center">
           <MapPin className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -64,7 +64,7 @@ export default function NeighborhoodInsights({ location, city }: NeighborhoodIns
       {/* Scores */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {/* Walk Score */}
-        <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+        <div className="p-4 bg-gradient-to-br from-blue-50 to-teal-50 rounded-xl border border-blue-200">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
               <Footprints className="w-5 h-5 text-blue-600" />
@@ -96,14 +96,14 @@ export default function NeighborhoodInsights({ location, city }: NeighborhoodIns
         </div>
 
         {/* Safety Rating */}
-        <div className="p-4 bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl border border-rose-200">
+        <div className="p-4 bg-gradient-to-br from-teal-50 to-teal-50 rounded-xl border border-teal-200">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-              <ShieldCheck className="w-5 h-5 text-rose-600" />
+              <ShieldCheck className="w-5 h-5 text-teal-700" />
             </div>
             <div>
               <p className="text-xs text-gray-600 font-medium">Safety Rating</p>
-              <div className="text-2xl font-bold text-rose-600">
+              <div className="text-2xl font-bold text-teal-700">
                 {data.safetyRating.toFixed(1)}/5.0
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function NeighborhoodInsights({ location, city }: NeighborhoodIns
               <div
                 key={star}
                 className={`w-3 h-3 rounded-full ${
-                  star <= Math.round(data.safetyRating) ? 'bg-rose-500' : 'bg-gray-200'
+                  star <= Math.round(data.safetyRating) ? 'bg-teal-600' : 'bg-gray-200'
                 }`}
               />
             ))}
@@ -124,21 +124,21 @@ export default function NeighborhoodInsights({ location, city }: NeighborhoodIns
       {/* Nearby Universities */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-4">
-          <GraduationCap className="w-5 h-5 text-purple-600" />
+          <GraduationCap className="w-5 h-5 text-teal-700" />
           <h3 className="font-bold text-gray-900">Nearby Universities</h3>
         </div>
         <div className="space-y-3">
           {data.universities.map((university, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200"
+              className="flex items-center justify-between p-3 bg-teal-50 rounded-lg border border-teal-200"
             >
               <div>
                 <p className="font-semibold text-gray-900">{university.name}</p>
                 <p className="text-sm text-gray-600">{university.commute}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-bold text-purple-600">{university.distance}</p>
+                <p className="text-sm font-bold text-teal-700">{university.distance}</p>
                 <p className="text-xs text-gray-500">away</p>
               </div>
             </div>

@@ -112,8 +112,8 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
 
   const getSuggestionIcon = (type: string) => {
     switch (type) {
-      case 'city': return <MapPin className="w-4 h-4 text-rose-500" />;
-      case 'university': return <GraduationCap className="w-4 h-4 text-purple-500" />;
+      case 'city': return <MapPin className="w-4 h-4 text-teal-600" />;
+      case 'university': return <GraduationCap className="w-4 h-4 text-teal-600" />;
       case 'query': return <Search className="w-4 h-4 text-gray-400" />;
       default: return <Search className="w-4 h-4 text-gray-400" />;
     }
@@ -126,11 +126,11 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
       <form onSubmit={handleSubmit}>
         <div className={`relative flex items-center bg-white dark:bg-gray-800 border-2 transition-all ${
           isFocused
-            ? 'border-rose-500 shadow-lg shadow-rose-500/10'
+            ? 'border-teal-600 shadow-lg shadow-teal-600/10'
             : 'border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg'
         } ${compact ? 'rounded-xl' : 'rounded-2xl'}`}>
           <div className="pl-4 pr-2">
-            <Sparkles className={`w-5 h-5 transition-colors ${isFocused ? 'text-rose-500' : 'text-gray-400'}`} />
+            <Sparkles className={`w-5 h-5 transition-colors ${isFocused ? 'text-teal-600' : 'text-gray-400'}`} />
           </div>
           <input
             ref={inputRef}
@@ -155,7 +155,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
           )}
           <button
             type="submit"
-            className={`bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:via-pink-600 hover:to-purple-700 text-white font-semibold transition-all ${
+            className={`bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white font-semibold transition-all ${
               compact
                 ? 'px-4 py-2 rounded-lg mr-1.5 text-sm'
                 : 'px-6 py-3 rounded-xl mr-2 text-base'
@@ -176,7 +176,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Smart Search understands</p>
               <div className="flex flex-wrap gap-2">
                 {parsedPreview.location && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 rounded-full text-xs font-medium">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
                     <MapPin className="w-3 h-3" /> {parsedPreview.location}
                   </span>
                 )}
@@ -197,7 +197,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
                   </span>
                 )}
                 {parsedPreview.propertyType && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-medium">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
                     <Home className="w-3 h-3" /> {parsedPreview.propertyType}
                   </span>
                 )}
@@ -207,7 +207,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
                   </span>
                 )}
                 {parsedPreview.duration && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-xs font-medium">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
                     <Clock className="w-3 h-3" /> {parsedPreview.duration}
                   </span>
                 )}
@@ -229,7 +229,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
                   key={`${suggestion.type}-${suggestion.value}`}
                   className={`w-full px-4 py-2.5 flex items-center gap-3 text-left transition ${
                     index === selectedIndex
-                      ? 'bg-rose-50 dark:bg-rose-900/20'
+                      ? 'bg-teal-50 dark:bg-teal-900/20'
                       : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                   onClick={() => {
@@ -257,7 +257,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Recent Searches</p>
                 <button
                   onClick={() => { clearRecentSearches(); setRecentSearches([]); }}
-                  className="text-xs text-rose-500 hover:text-rose-600 font-medium"
+                  className="text-xs text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Clear
                 </button>
@@ -267,7 +267,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
                   key={search}
                   className={`w-full px-4 py-2.5 flex items-center gap-3 text-left transition ${
                     index === selectedIndex
-                      ? 'bg-rose-50 dark:bg-rose-900/20'
+                      ? 'bg-teal-50 dark:bg-teal-900/20'
                       : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                   onClick={() => {
@@ -285,7 +285,7 @@ export default function SmartSearchBar({ onSearch, initialQuery = '', placeholde
           {/* Tip */}
           <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              <Sparkles className="w-3 h-3 inline mr-1 text-rose-400" />
+              <Sparkles className="w-3 h-3 inline mr-1 text-teal-400" />
               Try: &quot;2 bed apartment in Boston under $2000&quot; or &quot;pet friendly studio near NYU&quot;
             </p>
           </div>

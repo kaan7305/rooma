@@ -71,8 +71,8 @@ export default function PropertyGallery({ images, title }: PropertyGalleryProps)
               onClick={() => setSelectedIndex(index)}
               className={`relative aspect-video rounded-xl overflow-hidden transition-all ${
                 selectedIndex === index
-                  ? 'ring-4 ring-rose-500 scale-105'
-                  : 'ring-2 ring-gray-200 hover:ring-rose-300 opacity-70 hover:opacity-100'
+                  ? 'ring-4 ring-teal-600 scale-105'
+                  : 'ring-2 ring-gray-200 hover:ring-teal-300 opacity-70 hover:opacity-100'
               }`}
             >
               <img

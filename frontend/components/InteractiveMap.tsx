@@ -174,7 +174,7 @@ export default function InteractiveMap() {
       case 'university':
         return 'bg-blue-500';
       case 'transit':
-        return 'bg-purple-500';
+        return 'bg-teal-600';
       case 'grocery':
         return 'bg-green-500';
       case 'cafe':
@@ -239,12 +239,12 @@ export default function InteractiveMap() {
                 <div
                   className={`w-10 h-10 rounded-full shadow-lg flex items-center justify-center ${
                     isSelected
-                      ? 'bg-rose-600 ring-4 ring-rose-300'
-                      : 'bg-white border-2 border-rose-500'
+                      ? 'bg-teal-700 ring-4 ring-teal-300'
+                      : 'bg-white border-2 border-teal-600'
                   }`}
                 >
                   <MapPin
-                    className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-rose-600'}`}
+                    className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-teal-700'}`}
                     fill={isSelected ? 'white' : 'currentColor'}
                   />
                 </div>
@@ -268,7 +268,7 @@ export default function InteractiveMap() {
                   <h4 className="font-bold text-sm text-gray-900 mb-1">{property.title}</h4>
                   <p className="text-xs text-gray-600 mb-2">{property.location}</p>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-rose-600">${property.price}/mo</span>
+                    <span className="font-bold text-teal-700">${property.price}/mo</span>
                     <div className="flex gap-2 text-gray-600">
                       <span className="flex items-center gap-1">
                         <Bed className="w-3 h-3" /> {property.beds}
@@ -324,8 +324,8 @@ export default function InteractiveMap() {
                   return `${window.innerWidth / 2 + offsetLng},${window.innerHeight / 2 - offsetLat}`;
                 })
                 .join(' ')}
-              fill="rgba(236, 72, 153, 0.2)"
-              stroke="rgb(236, 72, 153)"
+              fill="rgba(13, 148, 136, 0.2)"
+              stroke="rgb(13, 148, 136)"
               strokeWidth="2"
             />
           </svg>
@@ -370,7 +370,7 @@ export default function InteractiveMap() {
             filters.propertyType.length > 0 ||
             filters.amenities.length > 0 ||
             drawnArea) && (
-            <span className="bg-rose-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+            <span className="bg-teal-700 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {filters.beds.length +
                 filters.propertyType.length +
                 filters.amenities.length +
@@ -384,7 +384,7 @@ export default function InteractiveMap() {
           onClick={toggleAmenities}
           className={`px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center gap-2 font-medium ${
             showAmenities
-              ? 'bg-rose-600 text-white'
+              ? 'bg-teal-700 text-white'
               : 'bg-white text-gray-900'
           }`}
         >
@@ -401,7 +401,7 @@ export default function InteractiveMap() {
             }}
             className={`p-2 rounded transition ${
               isDrawing
-                ? 'bg-rose-600 text-white'
+                ? 'bg-teal-700 text-white'
                 : 'hover:bg-gray-100 text-gray-600'
             }`}
             title="Draw search area"
@@ -430,7 +430,7 @@ export default function InteractiveMap() {
 
       {/* Drawing Instructions */}
       {isDrawing && (
-        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 bg-rose-600 text-white px-4 py-2 rounded-lg shadow-lg z-[1001]">
+        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 bg-teal-700 text-white px-4 py-2 rounded-lg shadow-lg z-[1001]">
           Click on the map to draw a custom search area. Need at least 3 points.
           {drawingPoints.length > 0 && ` (${drawingPoints.length} points)`}
         </div>
@@ -499,8 +499,8 @@ export default function InteractiveMap() {
                     }}
                     className={`px-4 py-2 rounded-lg border transition ${
                       filters.beds.includes(num)
-                        ? 'bg-rose-600 text-white border-rose-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-rose-600'
+                        ? 'bg-teal-700 text-white border-teal-700'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-teal-700'
                     }`}
                   >
                     {num}
@@ -526,7 +526,7 @@ export default function InteractiveMap() {
                           : filters.propertyType.filter((t) => t !== type);
                         setFilters({ propertyType: newTypes });
                       }}
-                      className="w-4 h-4 text-rose-600 rounded"
+                      className="w-4 h-4 text-teal-700 rounded"
                     />
                     <span className="text-sm text-gray-700">{type}</span>
                   </label>
@@ -551,7 +551,7 @@ export default function InteractiveMap() {
                           : filters.amenities.filter((a) => a !== amenity);
                         setFilters({ amenities: newAmenities });
                       }}
-                      className="w-4 h-4 text-rose-600 rounded"
+                      className="w-4 h-4 text-teal-700 rounded"
                     />
                     <span className="text-sm text-gray-700">{amenity}</span>
                   </label>
@@ -577,7 +577,7 @@ export default function InteractiveMap() {
           <div className="space-y-2">
             {[
               { type: 'university', label: 'Universities', icon: GraduationCap, color: 'blue' },
-              { type: 'transit', label: 'Transit', icon: Bus, color: 'purple' },
+              { type: 'transit', label: 'Transit', icon: Bus, color: 'teal' },
               { type: 'grocery', label: 'Grocery', icon: ShoppingCart, color: 'green' },
               { type: 'cafe', label: 'Cafes', icon: Coffee, color: 'orange' },
               { type: 'gym', label: 'Gyms', icon: Dumbbell, color: 'red' },
@@ -592,7 +592,7 @@ export default function InteractiveMap() {
                       : amenityTypes.filter((t) => t !== type);
                     setAmenityTypes(newTypes);
                   }}
-                  className="w-4 h-4 text-rose-600 rounded"
+                  className="w-4 h-4 text-teal-700 rounded"
                 />
                 <div className={`w-6 h-6 rounded-full bg-${color}-500 flex items-center justify-center text-white`}>
                   <Icon className="w-3 h-3" />
@@ -627,7 +627,7 @@ export default function InteractiveMap() {
             <p className="text-sm text-gray-600 mb-3">{selectedProperty.location}</p>
 
             <div className="flex items-center justify-between mb-4">
-              <div className="text-2xl font-bold text-rose-600">
+              <div className="text-2xl font-bold text-teal-700">
                 ${selectedProperty.price}
                 <span className="text-sm text-gray-500">/month</span>
               </div>
@@ -645,7 +645,7 @@ export default function InteractiveMap() {
 
             <button
               onClick={() => router.push(`/property/${selectedProperty.id}`)}
-              className="w-full px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl"
+              className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl"
             >
               View Details
             </button>
@@ -658,11 +658,11 @@ export default function InteractiveMap() {
         <h4 className="text-xs font-bold text-gray-900 mb-2">Map Legend</h4>
         <div className="space-y-1 text-xs text-gray-600">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-rose-600"></div>
+            <div className="w-4 h-4 rounded-full bg-teal-700"></div>
             <span>Selected Property</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-white border-2 border-rose-500"></div>
+            <div className="w-4 h-4 rounded-full bg-white border-2 border-teal-600"></div>
             <span>Available Property</span>
           </div>
           {showAmenities && (
@@ -673,7 +673,7 @@ export default function InteractiveMap() {
                 <span>University</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full bg-purple-500"></div>
+                <div className="w-4 h-4 rounded-full bg-teal-600"></div>
                 <span>Transit</span>
               </div>
               <div className="flex items-center gap-2">

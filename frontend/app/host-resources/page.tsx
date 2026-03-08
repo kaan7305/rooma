@@ -39,13 +39,13 @@ export default function HostResourcesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <BookOpen className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent mb-4">
             Host Resources
           </h1>
           <p className="text-xl text-black max-w-3xl mx-auto">
@@ -62,10 +62,10 @@ export default function HostResourcesPage() {
                 href={resource.link}
                 className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all group"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-rose-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-100 rounded-xl flex items-center justify-center mb-4">
+                  <Icon className="w-6 h-6 text-teal-600" />
                 </div>
-                <h3 className="text-xl font-bold text-black mb-2 group-hover:text-rose-600 transition-colors">
+                <h3 className="text-xl font-bold text-black mb-2 group-hover:text-teal-600 transition-colors">
                   {resource.title}
                 </h3>
                 <p className="text-black">{resource.description}</p>
@@ -80,13 +80,13 @@ export default function HostResourcesPage() {
             {videos.map((video) => (
               <div
                 key={video.title}
-                className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:border-rose-300 hover:shadow-md transition-all cursor-pointer group"
+                className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:border-teal-300 hover:shadow-md transition-all cursor-pointer group"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shrink-0">
+                <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shrink-0">
                   <Video className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-black group-hover:text-rose-600 transition-colors mb-1">
+                  <h4 className="font-bold text-black group-hover:text-teal-600 transition-colors mb-1">
                     {video.title}
                   </h4>
                   <p className="text-sm text-black">{video.duration}</p>
@@ -97,13 +97,13 @@ export default function HostResourcesPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-8 text-white">
+          <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl p-8 text-white">
             <Home className="w-12 h-12 mb-4" />
             <h3 className="text-2xl font-bold mb-4">Ready to List?</h3>
             <p className="mb-6 text-white">Start earning by listing your property on ROOMA today.</p>
             <Link
               href="/host/new"
-              className="inline-block bg-white text-rose-600 px-6 py-3 rounded-xl font-semibold hover:bg-rose-50 transition-colors"
+              className="inline-block bg-white text-teal-600 px-6 py-3 rounded-xl font-semibold hover:bg-teal-50 transition-colors"
             >
               List Your Space
             </Link>

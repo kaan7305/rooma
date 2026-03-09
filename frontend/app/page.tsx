@@ -209,7 +209,7 @@ function ProfileCardMockup() {
       </div>
       <div className="border-t border-gray-100 pt-4 mb-5">
         <p className="text-sm font-semibold text-gray-900 mb-1">About Sarah</p>
-        <p className="text-xs text-gray-500 leading-relaxed">Hi! I&apos;m heading home for the summer and looking for someone to take over my apartment near campus. It&apos;s a cozy 1-bed with great light!</p>
+        <p className="text-xs text-gray-500 leading-relaxed">Hi! I&apos;ll have an internship at Seattle this summer and I&apos;m looking for housing near campus. Would love a cozy place with great light!</p>
       </div>
       <div className="flex gap-3">
         <button className="flex-1 py-2.5 rounded-full border border-gray-200 text-sm font-medium text-gray-700">Ignore</button>

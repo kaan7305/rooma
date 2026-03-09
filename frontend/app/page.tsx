@@ -141,9 +141,7 @@ function NotificationStream() {
               {/* Top row: app icon + time */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-sm">
-                    <span className="text-white font-bold text-sm">R</span>
-                  </div>
+                  <img src="/rooma-logo.svg" alt="Rooma" className="w-10 h-10 rounded-xl shadow-sm" />
                   <div>
                     <p className="text-sm font-bold text-gray-900">Rooma</p>
                     <p className="text-[10px] text-gray-400">{notif.time}</p>

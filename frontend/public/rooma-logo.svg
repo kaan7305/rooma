@@ -24,34 +24,44 @@
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000020"/>
     </filter>
 
+    <!-- Shadow for students -->
+    <filter id="studentShadow" x="-15%" y="-10%" width="130%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#00000025"/>
+    </filter>
+
     <!-- Gradient for the house body -->
-    <linearGradient id="houseGrad" x1="160" y1="200" x2="352" y2="400" gradientUnits="userSpaceOnUse">
+    <linearGradient id="houseGrad" x1="160" y1="180" x2="352" y2="380" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#FFFFFF"/>
       <stop offset="100%" stop-color="#F0F0F0"/>
     </linearGradient>
 
     <!-- Gradient for roof -->
-    <linearGradient id="roofGrad" x1="256" y1="100" x2="256" y2="220" gradientUnits="userSpaceOnUse">
+    <linearGradient id="roofGrad" x1="256" y1="80" x2="256" y2="200" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#FFFFFF"/>
       <stop offset="100%" stop-color="#E8E8E8"/>
     </linearGradient>
 
     <!-- Cap gradient -->
-    <linearGradient id="capGrad" x1="200" y1="80" x2="312" y2="140" gradientUnits="userSpaceOnUse">
+    <linearGradient id="capGrad" x1="200" y1="60" x2="312" y2="120" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#1E293B"/>
       <stop offset="100%" stop-color="#0F172A"/>
     </linearGradient>
 
     <!-- Door gradient -->
-    <linearGradient id="doorGrad" x1="220" y1="300" x2="292" y2="400" gradientUnits="userSpaceOnUse">
+    <linearGradient id="doorGrad" x1="225" y1="280" x2="287" y2="370" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#F97316"/>
       <stop offset="100%" stop-color="#EA580C"/>
     </linearGradient>
 
-    <!-- Book gradient -->
-    <linearGradient id="bookGrad" x1="190" y1="240" x2="322" y2="310" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#F97316"/>
-      <stop offset="100%" stop-color="#DC6A0F"/>
+    <!-- Student skin -->
+    <linearGradient id="skinGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FDDCB5"/>
+      <stop offset="100%" stop-color="#F5C89A"/>
+    </linearGradient>
+
+    <linearGradient id="skinGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C68642"/>
+      <stop offset="100%" stop-color="#A0522D"/>
     </linearGradient>
 
     <!-- Clip for rounded square -->
@@ -69,72 +79,191 @@
   <!-- Main house group with shadow -->
   <g filter="url(#houseShadow)">
     <!-- House body -->
-    <path d="M160 240 L160 390 C160 396 165 400 170 400 L342 400 C348 400 352 396 352 390 L352 240 Z" fill="url(#houseGrad)"/>
+    <path d="M155 220 L155 370 C155 376 160 380 165 380 L347 380 C353 380 357 376 357 370 L357 220 Z" fill="url(#houseGrad)"/>
 
     <!-- Roof -->
-    <path d="M256 110 L120 240 C116 244 119 250 124 250 L150 250 L150 240 L362 240 L362 250 L388 250 C393 250 396 244 392 240 L256 110Z" fill="url(#roofGrad)"/>
+    <path d="M256 90 L110 220 C106 224 109 230 114 230 L145 230 L145 220 L367 220 L367 230 L398 230 C403 230 406 224 402 220 L256 90Z" fill="url(#roofGrad)"/>
 
     <!-- Chimney -->
-    <rect x="320" y="145" width="30" height="70" rx="4" fill="#E8E8E8"/>
-    <rect x="316" y="140" width="38" height="12" rx="4" fill="#F0F0F0"/>
+    <rect x="325" y="125" width="28" height="65" rx="4" fill="#E8E8E8"/>
+    <rect x="321" y="120" width="36" height="12" rx="4" fill="#F0F0F0"/>
   </g>
 
   <!-- Door with rounded top -->
-  <rect x="222" y="310" width="68" height="90" rx="34" fill="url(#doorGrad)"/>
-  <rect x="222" y="350" width="68" height="50" fill="url(#doorGrad)"/>
+  <rect x="225" y="295" width="62" height="85" rx="31" fill="url(#doorGrad)"/>
+  <rect x="225" y="335" width="62" height="45" fill="url(#doorGrad)"/>
 
   <!-- Door knob -->
-  <circle cx="278" cy="360" r="5" fill="#FCD34D"/>
-  <circle cx="278" cy="360" r="2.5" fill="#FBBF24"/>
+  <circle cx="277" cy="342" r="4.5" fill="#FCD34D"/>
+  <circle cx="277" cy="342" r="2.2" fill="#FBBF24"/>
 
   <!-- Window left -->
   <g filter="url(#innerGlow)">
-    <rect x="175" y="270" width="35" height="40" rx="4" fill="#BFDBFE"/>
-    <line x1="192.5" y1="270" x2="192.5" y2="310" stroke="white" stroke-width="2"/>
-    <line x1="175" y1="290" x2="210" y2="290" stroke="white" stroke-width="2"/>
+    <rect x="170" y="252" width="38" height="38" rx="4" fill="#BFDBFE"/>
+    <line x1="189" y1="252" x2="189" y2="290" stroke="white" stroke-width="2"/>
+    <line x1="170" y1="271" x2="208" y2="271" stroke="white" stroke-width="2"/>
   </g>
 
   <!-- Window right -->
   <g filter="url(#innerGlow)">
-    <rect x="302" y="270" width="35" height="40" rx="4" fill="#BFDBFE"/>
-    <line x1="319.5" y1="270" x2="319.5" y2="310" stroke="white" stroke-width="2"/>
-    <line x1="302" y1="290" x2="337" y2="290" stroke="white" stroke-width="2"/>
+    <rect x="304" y="252" width="38" height="38" rx="4" fill="#BFDBFE"/>
+    <line x1="323" y1="252" x2="323" y2="290" stroke="white" stroke-width="2"/>
+    <line x1="304" y1="271" x2="342" y2="271" stroke="white" stroke-width="2"/>
   </g>
 
   <!-- Graduation cap on roof -->
-  <g transform="translate(256, 95)">
+  <g transform="translate(256, 78)">
     <!-- Cap board (mortarboard) -->
-    <polygon points="0,-30 -52,-10 0,10 52,-10" fill="url(#capGrad)"/>
-    <!-- Cap top highlight -->
-    <polygon points="0,-28 -46,-10 0,6 46,-10" fill="#1E293B" opacity="0.8"/>
+    <polygon points="0,-28 -50,-9 0,10 50,-9" fill="url(#capGrad)"/>
+    <polygon points="0,-26 -44,-9 0,6 44,-9" fill="#1E293B" opacity="0.8"/>
     <!-- Cap skull piece -->
-    <ellipse cx="0" cy="-2" rx="22" ry="14" fill="#334155"/>
-    <ellipse cx="0" cy="-4" rx="20" ry="12" fill="#1E293B"/>
+    <ellipse cx="0" cy="-1" rx="20" ry="13" fill="#334155"/>
+    <ellipse cx="0" cy="-3" rx="18" ry="11" fill="#1E293B"/>
     <!-- Button on top -->
-    <circle cx="0" cy="-10" r="4" fill="#334155"/>
+    <circle cx="0" cy="-9" r="3.5" fill="#334155"/>
     <!-- Tassel string -->
-    <path d="M0,-10 Q15,-5 40,15 Q45,20 42,30" stroke="#FCD34D" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M0,-9 Q14,-4 38,14 Q42,18 40,28" stroke="#FCD34D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
     <!-- Tassel end -->
-    <path d="M40,28 L38,42 L42,42 L44,42 L42,28" fill="#FCD34D"/>
-    <rect x="37" y="26" width="10" height="5" rx="2" fill="#FBBF24"/>
+    <path d="M38,26 L36,38 L40,38 L42,38 L40,26" fill="#FCD34D"/>
+    <rect x="35" y="24" width="9" height="4.5" rx="2" fill="#FBBF24"/>
   </g>
 
   <!-- Open book below the roof peak -->
-  <g transform="translate(256, 215)">
+  <g transform="translate(256, 198)">
     <!-- Left page -->
-    <path d="M-4,0 C-4,0 -40,-8 -50,0 L-50,35 C-40,28 -4,35 -4,35 Z" fill="white" opacity="0.95"/>
+    <path d="M-4,0 C-4,0 -38,-7 -46,0 L-46,30 C-38,24 -4,30 -4,30 Z" fill="white" opacity="0.95"/>
     <!-- Right page -->
-    <path d="M4,0 C4,0 40,-8 50,0 L50,35 C40,28 4,35 4,35 Z" fill="white" opacity="0.9"/>
+    <path d="M4,0 C4,0 38,-7 46,0 L46,30 C38,24 4,30 4,30 Z" fill="white" opacity="0.9"/>
     <!-- Spine -->
-    <path d="M-4,0 C-2,3 2,3 4,0 L4,35 C2,32 -2,32 -4,35 Z" fill="#E8E8E8"/>
-    <!-- Text lines on left page -->
-    <line x1="-42" y1="10" x2="-12" y2="10" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="-40" y1="16" x2="-14" y2="16" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="-38" y1="22" x2="-16" y2="22" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
-    <!-- Text lines on right page -->
-    <line x1="12" y1="10" x2="42" y2="10" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="14" y1="16" x2="40" y2="16" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="16" y1="22" x2="38" y2="22" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M-4,0 C-2,3 2,3 4,0 L4,30 C2,27 -2,27 -4,30 Z" fill="#E8E8E8"/>
+    <!-- Text lines left -->
+    <line x1="-39" y1="8" x2="-12" y2="8" stroke="#CBD5E1" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="-37" y1="14" x2="-14" y2="14" stroke="#CBD5E1" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="-35" y1="20" x2="-16" y2="20" stroke="#CBD5E1" stroke-width="1.3" stroke-linecap="round"/>
+    <!-- Text lines right -->
+    <line x1="12" y1="8" x2="39" y2="8" stroke="#CBD5E1" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="14" y1="14" x2="37" y2="14" stroke="#CBD5E1" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="16" y1="20" x2="35" y2="20" stroke="#CBD5E1" stroke-width="1.3" stroke-linecap="round"/>
+  </g>
+
+  <!-- STUDENT 1 - Left side, walking with backpack -->
+  <g filter="url(#studentShadow)" transform="translate(75, 310)">
+    <!-- Head -->
+    <circle cx="30" cy="15" r="18" fill="url(#skinGrad1)"/>
+    <!-- Hair -->
+    <path d="M14,10 Q14,0 30,-2 Q46,0 46,10 Q46,5 40,3 Q30,0 20,3 Q14,5 14,10Z" fill="#4A3728"/>
+    <!-- Eyes -->
+    <ellipse cx="24" cy="14" rx="2" ry="2.5" fill="#1E293B"/>
+    <ellipse cx="36" cy="14" rx="2" ry="2.5" fill="#1E293B"/>
+    <!-- Smile -->
+    <path d="M24,22 Q30,27 36,22" stroke="#C0846A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <rect x="26" y="32" width="8" height="8" rx="2" fill="url(#skinGrad1)"/>
+    <!-- Body / T-shirt -->
+    <path d="M12,40 Q12,36 20,36 L40,36 Q48,36 48,40 L50,85 Q50,90 45,90 L15,90 Q10,90 10,85 Z" fill="white"/>
+    <!-- Shirt collar -->
+    <path d="M22,36 L30,44 L38,36" stroke="#E5E7EB" stroke-width="1.5" fill="none"/>
+    <!-- Arms -->
+    <path d="M12,42 Q2,50 6,72" stroke="url(#skinGrad1)" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M48,42 Q56,55 50,72" stroke="url(#skinGrad1)" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Jeans -->
+    <path d="M14,88 L12,140 Q12,145 17,145 L26,145 Q28,145 28,140 L28,95" fill="#3B82F6"/>
+    <path d="M46,88 L48,140 Q48,145 43,145 L34,145 Q32,145 32,140 L32,95" fill="#3B82F6"/>
+    <!-- Shoes -->
+    <ellipse cx="19" cy="147" rx="12" ry="5" fill="#1E293B"/>
+    <ellipse cx="41" cy="147" rx="12" ry="5" fill="#1E293B"/>
+    <!-- Backpack strap -->
+    <path d="M20,40 L18,75" stroke="#9CA3AF" stroke-width="3" stroke-linecap="round"/>
+    <path d="M40,40 L42,75" stroke="#9CA3AF" stroke-width="3" stroke-linecap="round"/>
+    <!-- Backpack (behind, peeking out) -->
+    <rect x="5" y="42" width="12" height="40" rx="5" fill="#6B7280" opacity="0.7"/>
+  </g>
+
+  <!-- STUDENT 2 - Right side, female with ponytail -->
+  <g filter="url(#studentShadow)" transform="translate(385, 300)">
+    <!-- Head -->
+    <circle cx="30" cy="15" r="18" fill="url(#skinGrad2)"/>
+    <!-- Hair -->
+    <path d="M12,12 Q12,-2 30,-4 Q48,-2 48,12 Q48,6 42,2 Q30,-3 18,2 Q12,6 12,12Z" fill="#1A1A2E"/>
+    <!-- Ponytail -->
+    <path d="M46,8 Q58,5 60,20 Q62,35 55,45" stroke="#1A1A2E" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Hair tie -->
+    <circle cx="47" cy="8" r="3" fill="#EC4899"/>
+    <!-- Eyes -->
+    <ellipse cx="24" cy="14" rx="2" ry="2.5" fill="#1E293B"/>
+    <ellipse cx="36" cy="14" rx="2" ry="2.5" fill="#1E293B"/>
+    <!-- Eyelashes -->
+    <path d="M22,11 L21,9" stroke="#1E293B" stroke-width="1" stroke-linecap="round"/>
+    <path d="M34,11 L33,9" stroke="#1E293B" stroke-width="1" stroke-linecap="round"/>
+    <!-- Smile -->
+    <path d="M24,22 Q30,27 36,22" stroke="#8B5E3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <rect x="26" y="32" width="8" height="8" rx="2" fill="url(#skinGrad2)"/>
+    <!-- Body / Hoodie -->
+    <path d="M10,40 Q10,36 20,36 L40,36 Q50,36 50,40 L52,90 Q52,95 47,95 L13,95 Q8,95 8,90 Z" fill="#F97316"/>
+    <!-- Hoodie pocket -->
+    <rect x="18" y="68" width="24" height="14" rx="5" fill="#EA580C" opacity="0.5"/>
+    <!-- Hood strings -->
+    <line x1="25" y1="40" x2="23" y2="55" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="35" y1="40" x2="37" y2="55" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Arms -->
+    <path d="M10,44 Q0,55 4,75" stroke="#F97316" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M50,44 Q58,55 54,75" stroke="#F97316" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <!-- Hands -->
+    <circle cx="4" cy="77" r="5" fill="url(#skinGrad2)"/>
+    <circle cx="54" cy="77" r="5" fill="url(#skinGrad2)"/>
+    <!-- Book in hand -->
+    <rect x="-4" y="73" width="14" height="18" rx="2" fill="white" transform="rotate(-10, 4, 82)"/>
+    <line x1="-1" y1="78" x2="7" y2="78" stroke="#CBD5E1" stroke-width="1" transform="rotate(-10, 4, 82)"/>
+    <line x1="0" y1="82" x2="6" y2="82" stroke="#CBD5E1" stroke-width="1" transform="rotate(-10, 4, 82)"/>
+    <!-- Skirt -->
+    <path d="M12,93 L8,140 Q8,142 12,142 L28,142 Q30,142 30,140 Z" fill="#1E293B"/>
+    <path d="M48,93 L52,140 Q52,142 48,142 L32,142 Q30,142 30,140 Z" fill="#1E293B"/>
+    <!-- Shoes -->
+    <ellipse cx="18" cy="144" rx="11" ry="5" fill="#EC4899"/>
+    <ellipse cx="42" cy="144" rx="11" ry="5" fill="#EC4899"/>
+  </g>
+
+  <!-- STUDENT 3 - Bottom center, waving -->
+  <g filter="url(#studentShadow)" transform="translate(220, 395)">
+    <!-- Head -->
+    <circle cx="36" cy="12" r="16" fill="url(#skinGrad1)"/>
+    <!-- Hair (curly/afro style) -->
+    <circle cx="36" cy="5" r="18" fill="#3D2914"/>
+    <circle cx="22" cy="10" r="8" fill="#3D2914"/>
+    <circle cx="50" cy="10" r="8" fill="#3D2914"/>
+    <circle cx="36" cy="-2" r="10" fill="#3D2914"/>
+    <!-- Face visible area -->
+    <circle cx="36" cy="14" r="14" fill="url(#skinGrad1)"/>
+    <!-- Glasses -->
+    <circle cx="30" cy="12" r="5" fill="none" stroke="#1E293B" stroke-width="1.5"/>
+    <circle cx="42" cy="12" r="5" fill="none" stroke="#1E293B" stroke-width="1.5"/>
+    <line x1="35" y1="12" x2="37" y2="12" stroke="#1E293B" stroke-width="1.5"/>
+    <!-- Eyes behind glasses -->
+    <circle cx="30" cy="12" r="1.8" fill="#1E293B"/>
+    <circle cx="42" cy="12" r="1.8" fill="#1E293B"/>
+    <!-- Smile -->
+    <path d="M30,19 Q36,24 42,19" stroke="#C0846A" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <rect x="32" y="27" width="8" height="6" rx="2" fill="url(#skinGrad1)"/>
+    <!-- Body / College sweater -->
+    <path d="M16,33 Q16,30 24,30 L48,30 Q56,30 56,33 L58,75 Q58,78 53,78 L19,78 Q14,78 14,75 Z" fill="#1E40AF"/>
+    <!-- "R" letter on sweater -->
+    <text x="36" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="22" fill="white" opacity="0.9">R</text>
+    <!-- Waving arm (raised) -->
+    <path d="M56,36 Q68,28 72,10" stroke="#1E40AF" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <circle cx="72" cy="8" r="5" fill="url(#skinGrad1)"/>
+    <!-- Other arm -->
+    <path d="M16,36 Q8,48 10,60" stroke="#1E40AF" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <circle cx="10" cy="62" r="5" fill="url(#skinGrad1)"/>
+    <!-- Pants -->
+    <path d="M18,76 L16,115 Q16,118 20,118 L32,118 Q34,118 34,115 L34,80" fill="#4B5563"/>
+    <path d="M54,76 L56,115 Q56,118 52,118 L40,118 Q38,118 38,115 L38,80" fill="#4B5563"/>
+    <!-- Sneakers -->
+    <ellipse cx="24" cy="120" rx="11" ry="5" fill="white"/>
+    <ellipse cx="48" cy="120" rx="11" ry="5" fill="white"/>
+    <path d="M15,120 Q15,117 24,117 Q33,117 33,120" fill="#F97316"/>
+    <path d="M39,120 Q39,117 48,117 Q57,117 57,120" fill="#F97316"/>
   </g>
 
   <!-- Subtle border for the rounded square -->

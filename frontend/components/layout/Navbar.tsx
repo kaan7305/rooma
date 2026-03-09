@@ -154,8 +154,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent">ROOMA</h1>
+          <Link href="/" className="flex items-center gap-2.5">
+            <img src="/rooma-logo.svg" alt="Rooma" className="w-12 h-12" />
+            <h1 className="text-2xl font-bold text-gray-900">ROOMA</h1>
           </Link>
 
           {/* Navigation Links - Desktop */}
@@ -165,14 +166,14 @@ export default function Navbar() {
               href="/favorites"
               className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 relative ${
                 pathname === '/favorites'
-                  ? 'bg-rose-50 text-rose-600'
+                  ? 'bg-orange-50 text-orange-600'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Heart className="w-4 h-4" />
               Favorites
               {totalFavorites > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {totalFavorites}
                 </span>
               )}
@@ -184,7 +185,7 @@ export default function Navbar() {
                 href="/messages"
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                   pathname === '/messages'
-                    ? 'bg-rose-50 text-rose-600'
+                    ? 'bg-orange-50 text-orange-600'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -200,7 +201,7 @@ export default function Navbar() {
                   onClick={() => setIsHostMenuOpen(!isHostMenuOpen)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                     isAnyHostItemActive
-                      ? 'bg-rose-50 text-rose-600'
+                      ? 'bg-orange-50 text-orange-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -217,7 +218,7 @@ export default function Navbar() {
                         onClick={() => setIsHostMenuOpen(false)}
                         className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition ${
                           pathname === item.href
-                            ? 'bg-rose-50 text-rose-600'
+                            ? 'bg-orange-50 text-orange-600'
                             : 'text-gray-700 hover:bg-gray-50'
                         }`}
                       >
@@ -237,7 +238,7 @@ export default function Navbar() {
                   onClick={() => setIsGuestMenuOpen(!isGuestMenuOpen)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                     isAnyGuestItemActive
-                      ? 'bg-rose-50 text-rose-600'
+                      ? 'bg-orange-50 text-orange-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -254,7 +255,7 @@ export default function Navbar() {
                         onClick={() => setIsGuestMenuOpen(false)}
                         className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition ${
                           pathname === item.href
-                            ? 'bg-rose-50 text-rose-600'
+                            ? 'bg-orange-50 text-orange-600'
                             : 'text-gray-700 hover:bg-gray-50'
                         }`}
                       >
@@ -274,7 +275,7 @@ export default function Navbar() {
                   onClick={() => setIsStudentMenuOpen(!isStudentMenuOpen)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                     isAnyStudentItemActive
-                      ? 'bg-rose-50 text-rose-600'
+                      ? 'bg-orange-50 text-orange-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -291,7 +292,7 @@ export default function Navbar() {
                         onClick={() => setIsStudentMenuOpen(false)}
                         className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition ${
                           pathname === item.href
-                            ? 'bg-rose-50 text-rose-600'
+                            ? 'bg-orange-50 text-orange-600'
                             : 'text-gray-700 hover:bg-gray-50'
                         }`}
                       >
@@ -310,7 +311,7 @@ export default function Navbar() {
                 href="/admin/verifications"
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                   pathname === '/admin/verifications'
-                    ? 'bg-rose-50 text-rose-600'
+                    ? 'bg-orange-50 text-orange-600'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -332,7 +333,7 @@ export default function Navbar() {
                 >
                   <Bell className="w-5 h-5 text-gray-700" />
                   {unreadNotifications > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadNotifications}
                     </span>
                   )}
@@ -344,7 +345,7 @@ export default function Navbar() {
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                     className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition"
                   >
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-sm font-semibold text-white">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-orange-400 to-orange-500 flex items-center justify-center text-sm font-semibold text-white">
                       {user.firstName[0]}
                       {user.lastName[0]}
                     </div>
@@ -413,7 +414,7 @@ export default function Navbar() {
                             setIsProfileMenuOpen(false);
                             handleLogout();
                           }}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 transition"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Logout</span>
@@ -427,13 +428,13 @@ export default function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-rose-600 transition"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-orange-600 transition"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-pink-600 rounded-full hover:from-rose-600 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
+                  className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-full hover:from-orange-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg"
                 >
                   Sign Up
                 </Link>
@@ -450,14 +451,14 @@ export default function Navbar() {
               href="/favorites"
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition relative ${
                 pathname === '/favorites'
-                  ? 'bg-rose-50 text-rose-600'
+                  ? 'bg-orange-50 text-orange-600'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Heart className="w-4 h-4" />
               Favorites
               {totalFavorites > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {totalFavorites}
                 </span>
               )}
@@ -469,7 +470,7 @@ export default function Navbar() {
                 href="/messages"
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
                   pathname === '/messages'
-                    ? 'bg-rose-50 text-rose-600'
+                    ? 'bg-orange-50 text-orange-600'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -485,7 +486,7 @@ export default function Navbar() {
                 href={item.href}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
                   pathname === item.href
-                    ? 'bg-rose-50 text-rose-600'
+                    ? 'bg-orange-50 text-orange-600'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -501,7 +502,7 @@ export default function Navbar() {
                 href={item.href}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
                   pathname === item.href
-                    ? 'bg-rose-50 text-rose-600'
+                    ? 'bg-orange-50 text-orange-600'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -517,7 +518,7 @@ export default function Navbar() {
                 href={item.href}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
                   pathname === item.href
-                    ? 'bg-rose-50 text-rose-600'
+                    ? 'bg-orange-50 text-orange-600'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -532,7 +533,7 @@ export default function Navbar() {
                 href="/admin/verifications"
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
                   pathname === '/admin/verifications'
-                    ? 'bg-rose-50 text-rose-600'
+                    ? 'bg-orange-50 text-orange-600'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >

@@ -893,18 +893,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          <style jsx>{`
-            @keyframes float {
-              0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
-              25% { transform: translateY(-10px) translateX(5px); opacity: 0.7; }
-              50% { transform: translateY(-5px) translateX(-5px); opacity: 0.5; }
-              75% { transform: translateY(-15px) translateX(3px); opacity: 0.6; }
-            }
-            @keyframes ping {
-              0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-              75%, 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
-            }
-          `}</style>
         </div>
       </section>
 
@@ -1159,6 +1147,16 @@ export default function HomePage() {
         }
         .animate-wiggle {
           animation: wiggle 1s ease-in-out infinite;
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+          25% { transform: translateY(-10px) translateX(5px); opacity: 0.7; }
+          50% { transform: translateY(-5px) translateX(-5px); opacity: 0.5; }
+          75% { transform: translateY(-15px) translateX(3px); opacity: 0.6; }
+        }
+        @keyframes ping {
+          0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+          75%, 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
       `}</style>
     </div>

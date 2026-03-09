@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <!-- Main gradient for background -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FB923C"/>
+      <stop offset="50%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+
+    <!-- Subtle shine overlay -->
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="white" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="white" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Shadow for house -->
+    <filter id="houseShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#00000030"/>
+    </filter>
+
+    <!-- Inner shadow for depth -->
+    <filter id="innerGlow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000020"/>
+    </filter>
+
+    <!-- Gradient for the house body -->
+    <linearGradient id="houseGrad" x1="160" y1="200" x2="352" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F0F0F0"/>
+    </linearGradient>
+
+    <!-- Gradient for roof -->
+    <linearGradient id="roofGrad" x1="256" y1="100" x2="256" y2="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E8E8E8"/>
+    </linearGradient>
+
+    <!-- Cap gradient -->
+    <linearGradient id="capGrad" x1="200" y1="80" x2="312" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <!-- Door gradient -->
+    <linearGradient id="doorGrad" x1="220" y1="300" x2="292" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+
+    <!-- Book gradient -->
+    <linearGradient id="bookGrad" x1="190" y1="240" x2="322" y2="310" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#DC6A0F"/>
+    </linearGradient>
+
+    <!-- Clip for rounded square -->
+    <clipPath id="roundClip">
+      <rect x="0" y="0" width="512" height="512" rx="100"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background rounded square with gradient -->
+  <g clip-path="url(#roundClip)">
+    <rect width="512" height="512" fill="url(#bgGrad)"/>
+    <rect width="512" height="512" fill="url(#shine)"/>
+  </g>
+
+  <!-- Main house group with shadow -->
+  <g filter="url(#houseShadow)">
+    <!-- House body -->
+    <path d="M160 240 L160 390 C160 396 165 400 170 400 L342 400 C348 400 352 396 352 390 L352 240 Z" fill="url(#houseGrad)"/>
+
+    <!-- Roof -->
+    <path d="M256 110 L120 240 C116 244 119 250 124 250 L150 250 L150 240 L362 240 L362 250 L388 250 C393 250 396 244 392 240 L256 110Z" fill="url(#roofGrad)"/>
+
+    <!-- Chimney -->
+    <rect x="320" y="145" width="30" height="70" rx="4" fill="#E8E8E8"/>
+    <rect x="316" y="140" width="38" height="12" rx="4" fill="#F0F0F0"/>
+  </g>
+
+  <!-- Door with rounded top -->
+  <rect x="222" y="310" width="68" height="90" rx="34" fill="url(#doorGrad)"/>
+  <rect x="222" y="350" width="68" height="50" fill="url(#doorGrad)"/>
+
+  <!-- Door knob -->
+  <circle cx="278" cy="360" r="5" fill="#FCD34D"/>
+  <circle cx="278" cy="360" r="2.5" fill="#FBBF24"/>
+
+  <!-- Window left -->
+  <g filter="url(#innerGlow)">
+    <rect x="175" y="270" width="35" height="40" rx="4" fill="#BFDBFE"/>
+    <line x1="192.5" y1="270" x2="192.5" y2="310" stroke="white" stroke-width="2"/>
+    <line x1="175" y1="290" x2="210" y2="290" stroke="white" stroke-width="2"/>
+  </g>
+
+  <!-- Window right -->
+  <g filter="url(#innerGlow)">
+    <rect x="302" y="270" width="35" height="40" rx="4" fill="#BFDBFE"/>
+    <line x1="319.5" y1="270" x2="319.5" y2="310" stroke="white" stroke-width="2"/>
+    <line x1="302" y1="290" x2="337" y2="290" stroke="white" stroke-width="2"/>
+  </g>
+
+  <!-- Graduation cap on roof -->
+  <g transform="translate(256, 95)">
+    <!-- Cap board (mortarboard) -->
+    <polygon points="0,-30 -52,-10 0,10 52,-10" fill="url(#capGrad)"/>
+    <!-- Cap top highlight -->
+    <polygon points="0,-28 -46,-10 0,6 46,-10" fill="#1E293B" opacity="0.8"/>
+    <!-- Cap skull piece -->
+    <ellipse cx="0" cy="-2" rx="22" ry="14" fill="#334155"/>
+    <ellipse cx="0" cy="-4" rx="20" ry="12" fill="#1E293B"/>
+    <!-- Button on top -->
+    <circle cx="0" cy="-10" r="4" fill="#334155"/>
+    <!-- Tassel string -->
+    <path d="M0,-10 Q15,-5 40,15 Q45,20 42,30" stroke="#FCD34D" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Tassel end -->
+    <path d="M40,28 L38,42 L42,42 L44,42 L42,28" fill="#FCD34D"/>
+    <rect x="37" y="26" width="10" height="5" rx="2" fill="#FBBF24"/>
+  </g>
+
+  <!-- Open book below the roof peak -->
+  <g transform="translate(256, 215)">
+    <!-- Left page -->
+    <path d="M-4,0 C-4,0 -40,-8 -50,0 L-50,35 C-40,28 -4,35 -4,35 Z" fill="white" opacity="0.95"/>
+    <!-- Right page -->
+    <path d="M4,0 C4,0 40,-8 50,0 L50,35 C40,28 4,35 4,35 Z" fill="white" opacity="0.9"/>
+    <!-- Spine -->
+    <path d="M-4,0 C-2,3 2,3 4,0 L4,35 C2,32 -2,32 -4,35 Z" fill="#E8E8E8"/>
+    <!-- Text lines on left page -->
+    <line x1="-42" y1="10" x2="-12" y2="10" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-40" y1="16" x2="-14" y2="16" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-38" y1="22" x2="-16" y2="22" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Text lines on right page -->
+    <line x1="12" y1="10" x2="42" y2="10" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="14" y1="16" x2="40" y2="16" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="16" y1="22" x2="38" y2="22" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Subtle border for the rounded square -->
+  <rect x="0" y="0" width="512" height="512" rx="100" fill="none" stroke="white" stroke-opacity="0.15" stroke-width="3"/>
+</svg>

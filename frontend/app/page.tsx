@@ -784,29 +784,127 @@ export default function HomePage() {
           <p className="text-gray-500 max-w-2xl mx-auto mb-12">
             From New York to San Francisco, Boston to Miami — ROOMA connects students finding their next home every day.
           </p>
-          {/* Map with floating ping dots */}
-          <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden aspect-[2/1] max-w-5xl mx-auto shadow-xl">
+          {/* Map with animated elements */}
+          <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl overflow-hidden aspect-[2/1] max-w-5xl mx-auto shadow-2xl">
             <img
               src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=1200&auto=format&fit=crop&q=80"
               alt="World map"
-              className="w-full h-full object-cover opacity-25"
+              className="w-full h-full object-cover opacity-20"
             />
-            {/* Animated ping dots */}
-            <div className="absolute top-[35%] left-[22%]"><span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" /><span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500" /></span></div>
-            <div className="absolute top-[30%] left-[28%]"><span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animation-delay-700" /><span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500" /></span></div>
-            <div className="absolute top-[42%] left-[18%]"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animation-delay-1500" /><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" /></span></div>
-            <div className="absolute top-[32%] left-[48%]"><span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animation-delay-2000" /><span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500" /></span></div>
-            <div className="absolute top-[45%] left-[55%]"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animation-delay-500" /><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" /></span></div>
-            <div className="absolute top-[38%] left-[72%]"><span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animation-delay-3000" /><span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500" /></span></div>
 
-            {/* Center overlay */}
+            {/* Animated gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-orange-500/10 animate-pulse" />
+
+            {/* Connection lines (SVG) */}
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1000 500" preserveAspectRatio="none">
+              {/* NYC to London */}
+              <path d="M280 170 Q400 100 480 160" stroke="url(#lineGrad)" strokeWidth="1.5" fill="none" opacity="0.6">
+                <animate attributeName="stroke-dasharray" from="0 500" to="500 0" dur="3s" repeatCount="indefinite" />
+              </path>
+              {/* NYC to SF */}
+              <path d="M280 170 Q230 200 180 180" stroke="url(#lineGrad)" strokeWidth="1.5" fill="none" opacity="0.5">
+                <animate attributeName="stroke-dasharray" from="0 300" to="300 0" dur="2.5s" begin="0.5s" repeatCount="indefinite" />
+              </path>
+              {/* London to Dubai */}
+              <path d="M480 160 Q560 180 620 200" stroke="url(#lineGrad)" strokeWidth="1.5" fill="none" opacity="0.4">
+                <animate attributeName="stroke-dasharray" from="0 400" to="400 0" dur="3.5s" begin="1s" repeatCount="indefinite" />
+              </path>
+              {/* NYC to Miami */}
+              <path d="M280 170 Q270 220 260 240" stroke="url(#lineGrad)" strokeWidth="1" fill="none" opacity="0.4">
+                <animate attributeName="stroke-dasharray" from="0 200" to="200 0" dur="2s" begin="1.5s" repeatCount="indefinite" />
+              </path>
+              <defs>
+                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#F97316" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#F97316" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#F97316" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* City dots with labels and ripple effect */}
+            {[
+              { top: '34%', left: '22%', label: 'NYC', delay: '0s', size: 'lg' },
+              { top: '28%', left: '28%', label: 'Toronto', delay: '0.3s', size: 'md' },
+              { top: '44%', left: '18%', label: 'SF', delay: '0.6s', size: 'lg' },
+              { top: '32%', left: '48%', label: 'London', delay: '0.9s', size: 'md' },
+              { top: '48%', left: '26%', label: 'Miami', delay: '1.2s', size: 'sm' },
+              { top: '36%', left: '72%', label: 'Tokyo', delay: '1.5s', size: 'md' },
+              { top: '30%', left: '14%', label: 'Seattle', delay: '1.8s', size: 'sm' },
+              { top: '38%', left: '62%', label: 'Dubai', delay: '2.1s', size: 'sm' },
+            ].map((city, i) => (
+              <div key={i} className="absolute group" style={{ top: city.top, left: city.left }}>
+                {/* Outer ripple */}
+                <span
+                  className="absolute inline-flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/20"
+                  style={{ animation: `ping 2s cubic-bezier(0, 0, 0.2, 1) infinite`, animationDelay: city.delay }}
+                />
+                {/* Middle ripple */}
+                <span
+                  className="absolute inline-flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/30"
+                  style={{ animation: `ping 2s cubic-bezier(0, 0, 0.2, 1) infinite`, animationDelay: `calc(${city.delay} + 0.3s)` }}
+                />
+                {/* Core dot */}
+                <span className={`relative inline-flex rounded-full bg-orange-500 shadow-lg shadow-orange-500/50 -translate-x-1/2 -translate-y-1/2 ${
+                  city.size === 'lg' ? 'h-3 w-3' : city.size === 'md' ? 'h-2.5 w-2.5' : 'h-2 w-2'
+                }`} />
+                {/* Label tooltip */}
+                <span className="absolute left-1/2 -translate-x-1/2 -top-7 bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-bold px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+                  {city.label}
+                </span>
+              </div>
+            ))}
+
+            {/* Floating particles */}
+            {[...Array(15)].map((_, i) => (
+              <div
+                key={`p-${i}`}
+                className="absolute w-1 h-1 rounded-full bg-orange-400/40"
+                style={{
+                  top: `${15 + Math.random() * 70}%`,
+                  left: `${5 + Math.random() * 90}%`,
+                  animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+                  animationDelay: `${Math.random() * 3}s`,
+                }}
+              />
+            ))}
+
+            {/* Center overlay with counter */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center bg-white/80 backdrop-blur-md rounded-3xl px-10 py-8 shadow-xl">
-                <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">ROOMA</div>
-                <div className="text-lg text-gray-700 mt-2 font-medium">Growing every day</div>
+              <div className="text-center bg-gray-900/70 backdrop-blur-xl rounded-3xl px-10 py-8 shadow-2xl border border-white/10">
+                <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">ROOMA</div>
+                <div className="text-sm text-gray-400 mt-2 font-medium tracking-wide">Growing every day</div>
+                {/* Stats row */}
+                <div className="flex gap-8 mt-5 pt-5 border-t border-white/10">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white">8+</div>
+                    <div className="text-[10px] text-gray-500 uppercase tracking-wider">Cities</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white">10K+</div>
+                    <div className="text-[10px] text-gray-500 uppercase tracking-wider">Students</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white">5K+</div>
+                    <div className="text-[10px] text-gray-500 uppercase tracking-wider">Listings</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+
+          <style jsx>{`
+            @keyframes float {
+              0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+              25% { transform: translateY(-10px) translateX(5px); opacity: 0.7; }
+              50% { transform: translateY(-5px) translateX(-5px); opacity: 0.5; }
+              75% { transform: translateY(-15px) translateX(3px); opacity: 0.6; }
+            }
+            @keyframes ping {
+              0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+              75%, 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+            }
+          `}</style>
         </div>
       </section>
 

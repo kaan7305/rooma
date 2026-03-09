@@ -24,11 +24,16 @@ export default function Navbar() {
   const [isStudentMenuOpen, setIsStudentMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const isHome = pathname === '/';
 
   useEffect(() => {
-    if (!isHome) { setScrolled(true); return; }
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    if (!isHome) { setScrolled(true); setPastHero(true); return; }
+    const onScroll = () => {
+      setScrolled(window.scrollY > 50);
+      // Hero is 90vh, switch colors when navbar reaches the bottom of hero
+      setPastHero(window.scrollY > window.innerHeight * 0.85);
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -159,17 +164,15 @@ export default function Navbar() {
   const isAnyGuestItemActive = guestMenuItems.some(item => pathname === item.href);
   const isAnyStudentItemActive = studentMenuItems.some(item => pathname === item.href);
 
-  // On homepage: always light text. On other pages: dark when scrolled, light when not.
-  const useLightText = isHome || !scrolled;
+  // Light text when over dark backgrounds (hero video), dark text over white sections
+  const useLightText = !pastHero;
 
   return (
     <>
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isHome
-        ? 'bg-transparent border-b border-transparent'
-        : scrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200'
-          : 'bg-transparent border-b border-transparent'
+      pastHero
+        ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200'
+        : 'bg-transparent border-b border-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">

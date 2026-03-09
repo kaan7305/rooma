@@ -648,7 +648,6 @@ export default function HomePage() {
             loop
             playsInline
             className="w-full h-full object-cover"
-            poster="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1920&auto=format&fit=crop&q=80"
           >
             <source src="/hero-video.mp4" type="video/mp4" />
           </video>

@@ -178,8 +178,11 @@ function ProfileCardMockup() {
   return (
     <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 max-w-sm mx-auto">
       <div className="flex items-center gap-4 mb-5">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center">
-          <span className="text-white text-xl font-bold">SM</span>
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center overflow-hidden">
+          <svg className="w-12 h-12 text-white/80 mt-2" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M20 21a8 8 0 1 0-16 0" />
+          </svg>
         </div>
         <div>
           <h4 className="font-bold text-gray-900 text-lg">Sarah M.</h4>
@@ -579,8 +582,11 @@ function PropertyCarousel() {
                 )}
                 {/* Host avatar */}
                 <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full pl-1 pr-3 py-1">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold shadow-lg ring-2 ring-white/50">
-                    {property.hostInitials || property.hostName?.split(' ').map(n => n[0]).join('') || '?'}
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center overflow-hidden shadow-lg ring-2 ring-white/50">
+                    <svg className="w-6 h-6 text-white/80 mt-1" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M20 21a8 8 0 1 0-16 0" />
+                    </svg>
                   </div>
                   <span className="text-xs font-semibold text-white">{property.hostName?.split(' ')[0] || 'Host'}</span>
                 </div>

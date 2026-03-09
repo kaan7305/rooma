@@ -159,19 +159,24 @@ export default function Navbar() {
   const isAnyGuestItemActive = guestMenuItems.some(item => pathname === item.href);
   const isAnyStudentItemActive = studentMenuItems.some(item => pathname === item.href);
 
+  // On homepage: always light text. On other pages: dark when scrolled, light when not.
+  const useLightText = isHome || !scrolled;
+
   return (
     <>
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled
-        ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200'
-        : 'bg-transparent border-b border-transparent'
+      isHome
+        ? 'bg-transparent border-b border-transparent'
+        : scrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200'
+          : 'bg-transparent border-b border-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
             <img src="/rooma-logo.svg" alt="Rooma" className="w-12 h-12" />
-            <h1 className={`text-2xl font-bold transition-colors duration-300 ${scrolled ? 'text-gray-900' : 'text-white'}`}>ROOMA</h1>
+            <h1 className={`text-2xl font-bold transition-colors duration-300 ${useLightText ? 'text-white' : 'text-gray-900'}`}>ROOMA</h1>
           </Link>
 
           {/* Navigation Links - Desktop */}
@@ -182,7 +187,7 @@ export default function Navbar() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 relative ${
                 pathname === '/favorites'
                   ? 'bg-orange-50 text-orange-600'
-                  : scrolled ? 'text-gray-700 hover:bg-gray-50' : 'text-white/90 hover:text-white hover:bg-white/10'
+                  : useLightText ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Heart className="w-4 h-4" />
@@ -201,7 +206,7 @@ export default function Navbar() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                   pathname === '/messages'
                     ? 'bg-orange-50 text-orange-600'
-                    : scrolled ? 'text-gray-700 hover:bg-gray-50' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    : useLightText ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 <MessageCircle className="w-4 h-4" />
@@ -217,7 +222,7 @@ export default function Navbar() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                     isAnyHostItemActive
                       ? 'bg-orange-50 text-orange-600'
-                      : scrolled ? 'text-gray-700 hover:bg-gray-50' : 'text-white/90 hover:text-white hover:bg-white/10'
+                      : useLightText ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <Building2 className="w-4 h-4" />
@@ -254,7 +259,7 @@ export default function Navbar() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                     isAnyGuestItemActive
                       ? 'bg-orange-50 text-orange-600'
-                      : scrolled ? 'text-gray-700 hover:bg-gray-50' : 'text-white/90 hover:text-white hover:bg-white/10'
+                      : useLightText ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <HomeIcon className="w-4 h-4" />
@@ -291,7 +296,7 @@ export default function Navbar() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                     isAnyStudentItemActive
                       ? 'bg-orange-50 text-orange-600'
-                      : scrolled ? 'text-gray-700 hover:bg-gray-50' : 'text-white/90 hover:text-white hover:bg-white/10'
+                      : useLightText ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <GraduationCap className="w-4 h-4" />
@@ -327,7 +332,7 @@ export default function Navbar() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                   pathname === '/admin/verifications'
                     ? 'bg-orange-50 text-orange-600'
-                    : scrolled ? 'text-gray-700 hover:bg-gray-50' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    : useLightText ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 <Shield className="w-4 h-4" />
@@ -344,9 +349,9 @@ export default function Navbar() {
 
                 <Link
                   href="/notifications"
-                  className={`relative p-2 rounded-lg transition ${scrolled ? 'hover:bg-gray-50' : 'hover:bg-white/10'}`}
+                  className={`relative p-2 rounded-lg transition ${useLightText ? 'hover:bg-white/10' : 'hover:bg-gray-50'}`}
                 >
-                  <Bell className={`w-5 h-5 transition-colors duration-300 ${scrolled ? 'text-gray-700' : 'text-white'}`} />
+                  <Bell className={`w-5 h-5 transition-colors duration-300 ${useLightText ? 'text-white' : 'text-gray-700'}`} />
                   {unreadNotifications > 0 && (
                     <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadNotifications}
@@ -358,16 +363,16 @@ export default function Navbar() {
                 <div className="relative profile-menu-container">
                   <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition ${scrolled ? 'hover:bg-gray-50' : 'hover:bg-white/10'}`}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition ${useLightText ? 'hover:bg-white/10' : 'hover:bg-gray-50'}`}
                   >
                     <div className="h-8 w-8 rounded-full bg-gradient-to-r from-orange-400 to-orange-500 flex items-center justify-center text-sm font-semibold text-white">
                       {user.firstName[0]}
                       {user.lastName[0]}
                     </div>
-                    <span className={`hidden md:block text-sm font-medium transition-colors duration-300 ${scrolled ? 'text-gray-700' : 'text-white'}`}>
+                    <span className={`hidden md:block text-sm font-medium transition-colors duration-300 ${useLightText ? 'text-white' : 'text-gray-700'}`}>
                       {user.firstName}
                     </span>
-                    <ChevronDown className={`w-4 h-4 transition-all duration-300 ${scrolled ? 'text-gray-700' : 'text-white'} ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 transition-all duration-300 ${useLightText ? 'text-white' : 'text-gray-700'} ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {isProfileMenuOpen && (
@@ -443,7 +448,7 @@ export default function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className={`px-4 py-2 text-sm font-medium transition ${scrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white hover:text-orange-300'}`}
+                  className={`px-4 py-2 text-sm font-medium transition ${useLightText ? 'text-white hover:text-orange-300' : 'text-gray-700 hover:text-orange-600'}`}
                 >
                   Sign In
                 </Link>
@@ -459,7 +464,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Navigation */}
-        <div className={`md:hidden py-3 border-t ${scrolled ? 'border-gray-100' : 'border-white/20'}`}>
+        <div className={`md:hidden py-3 border-t ${useLightText ? 'border-white/20' : 'border-gray-100'}`}>
           <div className="flex items-center space-x-2 overflow-x-auto">
             {/* Favorites */}
             <Link

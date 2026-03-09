@@ -650,6 +650,8 @@ export default function HomePage() {
           </video>
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/50" />
+          {/* Orange gradient blending from navbar into video */}
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-orange-500/60 via-orange-500/20 to-transparent z-[1]" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28 w-full">
